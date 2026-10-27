@@ -59,7 +59,7 @@ const quadrantColor = {
             maturity, not enthusiasm. A blip moves when the evidence changes.
           </p>
         </div>
-        <div class="flex items-center gap-4 text-[0.68rem] text-muted">
+        <div class="flex items-center gap-4 text-[0.75rem] text-muted">
           <span class="inline-flex items-center gap-1.5">
             <span class="h-2 w-2 rotate-45 bg-eng"></span> Adopt
           </span>
@@ -89,9 +89,9 @@ const quadrantColor = {
               <h2 class="font-display text-3xl leading-none" style={`color: ${group.color}`}>
                 {group.label}
               </h2>
-              <span class="text-[0.66rem] text-muted">{group.items.length}</span>
+              <span class="text-[0.75rem] text-muted">{group.items.length}</span>
             </div>
-            <p class="mt-2 text-[0.72rem] leading-relaxed text-muted">{group.description}</p>
+            <p class="mt-2 text-[0.75rem] leading-relaxed text-muted">{group.description}</p>
           </header>
           <div class="space-y-2 p-3">
             {group.items.map((entry) => {
@@ -104,13 +104,13 @@ const quadrantColor = {
                   <div class="flex items-start justify-between gap-2">
                     <h3 class="text-sm font-semibold leading-snug text-fg">{entry.data.name}</h3>
                     <span
-                      class="label shrink-0 text-[0.58rem]"
+                      class="label shrink-0 text-[0.75rem]"
                       style={`color: ${quadrantColor[entry.data.quadrant]}`}
                     >
                       {section.short}
                     </span>
                   </div>
-                  <p class="text-[0.72rem] leading-relaxed text-muted">{entry.data.summary}</p>
+                  <p class="text-[0.75rem] leading-relaxed text-muted">{entry.data.summary}</p>
                   <div class="flex items-center justify-between gap-2 pt-0.5">
                     <span class="radar-moved">
                       {entry.data.moved === 'new'
@@ -123,7 +123,7 @@ const quadrantColor = {
                     {entry.data.links.map((link) => (
                       <a
                         href={link.href}
-                        class="inline-flex items-center gap-1 text-[0.66rem] font-semibold text-muted-strong hover:text-brand"
+                        class="inline-flex items-center gap-1 text-[0.75rem] font-semibold text-muted-strong hover:text-brand"
                         rel="noopener"
                       >
                         {link.label} <Icon name="arrowUpRight" size={10} />
@@ -147,7 +147,7 @@ const quadrantColor = {
           the primary documentation so you can disagree with the placement.
         </p>
       </div>
-      <a href="/tags/" class="btn btn-ghost !min-h-0 !py-2 !text-[0.72rem]">
+      <a href="/tags/" class="btn btn-ghost !min-h-0 !py-2 !text-[0.75rem]">
         Browse the archive <Icon name="arrowRight" size={12} />
       </a>
     </div>

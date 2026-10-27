@@ -9,30 +9,18 @@ interface Props {
 const { url, title } = Astro.props;
 const xHref = `https://x.com/intent/post?text=${encodeURIComponent(title)}&url=${encodeURIComponent(url)}`;
 const liHref = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
+// Shared base for the three controls: keep them compact but above the 24px tap-target floor.
+const shareClass = 'btn btn-ghost !min-h-[1.5rem] !px-2 !py-1.5 !text-[0.75rem]';
 ---
 
 <div class="share-row" role="group" aria-label="Share this post" data-pagefind-ignore>
-  <a
-    href={xHref}
-    class="btn btn-ghost !min-h-0 !px-2 !py-1.5 !text-[0.68rem]"
-    rel="noopener"
-    target="_blank"
-  >
+  <a href={xHref} class={shareClass} rel="noopener" target="_blank">
     <Icon name="x" size={12} /> Share
   </a>
-  <a
-    href={liHref}
-    class="btn btn-ghost !min-h-0 !px-2 !py-1.5 !text-[0.68rem]"
-    rel="noopener"
-    target="_blank"
-  >
+  <a href={liHref} class={shareClass} rel="noopener" target="_blank">
     <Icon name="linkedin" size={12} /> LinkedIn
   </a>
-  <button
-    type="button"
-    class="btn btn-ghost !min-h-0 !px-2 !py-1.5 !text-[0.68rem]"
-    data-copy-link={url}
-  >
+  <button type="button" class={shareClass} data-copy-link={url}>
     <Icon name="link" size={12} /> <span data-copy-label>Copy link</span>
   </button>
 </div>

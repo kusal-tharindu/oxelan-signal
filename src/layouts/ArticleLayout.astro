@@ -80,7 +80,7 @@ const articleSchema = {
   <div class="reading-progress" data-reading-progress aria-hidden="true"></div>
 
   <div class="container-wide pt-6">
-    <nav aria-label="Breadcrumb" class="flex items-center gap-2 text-[0.7rem] text-muted">
+    <nav aria-label="Breadcrumb" class="flex items-center gap-2 text-[0.75rem] text-muted">
       <a href="/" class="hover:text-brand">
         Latest
       </a>
@@ -109,7 +109,7 @@ const articleSchema = {
       <FormatBadge format={post.data.format} />
       {post.data.impact && <ImpactBadge impact={post.data.impact} />}
       {post.data.status === 'evolving' && (
-        <span class="inline-flex items-center gap-1.5 text-[0.62rem] font-semibold uppercase tracking-[0.08em] text-medium">
+        <span class="inline-flex items-center gap-1.5 text-[0.75rem] font-semibold uppercase tracking-[0.08em] text-medium">
           <span class="dot animate-pulse" aria-hidden="true"></span> Evolving story
         </span>
       )}
@@ -125,7 +125,7 @@ const articleSchema = {
         data-pagefind-ignore
       >
         <span class="flex items-center gap-2 text-[0.78rem] text-muted-strong">
-          <span class="grid h-7 w-7 place-items-center rounded-full border border-line bg-surface-2 font-label text-[0.6rem] font-bold text-brand">
+          <span class="grid h-7 w-7 place-items-center rounded-full border border-line bg-surface-2 font-label text-[0.75rem] font-bold text-brand">
             {initials(site.author.name)}
           </span>
           {site.author.name}
@@ -163,7 +163,7 @@ const articleSchema = {
 
         {isGuide && (
           <div class="mb-8 flex flex-wrap items-center gap-x-6 gap-y-2 rounded border border-eng/30 bg-eng/5 px-4 py-3">
-            <span class="inline-flex items-center gap-2 text-[0.7rem] font-semibold uppercase tracking-[0.08em] text-eng">
+            <span class="inline-flex items-center gap-2 text-[0.75rem] font-semibold uppercase tracking-[0.08em] text-eng">
               <Icon name="book" size={13} /> Living guide
             </span>
             <span class="text-xs text-muted-strong">Last reviewed {formatDate(modified)}</span>
@@ -213,7 +213,7 @@ const articleSchema = {
                 <li>
                   <time
                     datetime={isoDate(update.date)}
-                    class="font-label text-[0.7rem] font-semibold text-brand"
+                    class="font-label text-[0.75rem] font-semibold text-brand"
                   >
                     {formatDate(update.date)}
                   </time>
@@ -246,7 +246,7 @@ const articleSchema = {
           <Toc headings={headings} />
           <div class="rounded border border-line bg-surface/60 p-3">
             <p class="eyebrow mb-1.5">Details</p>
-            <dl class="space-y-1.5 text-[0.68rem]">
+            <dl class="space-y-1.5 text-[0.75rem]">
               <div class="flex justify-between gap-2">
                 <dt class="text-muted">Published</dt>
                 <dd class="text-muted-strong">

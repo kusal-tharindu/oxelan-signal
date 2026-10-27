@@ -75,8 +75,7 @@ const structuredData = {
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
     <meta name="generator" content={Astro.generator} />
-    <meta name="theme-color" content="#0a0e17" media="(prefers-color-scheme: dark)" />
-    <meta name="theme-color" content="#f6f2e8" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0a0e17" />
     <meta name="color-scheme" content="dark light" />
 
     {noindex && <meta name="robots" content="noindex, nofollow" />}
@@ -121,8 +120,12 @@ const structuredData = {
           var theme = stored === 'light' || stored === 'dark' ? stored : 'dark';
           document.documentElement.dataset.theme = theme;
         } catch (_) {
-          document.documentElement.dataset.theme = 'dark';
+          var theme = 'dark';
+          document.documentElement.dataset.theme = theme;
         }
+        // Keep the browser chrome in step with the active theme (not the OS preference).
+        var meta = document.querySelector('meta[name="theme-color"]');
+        if (meta) meta.setAttribute('content', theme === 'light' ? '#f6f2e8' : '#0a0e17');
       })();
     </script>
 

@@ -59,7 +59,7 @@ const guidesHeading = 'Guides that stay current';
                 <FormatBadge format={lead.data.format} />
                 {lead.data.impact && <ImpactBadge impact={lead.data.impact} />}
                 {lead.data.status === 'evolving' && (
-                  <span class="inline-flex items-center gap-1.5 text-[0.62rem] font-semibold uppercase tracking-[0.08em] text-medium">
+                  <span class="inline-flex items-center gap-1.5 text-[0.75rem] font-semibold uppercase tracking-[0.08em] text-medium">
                     <span class="dot animate-pulse" aria-hidden="true"></span> Evolving
                   </span>
                 )}
@@ -94,7 +94,7 @@ const guidesHeading = 'Guides that stay current';
                 The feed
               </h2>
             </div>
-            <span class="text-[0.7rem] text-muted">Newest first · all sections</span>
+            <span class="text-[0.75rem] text-muted">Newest first · all sections</span>
           </div>
 
           <div class="mt-4 border-y border-line py-3">
@@ -144,7 +144,7 @@ const guidesHeading = 'Guides that stay current';
                       {post.data.title}
                     </h3>
                     <p class="text-xs leading-relaxed text-muted">{post.data.summary}</p>
-                    <span class="mt-auto pt-2 text-[0.66rem] text-muted">
+                    <span class="mt-auto pt-2 text-[0.75rem] text-muted">
                       Updated {formatDate(post.data.updated ?? post.data.date)}
                     </span>
                   </a>
@@ -159,7 +159,7 @@ const guidesHeading = 'Guides that stay current';
             <span class="font-semibold text-fg">Every post answers three questions.</span>
             What changed, why it matters, and what to do.
           </p>
-          <a href="/about/" class="btn btn-ghost !min-h-0 !py-2 !text-[0.72rem]">
+          <a href="/about/" class="btn btn-ghost !min-h-0 !py-2 !text-[0.75rem]">
             Editorial rules <Icon name="arrowUpRight" size={12} />
           </a>
         </div>

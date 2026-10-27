@@ -17,7 +17,7 @@ const affects = post.data.affects ?? [];
     <div class="mb-1 flex items-center justify-between gap-4">
       <h2 class="label text-brand">Briefing</h2>
       {post.data.status === 'evolving' && (
-        <span class="inline-flex items-center gap-1.5 text-[0.62rem] font-semibold uppercase tracking-[0.08em] text-medium">
+        <span class="inline-flex items-center gap-1.5 text-[0.75rem] font-semibold uppercase tracking-[0.08em] text-medium">
           <span class="dot animate-pulse" aria-hidden="true"></span> Evolving story
         </span>
       )}
@@ -39,7 +39,7 @@ const affects = post.data.affects ?? [];
     {(action || affects.length > 0) && (
       <div class="mt-2 flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-line pt-3">
         {action && (
-          <span class="inline-flex items-center gap-1.5 text-[0.68rem] font-semibold uppercase tracking-[0.07em]">
+          <span class="inline-flex items-center gap-1.5 text-[0.75rem] font-semibold uppercase tracking-[0.07em]">
             <Icon
               name={action === 'patch-now' ? 'alert' : 'refresh'}
               size={12}
@@ -60,10 +60,10 @@ const affects = post.data.affects ?? [];
           </span>
         )}
         {affects.length > 0 && (
-          <span class="inline-flex flex-wrap items-center gap-1.5 text-[0.68rem] text-muted-strong">
+          <span class="inline-flex flex-wrap items-center gap-1.5 text-[0.75rem] text-muted-strong">
             <span class="font-semibold uppercase tracking-[0.07em] text-muted">Affects:</span>
             {affects.map((item) => (
-              <code class="rounded border border-line bg-surface-2 px-1.5 py-0.5 font-mono text-[0.68rem]">
+              <code class="rounded border border-line bg-surface-2 px-1.5 py-0.5 font-mono text-[0.75rem]">
                 {item}
               </code>
             ))}

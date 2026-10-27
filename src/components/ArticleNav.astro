@@ -23,7 +23,7 @@ const sectionMeta = sections[section as keyof typeof sections];
     <div class="bg-surface p-4">
       {older ? (
         <a href={hrefOf(older)} class="group block">
-          <span class="inline-flex items-center gap-1 text-[0.66rem] uppercase tracking-[0.1em] text-muted">
+          <span class="inline-flex items-center gap-1 text-[0.75rem] uppercase tracking-[0.1em] text-muted">
             <Icon name="arrowLeft" size={11} /> Previous in {sectionMeta?.label ?? section}
           </span>
           <span class="mt-1.5 block font-display text-xl leading-tight group-hover:text-brand">
@@ -37,7 +37,7 @@ const sectionMeta = sections[section as keyof typeof sections];
     <div class="bg-surface p-4 sm:text-right">
       {newer ? (
         <a href={hrefOf(newer)} class="group block">
-          <span class="inline-flex items-center gap-1 text-[0.66rem] uppercase tracking-[0.1em] text-muted sm:justify-end">
+          <span class="inline-flex items-center gap-1 text-[0.75rem] uppercase tracking-[0.1em] text-muted sm:justify-end">
             Next in {sectionMeta?.label ?? section} <Icon name="arrowRight" size={11} />
           </span>
           <span class="mt-1.5 block font-display text-xl leading-tight group-hover:text-brand">
