@@ -106,13 +106,10 @@ was following text that arrived inside a retrieved document two hops earlier.
 - Do not rely on the model refusing. The refusal is a courtesy, not a control.
 - Do not flatten every server into every agent's toolset "for flexibility." That is how one
   compromised agent becomes the whole graph.
-- Do not treat signing as identity. The recent MALFEX campaign had its operator
-  [signing their own work](/security/malfex-npm-campaign/); a signed tool server is still a server
-  you have not decided to trust.
 - Do not add agents faster than you add edges to the inventory. An unmanaged agent-to-agent call is
   an unreviewed network path.
 
-## After the first hour
+## Drawing the graph
 
 The concrete next step is unglamorous: draw the graph. List every agent, every tool server, and
 every edge where one agent's output becomes another agent's input. For each edge, write down the

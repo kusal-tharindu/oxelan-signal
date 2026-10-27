@@ -44,10 +44,12 @@ noise.
 
 ## 2. Block lifecycle scripts by default
 
-`npm install` runs `preinstall`, `install`, and `postinstall` scripts from your dependencies. This
-is the window every install-time malware campaign uses — the loader in the recent MALFEX campaign
-was triggered from a compiled native addon at install time, which is exactly the code path
-`ignore-scripts` closes.
+`npm install` runs `preinstall`, `install`, and `postinstall` scripts from your dependencies. Most
+install-time malware announces itself through those scripts, and blocking them closes that window.
+
+Note the limit: lifecycle scripts are not the only execution path. The recent
+[MALFEX](/security/malfex-npm-campaign/) loader runs on `require()` from a compiled native addon,
+which `ignore-scripts` never touches. Treat this control as one layer, not the whole defence.
 
 ```bash
 # .npmrc, committed to the repository

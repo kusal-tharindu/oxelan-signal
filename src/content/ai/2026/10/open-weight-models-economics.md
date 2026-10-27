@@ -34,7 +34,7 @@ variability across customers; you are now the pool.
 
 A useful first calculation:
 
-```
+```text
 monthly GPU cost = (GPUs × hourly rate × 730) × (1 + redundancy factor)
 effective cost per 1M output tokens = monthly GPU cost / monthly output tokens
 ```

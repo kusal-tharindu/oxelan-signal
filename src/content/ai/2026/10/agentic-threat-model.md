@@ -12,7 +12,7 @@ briefing:
 sources:
   - { title: "OWASP — Top 10 for LLM applications", url: "https://genai.owasp.org/llm-top-10/" }
   - { title: "NIST — AI Risk Management Framework", url: "https://www.nist.gov/itl/ai-risk-management-framework" }
-  - { title: "Microsoft — threat modeling AI systems", url: "https://learn.microsoft.com/en-us/security/engineering/threat-modeling-ai" }
+  - { title: "Microsoft — Threat modeling AI/ML systems and dependencies", url: "https://learn.microsoft.com/en-us/security/engineering/threat-modeling-aiml" }
   - { title: "Google — Secure AI Framework (SAIF)", url: "https://saif.google/" }
   - { title: "Model Context Protocol — security best practices", url: "https://modelcontextprotocol.io/specification/2025-06-18/basic/security_best_practices" }
 ---
