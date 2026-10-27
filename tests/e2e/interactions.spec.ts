@@ -161,6 +161,23 @@ test.describe('home hero', () => {
     });
     expect(painted, 'signal canvas did not paint').toBeGreaterThan(500);
   });
+
+  test('still paints one static frame under reduced motion', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto('/');
+    const canvas = page.locator('[data-signal-field] canvas');
+    await expect(canvas).toBeVisible();
+    const painted = await canvas.evaluate((element) => {
+      const canvas = element as HTMLCanvasElement;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return 0;
+      const { data } = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      let opaque = 0;
+      for (let i = 3; i < data.length; i += 4) if ((data[i] ?? 0) > 0) opaque += 1;
+      return opaque;
+    });
+    expect(painted, 'reduced-motion canvas is blank').toBeGreaterThan(500);
+  });
 });
 
 test.describe('article reading aids', () => {

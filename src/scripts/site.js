@@ -501,6 +501,7 @@
       let width = 0;
       let height = 0;
       let dpr = 1;
+      let drawStatic = null;
       const resize = () => {
         const rect = signalField.getBoundingClientRect();
         width = Math.max(1, rect.width);
@@ -508,6 +509,8 @@
         dpr = Math.min(window.devicePixelRatio || 1, 2);
         canvas.width = Math.round(width * dpr);
         canvas.height = Math.round(height * dpr);
+        // Resizing clears the canvas; under reduced motion there is no loop to repaint it.
+        if (reduced.matches) drawStatic?.();
       };
       resize();
       new ResizeObserver(resize).observe(signalField);
@@ -641,7 +644,13 @@
         if (!reduced.matches) requestAnimationFrame(draw);
       };
 
-      if (reduced.matches) draw(performance.now());
+      drawStatic = () => draw(performance.now());
+      reduced.addEventListener('change', () => {
+        if (reduced.matches) drawStatic();
+        else requestAnimationFrame(draw);
+      });
+
+      if (reduced.matches) drawStatic();
       else requestAnimationFrame(draw);
     }
   }

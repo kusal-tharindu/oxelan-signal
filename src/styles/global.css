@@ -2027,6 +2027,7 @@
   .share-row,
   .copy-code,
   .search-dialog,
+  .signal-field,
   nav[aria-label='Breadcrumb'],
   aside[aria-label='Article tools'],
   section[aria-labelledby='related-title'],
@@ -2182,7 +2183,10 @@
     }
 
     .hero-lede {
-      display: none;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+      overflow: hidden;
     }
   }
 
