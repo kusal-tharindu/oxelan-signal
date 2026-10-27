@@ -470,13 +470,20 @@
     button.addEventListener('click', async () => {
       await copyText(button.dataset.copyLink);
       const label = $('[data-copy-label]', button);
-      if (label) {
-        const previous = label.textContent;
-        label.textContent = 'Copied';
-        window.setTimeout(() => {
-          label.textContent = previous;
-        }, 1600);
-      }
+      const linkIcon = $('[data-copy-icon="link"]', button);
+      const checkIcon = $('[data-copy-icon="check"]', button);
+      if (!label) return;
+      const previous = label.textContent;
+      label.textContent = 'Copied';
+      button.classList.add('is-copied');
+      if (linkIcon) linkIcon.classList.add('hidden');
+      if (checkIcon) checkIcon.classList.remove('hidden');
+      window.setTimeout(() => {
+        label.textContent = previous;
+        button.classList.remove('is-copied');
+        if (linkIcon) linkIcon.classList.remove('hidden');
+        if (checkIcon) checkIcon.classList.add('hidden');
+      }, 2000);
     });
   });
 

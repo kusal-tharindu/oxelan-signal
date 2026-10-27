@@ -21,6 +21,14 @@ const shareClass = 'btn btn-ghost !min-h-[1.5rem] !px-2 !py-1.5 !text-[0.75rem]'
     <Icon name="linkedin" size={12} /> LinkedIn
   </a>
   <button type="button" class={shareClass} data-copy-link={url}>
-    <Icon name="link" size={12} /> <span data-copy-label>Copy link</span>
+    <span data-copy-icon="link">
+      <Icon name="link" size={12} />
+    </span>
+    <span data-copy-icon="check" class="hidden">
+      <Icon name="check" size={12} />
+    </span>
+    <span data-copy-label aria-live="polite">
+      Copy link
+    </span>
   </button>
 </div>

@@ -81,17 +81,26 @@ const articleSchema = {
 >
   <div class="reading-progress" data-reading-progress aria-hidden="true"></div>
 
-  <div class="container-wide pt-6">
-    <nav aria-label="Breadcrumb" class="flex items-center gap-2 text-[0.75rem] text-muted">
-      <a href="/" class="hover:text-brand">
+  <div class="container-wide pt-5">
+    <nav
+      aria-label="Breadcrumb"
+      class="flex min-w-0 items-center gap-1.5 text-[0.8125rem] text-muted"
+    >
+      <a href="/" class="shrink-0 hover:text-brand">
         Latest
       </a>
-      <Icon name="chevronRight" size={11} />
-      <a href={section.path} class="hover:text-brand">
+      <Icon name="chevronRight" size={11} class="shrink-0" />
+      <a href={section.path} class="shrink-0 hover:text-brand">
         {section.label}
       </a>
-      <Icon name="chevronRight" size={11} />
-      <span class="truncate text-muted-strong">{post.data.title}</span>
+      {/* The current title is omitted below sm so a long headline cannot wrap 2-3 lines
+          before the article starts. */}
+      <span class="hidden min-w-0 items-center gap-1.5 sm:flex">
+        <Icon name="chevronRight" size={11} class="shrink-0" />
+        <span class="truncate text-muted-strong" aria-current="page">
+          {post.data.title}
+        </span>
+      </span>
     </nav>
   </div>
 
@@ -137,7 +146,7 @@ const articleSchema = {
           <span>{minutes} min read</span>
           {post.data.updated && <span>Updated {formatDate(post.data.updated)}</span>}
         </span>
-        <div class="md:ml-auto">
+        <div class="md:ml-auto md:border-l md:border-line md:pl-5">
           <ShareRow url={canonical} title={post.data.title} />
         </div>
       </div>
@@ -193,11 +202,12 @@ const articleSchema = {
                 <li>
                   <a
                     href={source.url}
-                    class="text-muted-strong underline decoration-line-strong underline-offset-4 hover:text-brand"
+                    class="inline-flex items-baseline gap-1 text-muted-strong underline decoration-line-strong underline-offset-4 hover:text-brand"
                     rel="noopener noreferrer"
                     target="_blank"
                   >
-                    {source.title}
+                    <span>{source.title}</span>
+                    <Icon name="arrowUpRight" size={11} class="shrink-0 opacity-70" />
                   </a>
                 </li>
               ))}

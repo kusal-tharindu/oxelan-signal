@@ -41,8 +41,8 @@
 
   /* Named text sizes. Nothing visible goes below --text-floor (12px) on mobile. */
   --text-floor: 0.75rem; /* 12px — hard floor for any visible text */
-  --text-micro: 0.75rem; /* badges, labels, eyebrows, meta */
-  --text-meta: 0.8125rem; /* interactive text: chips, links, buttons */
+  --text-micro: 0.8125rem; /* 13px — badges, labels, eyebrows, meta */
+  --text-meta: 0.875rem; /* 14px — interactive text: chips, links, buttons */
 }
 
 [data-theme='light'] {
@@ -694,9 +694,9 @@
 
   .lead-title {
     font-family: var(--font-display);
-    font-size: clamp(2.3rem, 6vw, 4.4rem);
+    font-size: clamp(2.2rem, 5.8vw, 4.2rem);
     font-weight: 400;
-    line-height: 0.98;
+    line-height: 1.02;
     letter-spacing: -0.025em;
     text-wrap: balance;
   }
@@ -715,17 +715,17 @@
 
   .section-title {
     font-family: var(--font-display);
-    font-size: clamp(2.8rem, 7vw, 5rem);
+    font-size: clamp(2.7rem, 6.6vw, 4.7rem);
     font-weight: 400;
-    line-height: 0.95;
+    line-height: 1;
     letter-spacing: -0.02em;
   }
 
   .article-title {
     font-family: var(--font-display);
-    font-size: clamp(2.4rem, 5.8vw, 4.2rem);
+    font-size: clamp(2.35rem, 5.6vw, 4.05rem);
     font-weight: 400;
-    line-height: 1;
+    line-height: 1.04;
     letter-spacing: -0.02em;
     text-wrap: balance;
   }
@@ -735,7 +735,7 @@
     border-left: 3px solid var(--brand);
     border-radius: var(--radius);
     background: linear-gradient(120deg, var(--brand-soft), transparent 60%), var(--surface);
-    padding: 1.1rem 1.2rem;
+    padding: 1.4rem 1.5rem;
   }
 
   .briefing-row {
@@ -759,8 +759,8 @@
   }
 
   .briefing-value {
-    font-size: 0.92rem;
-    line-height: 1.5;
+    font-size: 0.95rem;
+    line-height: 1.56;
     color: var(--muted-strong);
   }
 
@@ -1052,7 +1052,13 @@
   .share-row {
     display: flex;
     flex-wrap: wrap;
+    align-items: center;
     gap: 0.4rem;
+  }
+
+  .share-row .is-copied {
+    border-color: color-mix(in srgb, var(--ok) 55%, var(--line));
+    color: var(--ok);
   }
 
   /* Tap targets (WCAG 2.2 SC 2.5.8): inline interactive controls keep a 24px floor. */
@@ -1496,23 +1502,105 @@
 }
 
 @media print {
+  @page {
+    margin: 16mm;
+  }
+
+  /* Chrome, navigation and interactive furniture do not belong on paper. */
   .site-nav,
   .site-footer,
+  .alert-strip,
   .reading-progress,
   .toc,
+  .toc-mobile,
   .share-row,
   .copy-code,
-  .search-dialog {
+  .search-dialog,
+  nav[aria-label='Breadcrumb'],
+  aside[aria-label='Article tools'],
+  section[aria-labelledby='related-title'],
+  section[aria-labelledby='comments-title'] {
     display: none !important;
   }
 
+  html,
   body {
-    background: white;
-    color: black;
+    background: #fff !important;
+    color: #000 !important;
+  }
+
+  .container-wide,
+  .prose-signal,
+  .max-w-4xl,
+  .measure {
+    max-width: none !important;
   }
 
   .prose-signal {
-    max-width: none;
-    color: black;
+    color: #000 !important;
+    font-size: 11.5pt;
+    line-height: 1.55;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    color: #000 !important;
+    break-after: avoid;
+  }
+
+  a {
+    color: #000 !important;
+    text-decoration: underline;
+  }
+
+  /* Expand external citations so a printed page is still verifiable. */
+  .prose-signal a[href^='http']::after,
+  .sources-list a[href^='http']::after {
+    content: ' (' attr(href) ')';
+    font-size: 0.82em;
+    color: #333;
+    word-break: break-all;
+  }
+
+  .prose-signal pre,
+  .prose-signal table,
+  .prose-signal blockquote,
+  .prose-signal figure,
+  .briefing {
+    break-inside: avoid;
+  }
+
+  .prose-signal pre {
+    border: 1px solid #ccc;
+    background: #f6f6f6 !important;
+    color: #000 !important;
+    white-space: pre-wrap;
+  }
+
+  .prose-signal pre code,
+  .prose-signal code {
+    color: #000 !important;
+    background: transparent !important;
+    border-color: #ccc !important;
+  }
+
+  .briefing,
+  .callout {
+    border: 1px solid #999 !important;
+    background: #fff !important;
+  }
+
+  .briefing-value,
+  .briefing-label,
+  .post-meta,
+  .text-muted,
+  .text-muted-strong {
+    color: #222 !important;
+  }
+
+  .briefing-label {
+    color: #000 !important;
   }
 }

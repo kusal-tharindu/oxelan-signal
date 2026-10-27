@@ -151,6 +151,30 @@ test.describe('theme', () => {
   });
 });
 
+test.describe('article reading aids', () => {
+  test('copy link gives explicit success feedback', async ({ page }) => {
+    await page.goto('/security/malfex-npm-campaign/');
+    const button = page.locator('[data-copy-link]').first();
+    await button.click();
+    await expect(button.locator('[data-copy-label]')).toHaveText('Copied');
+    await expect(button).toHaveClass(/is-copied/);
+    await expect(button.locator('[data-copy-icon="check"]')).toBeVisible();
+  });
+
+  test('omits the article title from the mobile breadcrumb', async ({ page }) => {
+    await page.goto('/security/malfex-npm-campaign/');
+    const crumb = page.locator('nav[aria-label="Breadcrumb"]');
+    await expect(crumb).toContainText('Latest');
+    await expect(crumb).toContainText('Security');
+    const current = crumb.locator('[aria-current="page"]');
+    await expect(current).toBeHidden();
+    // The full title returns on a desktop-width viewport.
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await expect(current).toBeVisible();
+    await expect(current).toContainText('MALFEX hides its npm loader');
+  });
+});
+
 test.describe('mobile menu', () => {
   test('moves focus on open and returns it on Escape (L6)', async ({ page }) => {
     await page.goto('/');
