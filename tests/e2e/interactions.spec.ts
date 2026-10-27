@@ -145,6 +145,7 @@ test.describe('home hero', () => {
       'href',
       '/advisories/',
     );
+    await expect(page.locator('.hero-lead')).toContainText('supply-chain');
 
     const canvas = page.locator('[data-signal-field] canvas');
     await expect(canvas).toBeVisible();

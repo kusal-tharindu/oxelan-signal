@@ -6,8 +6,6 @@ import FilterBar from '../components/FilterBar.astro';
 import PostFeed from '../components/PostFeed.astro';
 import Sidebar from '../components/Sidebar.astro';
 import SectionBadge from '../components/SectionBadge.astro';
-import FormatBadge from '../components/FormatBadge.astro';
-import ImpactBadge from '../components/ImpactBadge.astro';
 import Icon from '../components/Icon.astro';
 import {
   formatDate,
@@ -17,8 +15,6 @@ import {
   getLatestDigest,
   getLeadPost,
   hrefOf,
-  isoDate,
-  readingTime,
   sectionOf,
 } from '../lib/posts';
 import { latestContentDate } from '../lib/freshness';
@@ -37,17 +33,6 @@ const feed = lead ? posts.filter((post) => post.id !== lead.id) : posts;
 // the static archive pages reached through the "Older posts" link (review BLOG-M12).
 const visibleFeed = feed.slice(0, FEED_PAGE_SIZE);
 const olderHref = nextArchiveHref(1, feed.length, '/');
-const leadSection = lead ? sections[sectionOf(lead)] : undefined;
-
-// Hero console: the lead story drawn as a briefing, with a log of what needs attention
-// behind it. Both are built from frontmatter, so the hero is always real and current.
-const leadRows = lead?.data.briefing
-  ? [
-      { num: '01', label: 'What changed', value: lead.data.briefing.changed },
-      { num: '02', label: 'Why it matters', value: lead.data.briefing.why },
-      { num: '03', label: 'What to do', value: lead.data.briefing.action },
-    ]
-  : [];
 
 // The three desks. Copy is deliberately short; the section page carries the detail.
 const deskOrder: { key: SectionKey; icon: string; blurb: string }[] = [
@@ -113,10 +98,7 @@ const method = [
           </span>
         </h1>
 
-        <p class="hero-lede">
-          Calm, sourced briefings for people who ship AI and keep it safe. Every story tells you
-          what changed, why it matters in production and the next step to take.
-        </p>
+        <p class="hero-lede">Calm, sourced briefings for people who ship AI and keep it safe.</p>
 
         <div class="hero-actions">
           {lead && (
@@ -128,6 +110,16 @@ const method = [
             See what needs patching <Icon name="arrowRight" size={15} />
           </a>
         </div>
+
+        {lead && (
+          <p class="hero-lead">
+            <span class="hero-lead-label">Lead briefing</span>
+            <a href={hrefOf(lead)} class="hero-lead-link">
+              <span>{lead.data.title}</span>
+              <Icon name="arrowRight" size={13} />
+            </a>
+          </p>
+        )}
 
         <p class="hero-live">
           <span class="live-dot" aria-hidden="true"></span>
@@ -142,68 +134,9 @@ const method = [
         </p>
       </div>
 
-      {lead && leadSection && (
+      {lead && (
         <div class="hero-visual">
           <SignalField posts={posts} alerts={activeAlerts} lead={lead} />
-
-          <article
-            class="console console-front"
-            style={`--section-color: var(${leadSection.cssVar})`}
-          >
-            <div class="console-bar">
-              <span class="console-lights">
-                <i></i>
-                <i></i>
-                <i></i>
-              </span>
-              <span class="console-path">
-                <Icon name="link" size={11} />
-                <span class="truncate">{`${site.domain}${hrefOf(lead)}`}</span>
-              </span>
-            </div>
-
-            <div class="console-body">
-              <div class="console-badges">
-                <SectionBadge section={leadSection.key} link={false} />
-                <FormatBadge format={lead.data.format} />
-                {lead.data.impact && <ImpactBadge impact={lead.data.impact} />}
-              </div>
-
-              <h2 class="console-title">
-                <a href={hrefOf(lead)} class="console-link">
-                  <span class="absolute inset-0" aria-hidden="true"></span>
-                  {lead.data.title}
-                </a>
-              </h2>
-
-              {leadRows.length > 0 ? (
-                <dl class="console-rows">
-                  {leadRows.map((row) => (
-                    <div class="console-row">
-                      <dt>
-                        <span aria-hidden="true">{row.num}</span>
-                        {row.label}
-                      </dt>
-                      <dd>{row.value}</dd>
-                    </div>
-                  ))}
-                </dl>
-              ) : (
-                <p class="console-summary">{lead.data.summary}</p>
-              )}
-            </div>
-
-            <div class="console-foot">
-              <span>
-                <time datetime={isoDate(lead.data.date)}>{formatDate(lead.data.date)}</time>
-                <span aria-hidden="true"> · </span>
-                {readingTime(lead.body)} min read
-              </span>
-              <span class="console-open">
-                Open briefing <Icon name="arrowRight" size={13} />
-              </span>
-            </div>
-          </article>
         </div>
       )}
     </div>

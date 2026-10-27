@@ -2181,13 +2181,6 @@
       padding-top: 2.25rem;
       padding-bottom: 2.75rem;
     }
-
-    .hero-lede {
-      display: -webkit-box;
-      -webkit-box-orient: vertical;
-      -webkit-line-clamp: 2;
-      overflow: hidden;
-    }
   }
 
   .hero-field {
@@ -2283,6 +2276,42 @@
     padding-top: 0.25rem;
   }
 
+  .hero-lead {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.4rem 0.65rem;
+    max-width: 34rem;
+    margin-top: 1.35rem;
+  }
+
+  .hero-lead-label {
+    color: var(--brand);
+    font-family: var(--font-mono);
+    font-size: var(--text-micro);
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+  }
+
+  .hero-lead-link {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.35rem;
+    color: var(--fg);
+    font-size: var(--text-meta);
+    line-height: 1.45;
+    transition: color 160ms var(--ease-out);
+  }
+
+  .hero-lead-link:hover {
+    color: var(--brand);
+  }
+
+  .hero-lead-link svg {
+    flex: none;
+    translate: 0 1px;
+  }
+
   .hero-live {
     display: flex;
     flex-wrap: wrap;
@@ -2338,8 +2367,7 @@
   .signal-field {
     position: relative;
     z-index: 0;
-    height: clamp(12rem, 24vw, 14rem);
-    margin-bottom: 1rem;
+    height: clamp(17rem, 32vw, 29rem);
     pointer-events: none;
   }
 
