@@ -20,9 +20,9 @@ import {
   readingTime,
   sectionOf,
 } from '../lib/posts';
-import { latestContentDate } from '../lib/freshness';
+import { latestContentDate, relativeAge } from '../lib/freshness';
 import { FEED_PAGE_SIZE, nextArchiveHref, pageCount } from '../lib/pagination';
-import { sections, site } from '../site.config';
+import { sections, site, type SectionKey } from '../site.config';
 
 const posts = await getAllPosts();
 const alerts = getAlerts(posts, 3);
@@ -38,169 +38,388 @@ const visibleFeed = feed.slice(0, FEED_PAGE_SIZE);
 const olderHref = nextArchiveHref(1, feed.length, '/');
 const leadSection = lead ? sections[sectionOf(lead)] : undefined;
 
-const guidesHeading = 'Guides that stay current';
+// Hero console: the lead story drawn as a briefing, with a log of what needs attention
+// behind it. Both are built from frontmatter, so the hero is always real and current.
+const leadRows = lead?.data.briefing
+  ? [
+      { num: '01', label: 'What changed', value: lead.data.briefing.changed },
+      { num: '02', label: 'Why it matters', value: lead.data.briefing.why },
+      { num: '03', label: 'What to do', value: lead.data.briefing.action },
+    ]
+  : [];
+const logItems = (alerts.length > 0 ? alerts : posts.slice(0, 3)).slice(0, 3);
+const logLabel = alerts.length > 0 ? 'advisories' : 'latest';
+
+// The three desks. Copy is deliberately short; the section page carries the detail.
+const deskOrder: { key: SectionKey; icon: string; blurb: string }[] = [
+  {
+    key: 'ai',
+    icon: 'cpu',
+    blurb: 'Models, agents and what they really cost once they leave the demo.',
+  },
+  {
+    key: 'security',
+    icon: 'shield',
+    blurb: 'Incidents, CVEs and supply chain risk. Facts first, then the fix.',
+  },
+  {
+    key: 'engineering',
+    icon: 'terminal',
+    blurb: 'Platforms, pipelines and the tradeoffs behind systems that stay up.',
+  },
+];
+const desks = deskOrder.map((desk) => {
+  const sectionPosts = posts.filter((post) => sectionOf(post) === desk.key);
+  return { ...desk, section: sections[desk.key], count: sectionPosts.length, top: sectionPosts[0] };
+});
+
+const method = [
+  {
+    num: '01',
+    title: 'What changed',
+    body: 'The facts first, with the sources linked so you can check them yourself.',
+  },
+  {
+    num: '02',
+    title: 'Why it matters',
+    body: 'What it means for systems running in production, not for a slide deck.',
+  },
+  {
+    num: '03',
+    title: 'What to do',
+    body: 'One clear next step. Patch it, review it, or rest easy and move on.',
+  },
+];
 ---
 
-<BaseLayout description={site.description}>
+<BaseLayout description={site.description} bodyClass="home">
   <AlertStrip alerts={alerts} total={activeAlerts.length} />
 
-  <section class="container-wide pt-6 md:pt-9">
-    <div class="mb-5 flex flex-wrap items-end justify-between gap-3 border-b border-line pb-4">
-      <div>
-        <p class="eyebrow">The briefing</p>
-        <h1 class="mt-1 font-display text-[1.9rem] leading-[1.05] text-fg sm:text-3xl md:text-4xl">
-          Signal over noise.
-        </h1>
-      </div>
-      <div class="max-w-md md:text-right">
-        <p class="text-[0.8125rem] leading-relaxed text-muted sm:text-sm">
-          What changed in AI, security and engineering. Why it matters in production. What to do
-          next.
+  <!-- ===================================================================== Hero -->
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="hero-field" aria-hidden="true"></div>
+
+    <div class="container-wide hero-grid">
+      <div class="hero-copy">
+        <p class="kicker">
+          <span>
+            Independent briefings<span class="hidden sm:inline"> · AI, security, engineering</span>
+          </span>
         </p>
-        <p class="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-[0.75rem] text-muted md:justify-end">
+
+        <h1 id="hero-title" class="hero-title">
+          <span class="block">Something changed.</span>
+          <span class="block">
+            Here’s <em class="accent">what to do.</em>
+          </span>
+        </h1>
+
+        <p class="hero-lede">
+          Calm, sourced briefings for people who ship AI and keep it safe. Every story tells you
+          what changed, why it matters in production and the next step to take.
+        </p>
+
+        <div class="hero-actions">
+          {lead && (
+            <a href={hrefOf(lead)} class="btn btn-primary btn-lg">
+              Read the lead story <Icon name="arrowRight" size={16} />
+            </a>
+          )}
+          <a href="/advisories/" class="link-arrow">
+            See what needs patching <Icon name="arrowRight" size={15} />
+          </a>
+        </div>
+
+        <p class="hero-live">
+          <span class="live-dot" aria-hidden="true"></span>
           {latest && <span>Updated {formatDate(latest)}</span>}
-          <span aria-hidden="true">·</span>
+          <span aria-hidden="true">/</span>
           <span>{posts.length} posts</span>
-          <span aria-hidden="true">·</span>
+          <span aria-hidden="true">/</span>
           <span>
             {activeAlerts.length}
             {activeAlerts.length === 1 ? ' advisory' : ' advisories'}
           </span>
-          {digest && (
-            <>
-              <span aria-hidden="true">·</span>
-              <a href={hrefOf(digest)} class="inline-flex items-center gap-1 hover:text-brand">
-                Latest digest <Icon name="arrowRight" size={11} />
-              </a>
-            </>
-          )}
         </p>
       </div>
-    </div>
 
-    <div class="grid gap-10 lg:grid-cols-[minmax(0,1fr)_20rem]">
-      <div class="min-w-0">
-        {lead && leadSection && (
-          <article class="lead-banner" style={`--section-color: var(${leadSection.cssVar})`}>
-            <div class="lead-banner-inner">
-              <div class="lead-kicker">
-                <SectionBadge section={leadSection.key} />
+      {lead && leadSection && (
+        <div class="hero-visual">
+          <div class="signal-rings" aria-hidden="true">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+
+          <div class="console console-back" aria-hidden="true">
+            <div class="console-bar">
+              <span class="console-lights">
+                <i></i>
+                <i></i>
+                <i></i>
+              </span>
+              <span class="console-path">~/signal/{logLabel}</span>
+              <span class="console-tag">live</span>
+            </div>
+            <ul class="console-log">
+              {logItems.map((post) => (
+                <li style={`--impact-color: var(--${post.data.impact ?? 'info'})`}>
+                  <span class="console-log-dot"></span>
+                  <span class="console-log-level">{post.data.impact ?? post.data.format}</span>
+                  <span class="console-log-title">{post.data.title}</span>
+                  <span class="console-log-age">
+                    {relativeAge(post.data.updated ?? post.data.date)}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <article
+            class="console console-front"
+            style={`--section-color: var(${leadSection.cssVar})`}
+          >
+            <div class="console-bar">
+              <span class="console-lights">
+                <i></i>
+                <i></i>
+                <i></i>
+              </span>
+              <span class="console-path">
+                <Icon name="link" size={11} />
+                <span class="truncate">{`${site.domain}${hrefOf(lead)}`}</span>
+              </span>
+            </div>
+
+            <div class="console-body">
+              <div class="console-badges">
+                <SectionBadge section={leadSection.key} link={false} />
                 <FormatBadge format={lead.data.format} />
                 {lead.data.impact && <ImpactBadge impact={lead.data.impact} />}
-                {lead.data.status === 'evolving' && (
-                  <span class="inline-flex items-center gap-1.5 text-[0.75rem] font-semibold uppercase tracking-[0.08em] text-medium">
-                    <span class="dot animate-pulse" aria-hidden="true"></span> Evolving
-                  </span>
-                )}
               </div>
 
-              <a href={hrefOf(lead)} class="group block">
-                <h2 class="lead-title group-hover:text-brand">{lead.data.title}</h2>
-              </a>
-
-              <p class="lead-summary">{lead.data.summary}</p>
-
-              <div class="post-meta">
-                <time datetime={isoDate(lead.data.date)}>{formatDate(lead.data.date)}</time>
-                <span>{readingTime(lead.body)} min read</span>
-                <span>{leadSection.label}</span>
-              </div>
-
-              <div>
-                <a href={hrefOf(lead)} class="btn btn-primary">
-                  Read the briefing <Icon name="arrowRight" size={14} />
+              <h2 class="console-title">
+                <a href={hrefOf(lead)} class="console-link">
+                  <span class="absolute inset-0" aria-hidden="true"></span>
+                  {lead.data.title}
                 </a>
-              </div>
+              </h2>
+
+              {leadRows.length > 0 ? (
+                <dl class="console-rows">
+                  {leadRows.map((row) => (
+                    <div class="console-row">
+                      <dt>
+                        <span aria-hidden="true">{row.num}</span>
+                        {row.label}
+                      </dt>
+                      <dd>{row.value}</dd>
+                    </div>
+                  ))}
+                </dl>
+              ) : (
+                <p class="console-summary">{lead.data.summary}</p>
+              )}
+            </div>
+
+            <div class="console-foot">
+              <span>
+                <time datetime={isoDate(lead.data.date)}>{formatDate(lead.data.date)}</time>
+                <span aria-hidden="true"> · </span>
+                {readingTime(lead.body)} min read
+              </span>
+              <span class="console-open">
+                Open briefing <Icon name="arrowRight" size={13} />
+              </span>
             </div>
           </article>
-        )}
 
-        <section class="mt-8" aria-labelledby="latest-title">
-          <div class="flex flex-wrap items-end justify-between gap-3">
-            <div>
-              <p class="eyebrow">Latest</p>
-              <h2 id="latest-title" class="mt-1 font-display text-3xl leading-none text-fg">
-                The feed
-              </h2>
-            </div>
-            <span class="text-[0.75rem] text-muted">Newest first · all sections</span>
-          </div>
-
-          <div class="mt-4 border-y border-line py-3">
-            <FilterBar />
-          </div>
-
-          <div class="mt-1">
-            <PostFeed
-              posts={visibleFeed}
-              olderHref={olderHref}
-              page={1}
-              pages={pageCount(feed.length)}
-            />
-          </div>
-        </section>
-
-        {guides.length > 0 && (
-          <section class="mt-12" aria-labelledby="guides-title">
-            <div class="mb-4 flex flex-wrap items-end justify-between gap-3 border-b border-line pb-3">
-              <div>
-                <p class="eyebrow">Reference</p>
-                <h2 id="guides-title" class="mt-1 font-display text-3xl leading-none text-fg">
-                  {guidesHeading}
-                </h2>
-              </div>
-              <a
-                href="/engineering/"
-                class="inline-flex items-center gap-1 text-xs font-semibold text-brand hover:underline"
-              >
-                View all <Icon name="arrowRight" size={12} />
-              </a>
-            </div>
-            <div
-              class:list={[
-                'grid gap-px overflow-hidden border border-line bg-line',
-                guides.length >= 3 ? 'sm:grid-cols-2 lg:grid-cols-3' : 'sm:grid-cols-2',
-              ]}
-            >
-              {guides.map((post) => {
-                const section = sections[sectionOf(post)];
-                return (
-                  <a
-                    href={hrefOf(post)}
-                    class="group grid gap-2 bg-surface p-4 transition-colors hover:bg-surface-2"
-                    style={`--section-color: var(${section.cssVar})`}
-                  >
-                    <div class="flex items-center gap-2">
-                      <SectionBadge section={section.key} link={false} />
-                      <FormatBadge format={post.data.format} />
-                    </div>
-                    <h3 class="font-display text-2xl leading-tight group-hover:text-brand">
-                      {post.data.title}
-                    </h3>
-                    <p class="text-xs leading-relaxed text-muted">{post.data.summary}</p>
-                    <span class="mt-auto pt-2 text-[0.75rem] text-muted">
-                      Updated {formatDate(post.data.updated ?? post.data.date)}
-                    </span>
-                  </a>
-                );
-              })}
-            </div>
-          </section>
-        )}
-
-        <div class="mt-10 flex flex-wrap items-center justify-between gap-4 rounded border border-line bg-surface/60 px-4 py-3">
-          <p class="text-sm text-muted-strong">
-            <span class="font-semibold text-fg">Every post answers three questions.</span>
-            What changed, why it matters, and what to do.
+          <p class="console-pill" aria-hidden="true">
+            <span class="live-dot"></span> Sourced, dated and actionable
           </p>
-          <a href="/about/" class="btn btn-ghost !min-h-0 !py-2 !text-[0.75rem]">
-            Editorial rules <Icon name="arrowUpRight" size={12} />
-          </a>
         </div>
+      )}
+    </div>
+  </section>
+
+  <!-- =================================================================== Method -->
+  <section class="method reveal" aria-labelledby="method-title">
+    <div class="container-wide">
+      <div class="block-head">
+        <p class="kicker">How every story works</p>
+        <h2 id="method-title" class="h-section">
+          Three questions. <em class="accent">Every time.</em>
+        </h2>
+      </div>
+      <ol class="method-list">
+        {method.map((step) => (
+          <li class="method-step">
+            <span class="method-num" aria-hidden="true">
+              {step.num}
+            </span>
+            <h3 class="method-title">{step.title}</h3>
+            <p class="method-body">{step.body}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <!-- ==================================================================== Desks -->
+  <section class="desks reveal" aria-labelledby="desks-title">
+    <div class="container-wide">
+      <div class="block-head block-head-split">
+        <div>
+          <p class="kicker">The desks</p>
+          <h2 id="desks-title" class="h-section">
+            Three beats. <em class="accent">One standard.</em>
+          </h2>
+        </div>
+        <a href="/tags/" class="link-arrow">
+          Browse every topic <Icon name="arrowRight" size={15} />
+        </a>
       </div>
 
-      <div class="lg:sticky lg:top-24 lg:self-start">
-        <Sidebar posts={posts} digest={digest} />
+      <div class="desk-row">
+        {desks.map((desk) => (
+          <article class="desk" style={`--section-color: var(${desk.section.cssVar})`}>
+            <div class="desk-top">
+              <span class="desk-icon" aria-hidden="true">
+                <Icon name={desk.icon} size={20} />
+              </span>
+              <span class="desk-count">
+                {desk.count} {desk.count === 1 ? 'story' : 'stories'}
+              </span>
+            </div>
+            <h3 class="desk-name">
+              <a href={desk.section.path} class="desk-link">
+                <span class="absolute inset-0" aria-hidden="true"></span>
+                {desk.section.label}
+              </a>
+            </h3>
+            <p class="desk-blurb">{desk.blurb}</p>
+            {desk.top && (
+              <p class="desk-latest">
+                <span class="desk-latest-label">Latest</span>
+                <span class="desk-latest-title">{desk.top.data.title}</span>
+              </p>
+            )}
+            <span class="desk-cta" aria-hidden="true">
+              Open the desk <Icon name="arrowRight" size={14} />
+            </span>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- =================================================================== Latest -->
+  <section class="latest" aria-labelledby="latest-title">
+    <div class="container-wide">
+      <div class="block-head block-head-split">
+        <div>
+          <p class="kicker">Latest</p>
+          <h2 id="latest-title" class="h-section">
+            Everything we publish, <em class="accent">newest first.</em>
+          </h2>
+        </div>
+        {digest && (
+          <a href={hrefOf(digest)} class="link-arrow">
+            Read this week’s digest <Icon name="arrowRight" size={15} />
+          </a>
+        )}
+      </div>
+
+      <div class="grid gap-12 lg:grid-cols-[minmax(0,1fr)_20rem]">
+        <div class="min-w-0">
+          <div class="latest-filters">
+            <FilterBar />
+          </div>
+          <PostFeed
+            posts={visibleFeed}
+            olderHref={olderHref}
+            page={1}
+            pages={pageCount(feed.length)}
+          />
+        </div>
+
+        <div class="lg:sticky lg:top-24 lg:self-start">
+          <Sidebar posts={posts} digest={digest} showSubscribe={false} />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================== Guides -->
+  {guides.length > 0 && (
+    <section class="shelf reveal" aria-labelledby="guides-title">
+      <div class="container-wide">
+        <div class="block-head block-head-split">
+          <div>
+            <p class="kicker" style="--section-color: var(--eng)">
+              Reference
+            </p>
+            <h2 id="guides-title" class="h-section">
+              Guides that <em class="accent">stay current.</em>
+            </h2>
+          </div>
+          <a href="/format/guide/" class="link-arrow">
+            All guides <Icon name="arrowRight" size={15} />
+          </a>
+        </div>
+
+        <ol class="shelf-list">
+          {guides.map((post, index) => {
+            const section = sections[sectionOf(post)];
+            return (
+              <li class="shelf-item" style={`--section-color: var(${section.cssVar})`}>
+                <span class="shelf-num" aria-hidden="true">
+                  {String(index + 1).padStart(2, '0')}
+                </span>
+                <div class="shelf-main">
+                  <h3 class="shelf-title">
+                    <a href={hrefOf(post)}>
+                      <span class="absolute inset-0" aria-hidden="true"></span>
+                      {post.data.title}
+                    </a>
+                  </h3>
+                  <p class="shelf-summary">{post.data.summary}</p>
+                </div>
+                <div class="shelf-meta">
+                  <SectionBadge section={section.key} link={false} />
+                  <span>Reviewed {formatDate(post.data.updated ?? post.data.date)}</span>
+                </div>
+              </li>
+            );
+          })}
+        </ol>
+      </div>
+    </section>
+  )}
+
+  <!-- ================================================================= Sign off -->
+  <section class="signoff reveal" aria-labelledby="signoff-title">
+    <div class="container-wide">
+      <div class="signoff-inner">
+        <div class="signoff-rings" aria-hidden="true">
+          <span></span>
+          <span></span>
+        </div>
+        <p class="kicker">Stay close to the signal</p>
+        <h2 id="signoff-title" class="signoff-title">
+          The next briefing is <em class="accent">already in the works.</em>
+        </h2>
+        <p class="signoff-body">
+          Follow along by RSS. No account, no tracking and no algorithm deciding what you see.
+        </p>
+        <div class="signoff-actions">
+          <a href="/rss.xml" class="btn btn-primary btn-lg">
+            <Icon name="rss" size={16} /> Subscribe by RSS
+          </a>
+          <a href="/about/" class="link-arrow">
+            Read our editorial rules <Icon name="arrowRight" size={15} />
+          </a>
+        </div>
       </div>
     </div>
   </section>

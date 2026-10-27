@@ -10,15 +10,22 @@ const tags = trendingTags(posts, 5);
 const currentYear = new Date().getUTCFullYear();
 ---
 
-<footer class="site-footer mt-20 border-t border-line bg-bg-soft/60">
-  <div class="container-wide py-12">
+<footer class="site-footer">
+  <div class="container-wide">
+    <div class="footer-statement">
+      <p class="footer-line">
+        Less noise. <em class="accent">More signal.</em>
+      </p>
+      <p class="footer-note">
+        An independent publication from Oxelan, the engineering studio that builds things and then
+        keeps them running.
+      </p>
+    </div>
+
     <div class="footer-grid">
-      <div>
+      <div class="footer-brand">
         <Logo compact />
-        <p class="mt-4 max-w-xs text-sm leading-relaxed text-muted">{site.tagline}</p>
-        <p class="mt-3 max-w-xs text-xs leading-relaxed text-muted">
-          Independent, production-focused reporting on AI, security and engineering.
-        </p>
+        <p class="mt-4 max-w-xs text-[0.875rem] leading-relaxed text-muted">{site.tagline}</p>
         <div class="mt-5 flex items-center gap-1">
           <a href={site.socials.github} class="icon-btn" aria-label="GitHub" rel="me noopener">
             <Icon name="github" size={17} />
@@ -33,106 +40,85 @@ const currentYear = new Date().getUTCFullYear();
       </div>
 
       <div>
-        <h2 class="eyebrow">Sections</h2>
-        <ul class="mt-4 space-y-2 text-sm text-muted-strong">
+        <h2 class="footer-heading">Sections</h2>
+        <ul class="footer-links">
           {Object.values(sections).map((section) => (
             <li>
-              <a href={section.path} class="hover:text-brand">
-                {section.label}
-              </a>
+              <a href={section.path}>{section.label}</a>
             </li>
           ))}
           <li>
-            <a href="/about/" class="hover:text-brand">
-              About
-            </a>
+            <a href="/advisories/">Advisories</a>
           </li>
           <li>
-            <a href="/radar/" class="hover:text-brand">
-              Radar
-            </a>
+            <a href="/radar/">Radar</a>
           </li>
           <li>
-            <a href="/advisories/" class="hover:text-brand">
-              Advisories
-            </a>
+            <a href="/about/">About</a>
           </li>
         </ul>
+      </div>
 
-        <h2 class="eyebrow mt-6">Formats</h2>
-        <ul class="mt-4 space-y-2 text-sm text-muted-strong">
+      <div>
+        <h2 class="footer-heading">Formats</h2>
+        <ul class="footer-links">
           {formatOrder.map((key) => (
             <li>
-              <a href={formats[key].path} class="hover:text-brand">
-                {formats[key].label}
-              </a>
+              <a href={formats[key].path}>{formats[key].label}</a>
             </li>
           ))}
         </ul>
-      </div>
 
-      <div>
-        <h2 class="eyebrow">Topics</h2>
-        <ul class="mt-4 space-y-2 text-sm text-muted-strong">
+        <h2 class="footer-heading mt-8">Topics</h2>
+        <ul class="footer-links">
           {tags.map(({ tag }) => (
             <li>
-              <a href={`/tags/${tag}/`} class="hover:text-brand">
-                #{tag}
-              </a>
+              <a href={`/tags/${tag}/`}>#{tag}</a>
             </li>
           ))}
           <li>
-            <a href="/tags/" class="hover:text-brand">
-              All tags
-            </a>
+            <a href="/tags/">All tags</a>
           </li>
         </ul>
       </div>
 
       <div>
-        <h2 class="eyebrow">Stay updated</h2>
-        <ul class="mt-4 space-y-2 text-sm text-muted-strong">
+        <h2 class="footer-heading">Stay updated</h2>
+        <ul class="footer-links">
           <li>
-            <a href="/rss.xml" class="inline-flex items-center gap-2 hover:text-brand">
-              <Icon name="rss" size={13} /> RSS (all)
+            <a href="/rss.xml" class="inline-flex items-center gap-2">
+              <Icon name="rss" size={13} /> Everything
             </a>
           </li>
           <li>
-            <a href="/security/rss.xml" class="inline-flex items-center gap-2 hover:text-brand">
-              <Icon name="rss" size={13} /> Security feed
+            <a href="/security/rss.xml" class="inline-flex items-center gap-2">
+              <Icon name="rss" size={13} /> Security
             </a>
           </li>
           <li>
-            <a href="/ai/rss.xml" class="inline-flex items-center gap-2 hover:text-brand">
-              <Icon name="rss" size={13} /> AI feed
+            <a href="/ai/rss.xml" class="inline-flex items-center gap-2">
+              <Icon name="rss" size={13} /> AI
             </a>
-          </li>
-          <li class="pt-2 text-xs leading-relaxed text-muted">
-            No tracking. No paywall. Posts live in git.
           </li>
         </ul>
+        <p class="mt-5 max-w-[16rem] text-[0.8125rem] leading-relaxed text-muted">
+          No tracking. No paywall. Every post lives in git, so every change is on the record.
+        </p>
       </div>
     </div>
 
-    <div class="mt-10 flex flex-col gap-4 border-t border-line pt-6 text-xs text-muted md:flex-row md:items-center md:justify-between">
+    <div class="footer-base">
       <p>
         © {currentYear} Oxelan · Content CC BY 4.0 · Code MIT ·
-        <a href="/about/#disclaimer" class="hover:text-brand">
-          Disclaimer
-        </a>
+        <a href="/about/#disclaimer">Disclaimer</a>
       </p>
-      <p class="flex flex-wrap items-center gap-x-3 gap-y-1">
-        <span>An Oxelan publication</span>
-        <a
-          href={site.socials.oxelan}
-          class="inline-flex items-center gap-1 hover:text-brand"
-          rel="noopener"
-        >
+      <p class="flex flex-wrap items-center gap-x-4 gap-y-1">
+        <a href={site.socials.oxelan} class="inline-flex items-center gap-1" rel="noopener">
           oxelan.com <Icon name="arrowUpRight" size={11} />
         </a>
         <a
           href={`${site.socials.github}/oxelan-signal`}
-          class="inline-flex items-center gap-1 hover:text-brand"
+          class="inline-flex items-center gap-1"
           rel="noopener"
         >
           Source on GitHub <Icon name="arrowUpRight" size={11} />

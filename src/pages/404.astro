@@ -2,37 +2,44 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PostCard from '../components/PostCard.astro';
 import Icon from '../components/Icon.astro';
-import { getAllPosts } from '../lib/posts';
+import { getRegularPosts } from '../lib/posts';
 
-const posts = await getAllPosts();
-const latest = posts.filter((post) => post.data.format !== 'digest').slice(0, 5);
+const posts = (await getRegularPosts()).slice(0, 5);
 ---
 
 <BaseLayout
   title="Page not found"
-  description="That page does not exist. Search the archive or read the latest posts."
+  description="The page you were looking for moved or never existed."
   noindex
 >
-  <section class="container-wide py-16 md:py-24">
-    <p class="eyebrow text-brand">404</p>
-    <h1 class="mt-2 font-display text-6xl leading-none md:text-8xl">Signal lost.</h1>
-    <p class="mt-4 max-w-md text-base leading-relaxed text-muted-strong">
-      That URL does not point to a post. It may have moved, or it may never have existed.
-    </p>
-
-    <div class="mt-7 flex flex-wrap gap-3">
-      <button type="button" class="btn btn-primary" data-search-open>
-        <Icon name="search" size={14} /> Search the archive
-      </button>
-      <a href="/" class="btn btn-ghost">
-        Back to latest <Icon name="arrowRight" size={14} />
-      </a>
+  <header class="section-header" style="--section-color: var(--brand)">
+    <div class="container-wide">
+      <p class="section-label">Error 404</p>
+      <h1 class="section-title mt-3">
+        Signal <em class="accent">lost.</em>
+      </h1>
+      <p class="measure mt-5 text-base leading-relaxed text-muted-strong md:text-lg">
+        That page moved or never existed. Search the archive, or pick up one of the latest briefings
+        below.
+      </p>
+      <div class="mt-8 flex flex-wrap items-center gap-x-7 gap-y-4">
+        <button type="button" class="btn btn-primary btn-lg" data-search-open>
+          <Icon name="search" size={16} /> Search the archive
+        </button>
+        <a href="/" class="link-arrow">
+          Back to the front page <Icon name="arrowRight" size={15} />
+        </a>
+      </div>
     </div>
+  </header>
 
-    <div class="mt-14 max-w-3xl border-t border-line pt-6">
-      <h2 class="eyebrow mb-3">Latest posts</h2>
-      {latest.map((post) => (
-        <PostCard post={post} showTags={false} />
+  <section class="container-wide pt-12" aria-labelledby="latest-posts-title">
+    <h2 id="latest-posts-title" class="kicker mb-2">
+      Latest posts
+    </h2>
+    <div class="divide-y divide-line">
+      {posts.map((post) => (
+        <PostCard post={post} />
       ))}
     </div>
   </section>

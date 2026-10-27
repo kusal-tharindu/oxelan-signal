@@ -41,13 +41,13 @@ const olderHref =
     <div class="container-wide">
       <div class="flex flex-wrap items-end justify-between gap-6">
         <div>
-          <p class="section-label">{section.label}</p>
-          <h1 class="section-title mt-2">{section.label}</h1>
-          <p class="measure mt-4 text-sm leading-relaxed text-muted-strong md:text-base">
+          <p class="section-label">{isDigest ? 'Every week' : `The ${section.label} desk`}</p>
+          <h1 class="section-title mt-3">{section.label}</h1>
+          <p class="measure mt-5 text-base leading-relaxed text-muted-strong md:text-lg">
             {section.description}
           </p>
         </div>
-        <div class="flex flex-col items-start gap-2 text-[0.75rem] text-muted md:items-end">
+        <div class="flex flex-col items-start gap-2 font-mono text-[0.75rem] text-muted md:items-end">
           <span>
             {posts.length} {posts.length === 1 ? 'post' : 'posts'}
           </span>

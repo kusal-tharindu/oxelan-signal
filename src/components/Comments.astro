@@ -56,7 +56,10 @@ if (site.features.comments && !enabled) {
     </h2>
     <p class="text-sm text-muted">
       Spotted an error or have something to add? Send corrections to
-      <a href={`mailto:${site.author.email}`} class="text-brand hover:underline">
+      <a
+        href={`mailto:${site.author.email}`}
+        class="text-brand underline decoration-brand/40 underline-offset-4 hover:decoration-brand"
+      >
         {site.author.email}
       </a>
       .
@@ -77,7 +80,10 @@ if (site.features.comments && !enabled) {
       <Icon name="mail" size={14} />
       <span>
         Spotted an error? Send corrections to
-        <a href={`mailto:${site.author.email}`} class="text-brand hover:underline">
+        <a
+          href={`mailto:${site.author.email}`}
+          class="text-brand underline decoration-brand/40 underline-offset-4 hover:decoration-brand"
+        >
           {site.author.email}
         </a>
         .

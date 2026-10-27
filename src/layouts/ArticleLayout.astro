@@ -80,8 +80,9 @@ const articleSchema = {
   bodyClass="article-page"
 >
   <div class="reading-progress" data-reading-progress aria-hidden="true"></div>
+  <div class="page-glow" style={`--section-color: var(${section.cssVar})`} aria-hidden="true"></div>
 
-  <div class="container-wide pt-5">
+  <div class="container-wide pt-6">
     <nav
       aria-label="Breadcrumb"
       class="flex min-w-0 items-center gap-1.5 text-[0.8125rem] text-muted"
@@ -105,7 +106,7 @@ const articleSchema = {
   </div>
 
   <article
-    class="container-wide pb-8 pt-7"
+    class="container-wide pb-8 pt-8 md:pt-12"
     data-article
     data-pagefind-body
     data-post-section={section.label}
@@ -139,21 +140,23 @@ const articleSchema = {
       {post.data.draft && <span class="badge badge-draft">Draft — local only</span>}
     </div>
 
-    <div class="max-w-4xl">
+    {/* On desktop the header spans exactly the reading column (the aside is 16rem plus
+        the 2.5rem gap), so its rules line up with the briefing console below. */}
+    <div class="max-w-4xl lg:max-w-none lg:pr-[18.5rem]">
       <h1 class="article-title">{post.data.title}</h1>
-      <p class="measure mt-4 text-base leading-relaxed text-muted-strong md:text-lg">{summary}</p>
+      <p class="article-lede mt-5">{summary}</p>
 
       <div
-        class="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 border-y border-line py-3"
+        class="mt-7 flex flex-wrap items-center gap-x-5 gap-y-3 border-y border-line py-3.5"
         data-pagefind-ignore
       >
-        <span class="flex items-center gap-2 text-[0.78rem] text-muted-strong">
-          <span class="grid h-7 w-7 place-items-center rounded-full border border-line bg-surface-2 font-label text-[0.75rem] font-bold text-brand">
+        <span class="flex items-center gap-2.5 text-[0.875rem] font-medium text-fg">
+          <span class="grid h-8 w-8 place-items-center rounded-full border border-brand/40 bg-brand-soft font-mono text-[0.75rem] font-semibold text-brand">
             {initials(site.author.name)}
           </span>
           {site.author.name}
         </span>
-        <span class="post-meta !gap-0">
+        <span class="post-meta">
           <time datetime={isoDate(post.data.date)}>{formatDate(post.data.date)}</time>
           <span>{minutes} min read</span>
           {post.data.updated && <span>Updated {formatDate(post.data.updated)}</span>}
@@ -185,8 +188,8 @@ const articleSchema = {
         )}
 
         {isGuide && (
-          <div class="mb-8 flex flex-wrap items-center gap-x-6 gap-y-2 rounded border border-eng/30 bg-eng/5 px-4 py-3">
-            <span class="inline-flex items-center gap-2 text-[0.75rem] font-semibold uppercase tracking-[0.08em] text-eng">
+          <div class="mb-8 flex flex-wrap items-center gap-x-6 gap-y-2 rounded-xl border border-eng/30 bg-eng/5 px-5 py-3.5">
+            <span class="inline-flex items-center gap-2 font-mono text-[0.75rem] font-semibold uppercase tracking-[0.12em] text-eng">
               <Icon name="book" size={13} /> Living guide
             </span>
             <span class="text-xs text-muted-strong">Last reviewed {formatDate(modified)}</span>
@@ -268,9 +271,9 @@ const articleSchema = {
       <aside class="hidden lg:block" aria-label="Article tools" data-pagefind-ignore>
         <div class="sticky top-24 space-y-6">
           <Toc headings={headings} />
-          <div class="rounded border border-line bg-surface/60 p-3">
-            <p class="eyebrow mb-1.5">Details</p>
-            <dl class="space-y-1.5 text-[0.75rem]">
+          <div class="sidebar-panel !p-4">
+            <p class="panel-title !mb-3 !pb-2.5">Details</p>
+            <dl class="space-y-2 font-mono text-[0.75rem]">
               <div class="flex justify-between gap-2">
                 <dt class="text-muted">Published</dt>
                 <dd class="text-muted-strong">

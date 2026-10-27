@@ -8,7 +8,7 @@
 
 import { createHash } from 'node:crypto';
 
-export const OG_RENDER_VERSION = '1';
+export const OG_RENDER_VERSION = '2';
 
 export interface OgCacheInput {
   title: string;

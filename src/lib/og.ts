@@ -21,11 +21,15 @@ const fontsPromise = Promise.all([
   readFile(
     path.join(FONT_DIR, '@fontsource/space-grotesk/files/space-grotesk-latin-600-normal.woff2'),
   ),
-]).then(([serif, interRegular, interSemiBold, groteskSemiBold]) => [
+  readFile(
+    path.join(FONT_DIR, '@fontsource/space-grotesk/files/space-grotesk-latin-700-normal.woff2'),
+  ),
+]).then(([serif, interRegular, interSemiBold, groteskSemiBold, groteskBold]) => [
   { name: 'Instrument Serif', data: serif, weight: 400 as const, style: 'normal' as const },
   { name: 'Inter', data: interRegular, weight: 400 as const, style: 'normal' as const },
   { name: 'Inter', data: interSemiBold, weight: 600 as const, style: 'normal' as const },
   { name: 'Space Grotesk', data: groteskSemiBold, weight: 600 as const, style: 'normal' as const },
+  { name: 'Space Grotesk', data: groteskBold, weight: 700 as const, style: 'normal' as const },
 ]);
 
 const SECTION_COLORS = {
@@ -228,11 +232,12 @@ function buildMarkup({ title, sectionLabel, sectionColor, format, date, domain }
                 props: {
                   style: {
                     display: 'flex',
-                    fontFamily: 'Instrument Serif',
-                    fontWeight: 400,
-                    fontSize: `${titleSize}px`,
-                    lineHeight: 1.04,
-                    letterSpacing: '-0.015em',
+                    // Matches the site's display type: bold Space Grotesk, tight tracking.
+                    fontFamily: 'Space Grotesk',
+                    fontWeight: 700,
+                    fontSize: `${Math.round(titleSize * 0.88)}px`,
+                    lineHeight: 1.08,
+                    letterSpacing: '-0.04em',
                     color: '#F5F7FB',
                     maxWidth: '1010px',
                     maxHeight: '248px',

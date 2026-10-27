@@ -5,6 +5,7 @@ import { sections } from '../site.config';
 import SectionBadge from './SectionBadge.astro';
 import FormatBadge from './FormatBadge.astro';
 import ImpactBadge from './ImpactBadge.astro';
+import Icon from './Icon.astro';
 
 interface Props {
   post: Post;
@@ -27,8 +28,14 @@ const Heading = headingLevel;
 const minutes = readingTime(post.body);
 const isDraft = post.data.draft;
 const isScheduled = post.data.date > new Date();
+const day = formatDate(post.data.date, { month: 'short', day: 'numeric' });
+const year = post.data.date.getUTCFullYear();
 ---
 
+<!--
+  The card is its own size container: when it is wide enough it grows a date gutter
+  (newsroom style), when it is narrow (related posts, sidebars) it stays a single column.
+-->
 <article
   class="post-card group"
   data-post-card
@@ -39,42 +46,60 @@ const isScheduled = post.data.date > new Date();
   data-date={isoDate(post.data.date)}
   style={`--section-color: var(${section.cssVar})`}
 >
-  <div class="flex flex-wrap items-center gap-2">
-    <SectionBadge section={section.key} />
-    <FormatBadge format={post.data.format} />
-    {post.data.impact && <ImpactBadge impact={post.data.impact} />}
-    {post.data.status === 'evolving' && (
-      <span class="badge badge-format" style="color: var(--medium); border-color: var(--medium)">
-        <span class="dot" style="background: var(--medium)" aria-hidden="true"></span> Evolving
-      </span>
-    )}
-    {isDraft && <span class="badge badge-draft">Draft</span>}
-    {isScheduled && !isDraft && <span class="badge badge-draft">Scheduled</span>}
-  </div>
-
-  <Heading class="post-card-title">
-    <a href={hrefOf(post)}>
-      <span class="absolute inset-0" aria-hidden="true"></span>
-      {post.data.title}
-    </a>
-  </Heading>
-
-  {showSummary && <p class="post-card-summary">{post.data.summary}</p>}
-
-  <div class="post-meta">
-    <time datetime={isoDate(post.data.date)}>{formatDate(post.data.date)}</time>
-    <span>{minutes} min read</span>
-    {post.data.updated && <span>Updated {formatDate(post.data.updated)}</span>}
-    {!compact && <span>{section.label}</span>}
-  </div>
-
-  {showTags && (
-    <div class="flex flex-wrap gap-1.5 pt-1">
-      {post.data.tags.map((tag) => (
-        <a href={`/tags/${tag}/`} class="tag">
-          {tag}
-        </a>
-      ))}
+  <div class="post-card-grid">
+    <div class="post-card-gutter" aria-hidden="true">
+      <span class="post-card-day">{day}</span>
+      <span class="post-card-year">{year}</span>
     </div>
-  )}
+
+    <div class="post-card-body">
+      <div class="post-card-badges">
+        <SectionBadge section={section.key} />
+        <FormatBadge format={post.data.format} />
+        {post.data.impact && <ImpactBadge impact={post.data.impact} />}
+        {post.data.status === 'evolving' && (
+          <span
+            class="badge badge-format"
+            style="color: var(--medium); border-color: color-mix(in srgb, var(--medium) 40%, transparent)"
+          >
+            <span class="dot" style="background: var(--medium)" aria-hidden="true"></span> Evolving
+          </span>
+        )}
+        {isDraft && <span class="badge badge-draft">Draft</span>}
+        {isScheduled && !isDraft && <span class="badge badge-draft">Scheduled</span>}
+      </div>
+
+      <Heading class="post-card-title">
+        <a href={hrefOf(post)}>
+          <span class="absolute inset-0" aria-hidden="true"></span>
+          {post.data.title}
+        </a>
+      </Heading>
+
+      {showSummary && <p class="post-card-summary">{post.data.summary}</p>}
+
+      <div class="post-meta">
+        <time class="post-meta-date" datetime={isoDate(post.data.date)}>
+          {formatDate(post.data.date)}
+        </time>
+        <span>{minutes} min read</span>
+        {post.data.updated && <span>Updated {formatDate(post.data.updated)}</span>}
+        {!compact && <span>{section.label}</span>}
+      </div>
+
+      {showTags && (
+        <div class="post-card-tags">
+          {post.data.tags.map((tag) => (
+            <a href={`/tags/${tag}/`} class="tag">
+              {tag}
+            </a>
+          ))}
+        </div>
+      )}
+    </div>
+
+    <span class="post-card-arrow" aria-hidden="true">
+      <Icon name="arrowUpRight" size={16} />
+    </span>
+  </div>
 </article>
