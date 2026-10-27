@@ -12,21 +12,12 @@ import { expect, test } from '@playwright/test';
  */
 
 test.describe('browse archives', () => {
-  test('section and format chips are real, shareable URLs', async ({ page }) => {
+  test('format chips are real, shareable URLs', async ({ page }) => {
     await page.goto('/');
     const browse = page.locator('nav[data-browse]');
+    await expect(browse.getByRole('link', { name: 'Security', exact: true })).toHaveCount(0);
 
-    await browse.getByRole('link', { name: 'Security', exact: true }).click();
-    await expect(page).toHaveURL(/\/security\/$/);
-    await expect(page.getByRole('heading', { level: 1, name: 'Security' })).toBeVisible();
-    const securityCards = page.locator('[data-post-card]');
-    expect(await securityCards.count()).toBeGreaterThan(0);
-    for (const card of await securityCards.all()) {
-      await expect(card).toHaveAttribute('data-section', 'security');
-    }
-
-    // On a section page the section group is hidden; format links still work.
-    await page.locator('nav[data-browse]').getByRole('link', { name: 'News', exact: true }).click();
+    await browse.getByRole('link', { name: 'News', exact: true }).click();
     await expect(page).toHaveURL(/\/format\/news\/$/);
     await expect(page.getByRole('heading', { level: 1, name: 'News' })).toBeVisible();
     for (const card of await page.locator('[data-post-card]').all()) {
@@ -35,6 +26,12 @@ test.describe('browse archives', () => {
     await expect(
       page.locator('nav[data-browse]').getByRole('link', { name: 'News', exact: true }),
     ).toHaveAttribute('aria-current', 'page');
+
+    await page
+      .locator('nav[data-browse]')
+      .getByRole('link', { name: 'Analysis', exact: true })
+      .click();
+    await expect(page).toHaveURL(/\/format\/analysis\/$/);
   });
 
   test('the impact chip opens the generated advisories page', async ({ page }) => {
@@ -188,16 +185,21 @@ test.describe('home hero', () => {
     await expect(canvas).toBeVisible();
     await expect(page.locator('.signal-field-foot')).toContainText('posts in the graph');
 
-    const painted = await canvas.evaluate((element) => {
-      const canvas = element as HTMLCanvasElement;
-      const ctx = canvas.getContext('2d');
-      if (!ctx) return 0;
-      const { data } = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      let opaque = 0;
-      for (let i = 3; i < data.length; i += 4) if ((data[i] ?? 0) > 0) opaque += 1;
-      return opaque;
-    });
-    expect(painted, 'signal canvas did not paint').toBeGreaterThan(500);
+    await expect
+      .poll(
+        async () =>
+          canvas.evaluate((element) => {
+            const canvas = element as HTMLCanvasElement;
+            const ctx = canvas.getContext('2d');
+            if (!ctx) return 0;
+            const { data } = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            let opaque = 0;
+            for (let i = 3; i < data.length; i += 4) if ((data[i] ?? 0) > 0) opaque += 1;
+            return opaque;
+          }),
+        { timeout: 5_000, message: 'signal canvas did not paint' },
+      )
+      .toBeGreaterThan(500);
   });
 
   test('still paints one static frame under reduced motion', async ({ page }) => {
@@ -205,16 +207,21 @@ test.describe('home hero', () => {
     await page.goto('/');
     const canvas = page.locator('[data-signal-field] canvas');
     await expect(canvas).toBeVisible();
-    const painted = await canvas.evaluate((element) => {
-      const canvas = element as HTMLCanvasElement;
-      const ctx = canvas.getContext('2d');
-      if (!ctx) return 0;
-      const { data } = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      let opaque = 0;
-      for (let i = 3; i < data.length; i += 4) if ((data[i] ?? 0) > 0) opaque += 1;
-      return opaque;
-    });
-    expect(painted, 'reduced-motion canvas is blank').toBeGreaterThan(500);
+    await expect
+      .poll(
+        async () =>
+          canvas.evaluate((element) => {
+            const canvas = element as HTMLCanvasElement;
+            const ctx = canvas.getContext('2d');
+            if (!ctx) return 0;
+            const { data } = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            let opaque = 0;
+            for (let i = 3; i < data.length; i += 4) if ((data[i] ?? 0) > 0) opaque += 1;
+            return opaque;
+          }),
+        { timeout: 5_000, message: 'reduced-motion canvas is blank' },
+      )
+      .toBeGreaterThan(500);
   });
 });
 
@@ -231,7 +238,7 @@ test.describe('article reading aids', () => {
   test('omits the article title from the mobile breadcrumb', async ({ page }) => {
     await page.goto('/security/malfex-npm-campaign/');
     const crumb = page.locator('nav[aria-label="Breadcrumb"]');
-    await expect(crumb).toContainText('Latest');
+    await expect(crumb).toContainText('Home');
     await expect(crumb).toContainText('Security');
     const current = crumb.locator('[aria-current="page"]');
     await expect(current).toBeHidden();
@@ -281,7 +288,7 @@ test.describe('mobile menu', () => {
     await expect(menu).toBeVisible();
     // Opening moves focus to the first link.
     const firstName = await page.evaluate(() => document.activeElement?.textContent?.trim() ?? '');
-    expect(firstName).toContain('Latest');
+    expect(firstName).toContain('AI');
 
     await page.keyboard.press('Escape');
     await expect(toggle).toHaveAttribute('aria-expanded', 'false');

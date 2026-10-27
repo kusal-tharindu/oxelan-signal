@@ -1,51 +1,19 @@
 ---
 import { browseFormats, formats } from '../lib/formats';
-import { sections } from '../site.config';
 
 interface Props {
-  showSection?: boolean;
   showFormat?: boolean;
   showImpact?: boolean;
   label?: string;
 }
 
-const {
-  showSection = true,
-  showFormat = true,
-  showImpact = true,
-  label = 'Browse posts',
-} = Astro.props;
+const { showFormat = true, showImpact = true, label = 'Browse posts' } = Astro.props;
 
 const path = Astro.url.pathname;
-
-const sectionOptions = [
-  { value: 'all', label: 'All', href: '/' },
-  { value: 'ai', label: 'AI', href: sections.ai.path },
-  { value: 'security', label: 'Security', href: sections.security.path },
-  { value: 'engineering', label: 'Engineering', href: sections.engineering.path },
-];
-
-const isSectionActive = (href: string) =>
-  href === '/' ? path === '/' : path === href || path.startsWith(href);
-
 const isFormatActive = (href: string) => path.startsWith(href);
 ---
 
 <nav class="filter-bar" data-browse aria-label={label}>
-  {showSection && (
-    <div class="filter-group" role="group" aria-label="Section">
-      {sectionOptions.map((option) => (
-        <a
-          href={option.href}
-          class="chip"
-          aria-current={isSectionActive(option.href) ? 'page' : undefined}
-        >
-          {option.label}
-        </a>
-      ))}
-    </div>
-  )}
-
   {showFormat && (
     <div class="filter-group" role="group" aria-label="Format">
       {browseFormats.map((key) => {

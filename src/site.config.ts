@@ -30,7 +30,6 @@ export const site = {
     oxelan: 'https://oxelan.com',
   },
   nav: [
-    { label: 'Latest', href: '/' },
     { label: 'AI', href: '/ai/' },
     { label: 'Security', href: '/security/' },
     { label: 'Engineering', href: '/engineering/' },
