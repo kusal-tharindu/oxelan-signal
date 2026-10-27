@@ -28,15 +28,26 @@ const themeScriptHash = crypto.createHash('sha256').update(themeScript, 'utf8').
 // Content-Security-Policy. Referrer-Policy and X-Content-Type-Options are best set as
 // real headers (a Cloudflare Transform Rule); see operations.md. The meta CSP below
 // still constrains markup-served pages on GitHub Pages.
+// Cloudflare's Web Analytics beacon is only allowed when the feature flag and token
+// are set. A proxied zone can auto-inject the beacon even when the flag is off; that
+// injection is blocked on purpose (no tracking by default).
+const analyticsEnabled = Boolean(site.features.analytics && site.analytics.cloudflareToken);
+const scriptSources = ["'self'", `'sha256-${themeScriptHash}'`];
+const connectSources = ["'self'"];
+if (analyticsEnabled) {
+  scriptSources.push('https://static.cloudflareinsights.com');
+  connectSources.push('https://cloudflareinsights.com', 'https://static.cloudflareinsights.com');
+}
+
 const csp = [
   "default-src 'self'",
-  `script-src 'self' 'sha256-${themeScriptHash}'`,
+  `script-src ${scriptSources.join(' ')}`,
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data:",
   // Astro inlines the small JetBrains Mono subset as a base64 data: URI, so fonts
   // need data: — it cannot execute or exfiltrate, unlike a script source.
   "font-src 'self' data:",
-  "connect-src 'self'",
+  `connect-src ${connectSources.join(' ')}`,
   'frame-src giscus.app',
   "object-src 'none'",
   "base-uri 'self'",
