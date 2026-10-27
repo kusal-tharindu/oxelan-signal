@@ -151,6 +151,33 @@ test.describe('theme', () => {
   });
 });
 
+test.describe('mobile menu', () => {
+  test('moves focus on open and returns it on Escape (L6)', async ({ page }) => {
+    await page.goto('/');
+    const toggle = page.locator('[data-menu-toggle]');
+    const menu = page.locator('[data-mobile-menu]');
+    await expect(toggle).toBeVisible();
+    await expect(menu).toBeHidden();
+
+    await toggle.click();
+    await expect(toggle).toHaveAttribute('aria-expanded', 'true');
+    await expect(menu).toBeVisible();
+    // Opening moves focus to the first link.
+    const firstName = await page.evaluate(() => document.activeElement?.textContent?.trim() ?? '');
+    expect(firstName).toContain('Latest');
+
+    await page.keyboard.press('Escape');
+    await expect(toggle).toHaveAttribute('aria-expanded', 'false');
+    await expect(menu).toBeHidden();
+    // Focus returns to the toggle, not the top of the document.
+    expect(
+      await page.evaluate(() =>
+        (document.activeElement as HTMLElement)?.hasAttribute('data-menu-toggle'),
+      ),
+    ).toBe(true);
+  });
+});
+
 test.describe('mobile table of contents', () => {
   test('expands on tap', async ({ page }) => {
     await page.goto('/ai/agentic-threat-model/');

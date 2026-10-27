@@ -49,7 +49,7 @@
   const menuToggle = $('[data-menu-toggle]');
   const mobileMenu = $('[data-mobile-menu]');
 
-  const setMenu = (open) => {
+  const setMenu = (open, { focusFirst = false } = {}) => {
     if (!menuToggle || !mobileMenu) return;
     menuToggle.setAttribute('aria-expanded', String(open));
     menuToggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
@@ -59,10 +59,22 @@
     const closeIcon = $('[data-menu-icon="close"]', menuToggle);
     if (openIcon) openIcon.classList.toggle('hidden', open);
     if (closeIcon) closeIcon.classList.toggle('hidden', !open);
+    // Move focus into the menu on open so keyboard users do not have to tab back.
+    if (open && focusFirst) $('a', mobileMenu)?.focus();
   };
 
   menuToggle?.addEventListener('click', () => {
-    setMenu(menuToggle.getAttribute('aria-expanded') !== 'true');
+    const open = menuToggle.getAttribute('aria-expanded') !== 'true';
+    setMenu(open, { focusFirst: open });
+  });
+
+  // Escape closes the menu and returns focus to the toggle (BLOG-L6).
+  document.addEventListener('keydown', (event) => {
+    if (event.key !== 'Escape') return;
+    if (menuToggle?.getAttribute('aria-expanded') === 'true') {
+      setMenu(false);
+      menuToggle.focus();
+    }
   });
 
   $$('a', mobileMenu ?? document.createElement('div')).forEach((link) => {

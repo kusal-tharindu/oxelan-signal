@@ -3,19 +3,19 @@ title: "Securing LLM gateways: a production checklist"
 date: 2026-10-22
 updated: 2026-10-26
 format: guide
-summary: "A gateway centralises model access, but it also centralises credentials, data and failure. Use this checklist before it becomes the single point of compromise."
+summary: "A gateway centralizes model access, but it also centralizes credentials, data and failure. Use this checklist before it becomes the single point of compromise."
 tags: [llm-security, gateway, kubernetes, production]
 status: current
 action: review
 updates:
-  - { date: 2026-10-26, note: "Added egress and token-scope checks; clarified streaming failure behaviour." }
+  - { date: 2026-10-26, note: "Added egress and token-scope checks; clarified streaming failure behavior." }
   - { date: 2026-10-22, note: "First published." }
 sources:
-  - { title: "OWASP — Top 10 for LLM applications", url: "https://genai.owasp.org/llm-top-10/" }
+  - { title: "OWASP: Top 10 for LLM applications", url: "https://genai.owasp.org/llm-top-10/" }
   - { title: "Envoy AI Gateway documentation", url: "https://aigateway.envoyproxy.io/" }
-  - { title: "Kubernetes — good practices for Secrets", url: "https://kubernetes.io/docs/concepts/security/secrets-good-practices/" }
-  - { title: "OpenTelemetry — GenAI semantic conventions", url: "https://opentelemetry.io/docs/specs/semconv/gen-ai/" }
-  - { title: "NIST — AI Risk Management Framework", url: "https://www.nist.gov/itl/ai-risk-management-framework" }
+  - { title: "Kubernetes: good practices for Secrets", url: "https://kubernetes.io/docs/concepts/security/secrets-good-practices/" }
+  - { title: "OpenTelemetry: GenAI semantic conventions", url: "https://opentelemetry.io/docs/specs/semconv/gen-ai/" }
+  - { title: "NIST: AI Risk Management Framework", url: "https://www.nist.gov/itl/ai-risk-management-framework" }
 ---
 
 An LLM gateway sits between your applications and one or more model providers. It usually owns
@@ -92,10 +92,10 @@ Use it as a review, not a score. Every unchecked item should have an owner and a
 - [ ] There is a dashboard that answers “which application is spending the most this hour?” without
       a database query.
 
-## 6. Failure behaviour
+## 6. Failure behavior
 
 - [ ] Provider timeout returns a bounded error; it does not hang a user request indefinitely.
-- [ ] Retry and fallback behaviour is tested, including the case where the fallback is also down.
+- [ ] Retry and fallback behavior is tested, including the case where the fallback is also down.
 - [ ] A model deprecation can be handled by config change, not a code deploy.
 - [ ] The gateway can be drained without losing in-flight requests.
 - [ ] Rate limits fail closed for privileged routes and may fail open for low-risk read-only routes;
@@ -130,7 +130,7 @@ one place for telemetry, and no place where a caller can quietly bypass them.
 ```yaml
 # Illustrative policy — adapt to your gateway.
 routes:
-  - name: support-summarise
+  - name: support-summarize
     model: approved-small-model
     max_input_tokens: 12000
     max_output_tokens: 800

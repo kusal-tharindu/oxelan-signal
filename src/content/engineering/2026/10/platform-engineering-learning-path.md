@@ -10,8 +10,8 @@ updates:
   - { date: 2026-10-25, note: "Added the “build one thing” milestones and a review checklist." }
   - { date: 2026-10-21, note: "First published." }
 sources:
-  - { title: "CNCF — Platforms white paper", url: "https://tag-app-delivery.cncf.io/whitepapers/platforms/" }
-  - { title: "Google — Site Reliability Engineering book", url: "https://sre.google/sre-book/table-of-contents/" }
+  - { title: "CNCF: Platforms white paper", url: "https://tag-app-delivery.cncf.io/whitepapers/platforms/" }
+  - { title: "Google: Site Reliability Engineering book", url: "https://sre.google/sre-book/table-of-contents/" }
   - { title: "Team Topologies", url: "https://teamtopologies.com/" }
   - { title: "Kubernetes documentation", url: "https://kubernetes.io/docs/home/" }
   - { title: "OpenTelemetry documentation", url: "https://opentelemetry.io/docs/" }
@@ -27,7 +27,7 @@ Each phase ends with something you build, not just something you read.
 
 ## The six-month map
 
-| Phase | Weeks | Focus | Artefact you build |
+| Phase | Weeks | Focus | Artifact you build |
 |---|---|---|---|
 | 1. Foundations | 1–4 | Linux, networking, Git, one cloud | A reproducible VM or container running a small service |
 | 2. Delivery | 5–8 | CI, containers, registries, IaC | A pipeline that tests, builds and deploys a service |
@@ -117,7 +117,7 @@ Build:
 - A deprecation policy for the template, because version one will be wrong.
 
 The CNCF platforms white paper is useful here, but the harder reading is Team Topologies. Most
-platform failures are organisational: the platform team builds what it finds interesting, not
+platform failures are organizational: the platform team builds what it finds interesting, not
 what delivery teams are blocked on.
 
 ## Phase 6: operations

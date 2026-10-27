@@ -13,9 +13,9 @@ briefing:
   why: "Middleware is commonly used for auth gates and tenant routing. A bypass is a direct path to protected routes, not just a missing redirect."
   action: "Upgrade to 12.3.5, 13.5.9, 14.2.25 or 15.2.3 (or later). If you cannot upgrade immediately, strip the x-middleware-subrequest header at the edge and verify that authorization is enforced in the route or API, not only in middleware."
 sources:
-  - { title: "GitHub Advisory — GHSA-f82v-jwr5-mffw", url: "https://github.com/advisories/GHSA-f82v-jwr5-mffw" }
-  - { title: "Next.js — CVE-2025-29927", url: "https://nextjs.org/blog/cve-2025-29927" }
-  - { title: "NVD — CVE-2025-29927", url: "https://nvd.nist.gov/vuln/detail/CVE-2025-29927" }
+  - { title: "GitHub Advisory: GHSA-f82v-jwr5-mffw", url: "https://github.com/advisories/GHSA-f82v-jwr5-mffw" }
+  - { title: "Next.js: CVE-2025-29927", url: "https://nextjs.org/blog/cve-2025-29927" }
+  - { title: "NVD: CVE-2025-29927", url: "https://nvd.nist.gov/vuln/detail/CVE-2025-29927" }
 updates:
   - { date: 2026-10-27, note: "Set action to review: fixed versions shipped in March 2025, so this is now historical reference rather than an active patch advisory." }
   - { date: 2025-03-24, note: "Published after the coordinated advisory." }
@@ -45,7 +45,7 @@ major, the durable fix is to upgrade; a header filter is a mitigation, not a pat
 
 Block the header at the edge or in your reverse proxy. The value is attacker-controlled, so do not
 try to match a specific payload; remove the header entirely from external requests. Then verify
-that sensitive routes enforce authorization themselves. Middleware should be defence in depth,
+that sensitive routes enforce authorization themselves. Middleware should be defense in depth,
 never the only gate.
 
 ## What to check after patching

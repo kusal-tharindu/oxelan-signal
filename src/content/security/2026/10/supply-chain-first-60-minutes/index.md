@@ -12,11 +12,11 @@ briefing:
   why: "The first hour decides whether you are rotating a few credentials or reconstructing an entire release pipeline. Most teams spend it looking for the wrong evidence."
   action: "Freeze deploys, snapshot the lockfile and build logs, revoke CI credentials, scope every install of the affected version, then rebuild from a clean cache with pinned, verified dependencies."
 sources:
-  - { title: "SLSA specification — build levels and provenance", url: "https://slsa.dev/spec/v1.0/levels" }
-  - { title: "GitHub — security hardening for GitHub Actions", url: "https://docs.github.com/en/actions/security-for-github-actions/security-guides/security-hardening-for-github-actions" }
+  - { title: "SLSA specification: build levels and provenance", url: "https://slsa.dev/spec/v1.0/levels" }
+  - { title: "GitHub: security hardening for GitHub Actions", url: "https://docs.github.com/en/actions/security-for-github-actions/security-guides/security-hardening-for-github-actions" }
   - { title: "OpenSSF Scorecard", url: "https://github.com/ossf/scorecard" }
-  - { title: "npm — audit documentation", url: "https://docs.npmjs.com/cli/v10/commands/npm-audit" }
-  - { title: "CISA — Known Exploited Vulnerabilities catalog", url: "https://www.cisa.gov/known-exploited-vulnerabilities-catalog" }
+  - { title: "npm: audit documentation", url: "https://docs.npmjs.com/cli/v10/commands/npm-audit" }
+  - { title: "CISA: Known Exploited Vulnerabilities catalog", url: "https://www.cisa.gov/known-exploited-vulnerabilities-catalog" }
 ---
 
 A supply-chain incident is not a vulnerability triage problem. It is an identity problem. The

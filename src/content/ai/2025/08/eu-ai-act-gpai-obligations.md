@@ -9,19 +9,19 @@ impact: medium
 action: review
 status: current
 briefing:
-  changed: "The EU AI Act’s general-purpose AI (GPAI) obligations started applying on 2 August 2025, with a longer runway for models already on the market."
+  changed: "The EU AI Act’s general-purpose AI (GPAI) obligations started applying on August 2, 2025, with a longer runway for models already on the market."
   why: "Providers must publish or supply technical documentation, training-content summaries and copyright policies. Deployers need that material to assess downstream obligations and vendor risk."
   action: "Ask every model vendor for its GPAI documentation, model card, training-data summary and acceptable-use terms. Record the version you assessed and revisit it when the model changes."
 sources:
-  - { title: "European Commission — AI Act regulatory framework", url: "https://digital-strategy.ec.europa.eu/en/policies/regulatory-framework-ai" }
-  - { title: "EUR-Lex — Regulation (EU) 2024/1689", url: "https://eur-lex.europa.eu/eli/reg/2024/1689/oj" }
-  - { title: "European Parliament — AI Act overview", url: "https://www.europarl.europa.eu/topics/en/article/20230601STO93804/eu-ai-act-first-regulation-on-ai" }
+  - { title: "European Commission: AI Act regulatory framework", url: "https://digital-strategy.ec.europa.eu/en/policies/regulatory-framework-ai" }
+  - { title: "EUR-Lex: Regulation (EU) 2024/1689", url: "https://eur-lex.europa.eu/eli/reg/2024/1689/oj" }
+  - { title: "European Parliament: AI Act overview", url: "https://www.europarl.europa.eu/topics/en/article/20230601STO93804/eu-ai-act-first-regulation-on-ai" }
 ---
 
 The EU AI Act is not only a rule for companies building high-risk AI systems. It also creates a
 documentation layer around general-purpose models, and that layer reaches anyone who deploys one.
 
-From 2 August 2025, providers of general-purpose AI models placed on the EU market are subject to
+From August 2, 2025, providers of general-purpose AI models placed on the EU market are subject to
 obligations including technical documentation, a summary of training content, a copyright policy,
 and information for downstream providers. Models with systemic risk have additional evaluation and
 incident-reporting duties. The Act gave models already on the market a transition period, so the
@@ -33,7 +33,7 @@ You may not be the provider. You are still the party that chose the model, integ
 it in front of users. When a regulator, customer, or insurer asks how you assessed the model, “the
 vendor’s website looked fine” is not an answer.
 
-The useful artefacts to request:
+The useful artifacts to request:
 
 - The model card and intended-use statement.
 - A summary of training content, at the level the provider is required to publish.

@@ -7,9 +7,9 @@ summary: "Static output hides the complexity in the build. The sites that age we
 tags: [astro, github-actions, performance, build]
 status: current
 sources:
-  - { title: "Astro — content collections", url: "https://docs.astro.build/en/guides/content-collections/" }
-  - { title: "Astro — images", url: "https://docs.astro.build/en/guides/images/" }
-  - { title: "GitHub Actions — dependency caching", url: "https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/caching-dependencies-to-speed-up-workflows" }
+  - { title: "Astro: content collections", url: "https://docs.astro.build/en/guides/content-collections/" }
+  - { title: "Astro: images", url: "https://docs.astro.build/en/guides/images/" }
+  - { title: "GitHub Actions: dependency caching", url: "https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/caching-dependencies-to-speed-up-workflows" }
   - { title: "Pagefind", url: "https://pagefind.app/" }
 ---
 
@@ -20,7 +20,7 @@ dependencies, it consumes secrets, and it produces the artifact users see.
 The failure modes are predictable:
 
 - A build that takes 12 minutes makes small copy fixes feel expensive.
-- An unpinned action or package changes behaviour without a code change.
+- An unpinned action or package changes behavior without a code change.
 - A content schema that accepts bad frontmatter moves the error from CI to production.
 - A search index or share image generated at build silently drifts from the page it describes.
 - A cache that stores the wrong thing makes the build fast and wrong.
@@ -73,7 +73,7 @@ minutes over six months is easier to fix when you see the trend.
 A modern static blog usually has four generated artifacts:
 
 1. **HTML pages** from Markdown and layouts.
-2. **Optimised images** from source assets.
+2. **Optimized images** from source assets.
 3. **A search index** built after the HTML exists.
 4. **Share images** generated from post metadata.
 

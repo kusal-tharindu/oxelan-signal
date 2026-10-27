@@ -10,11 +10,11 @@ briefing:
   why: "Prompt injection is still the entry point, but the damage is decided by the tools and credentials behind the agent. Most teams review the model and skip the authorization design."
   action: "Model the agent as an untrusted workload: least-privilege tools, per-action authorization, egress controls, human approval for irreversible operations, and an audit trail that ties every action to a request."
 sources:
-  - { title: "OWASP — Top 10 for LLM applications", url: "https://genai.owasp.org/llm-top-10/" }
-  - { title: "NIST — AI Risk Management Framework", url: "https://www.nist.gov/itl/ai-risk-management-framework" }
-  - { title: "Microsoft — Threat modeling AI/ML systems and dependencies", url: "https://learn.microsoft.com/en-us/security/engineering/threat-modeling-aiml" }
-  - { title: "Google — Secure AI Framework (SAIF)", url: "https://saif.google/" }
-  - { title: "Model Context Protocol — security best practices", url: "https://modelcontextprotocol.io/specification/2025-06-18/basic/security_best_practices" }
+  - { title: "OWASP: Top 10 for LLM applications", url: "https://genai.owasp.org/llm-top-10/" }
+  - { title: "NIST: AI Risk Management Framework", url: "https://www.nist.gov/itl/ai-risk-management-framework" }
+  - { title: "Microsoft: Threat modeling AI/ML systems and dependencies", url: "https://learn.microsoft.com/en-us/security/engineering/threat-modeling-aiml" }
+  - { title: "Google: Secure AI Framework (SAIF)", url: "https://saif.google/" }
+  - { title: "Model Context Protocol: security best practices", url: "https://modelcontextprotocol.io/specification/2025-06-18/basic/security_best_practices" }
 ---
 
 The first generation of LLM security advice was about the prompt: don't put secrets in the system

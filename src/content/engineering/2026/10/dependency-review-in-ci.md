@@ -9,10 +9,10 @@ tags: [supply-chain, ci-cd, npm, devops, security]
 status: current
 action: review
 sources:
-  - { title: "OpenSSF — GitHub expands malware advisories across eight ecosystems", url: "https://openssf.org/blog/2026/10/16/case-study-github-expands-malware-advisories-across-eight-ecosystems-with-openssf" }
-  - { title: "npm — generating provenance statements", url: "https://docs.npmjs.com/generating-provenance-statements" }
-  - { title: "OpenSSF — malicious-packages repository", url: "https://github.com/ossf/malicious-packages" }
-  - { title: "npm — scripts documentation (ignoring scripts)", url: "https://docs.npmjs.com/cli/using-npm/scripts" }
+  - { title: "OpenSSF: GitHub expands malware advisories across eight ecosystems", url: "https://openssf.org/blog/2026/10/16/case-study-github-expands-malware-advisories-across-eight-ecosystems-with-openssf" }
+  - { title: "npm: generating provenance statements", url: "https://docs.npmjs.com/generating-provenance-statements" }
+  - { title: "OpenSSF: malicious-packages repository", url: "https://github.com/ossf/malicious-packages" }
+  - { title: "npm: scripts documentation (ignoring scripts)", url: "https://docs.npmjs.com/cli/using-npm/scripts" }
 ---
 
 Malicious packages arrive through the same door as legitimate ones: your installer. This guide is
@@ -20,7 +20,7 @@ the pipeline that catches them before they run and the review you run when somet
 through. It is written for npm, but every step has a direct equivalent in PyPI, Go, Rust or Maven
 workflows. It assumes nothing beyond your existing CI.
 
-**Last reviewed: 27 October 2026.** Re-review monthly, or after any install-time incident,
+**Last reviewed: October 27, 2026.** Re-review monthly, or after any install-time incident,
 whichever comes first. The update path is listed at the end.
 
 ## The goal
@@ -50,7 +50,7 @@ install-time malware announces itself through those scripts, and blocking them c
 
 Note the limit: lifecycle scripts are not the only execution path. The recent
 [MALFEX](/security/malfex-npm-campaign/) loader runs on `require()` from a compiled native addon,
-which `ignore-scripts` never touches. Treat this control as one layer, not the whole defence.
+which `ignore-scripts` never touches. Treat this control as one layer, not the whole defense.
 
 ```bash
 # .npmrc, committed to the repository
@@ -76,8 +76,8 @@ tamper. It does not eliminate the compromised maintainer. Use it as one control,
 
 Dependency-review tooling compares the base and head lockfiles of a pull request and flags new or
 changed packages against an advisory database. As of October 2026, the GitHub Advisory Database
-includes OpenSSF's malicious-packages data across eight ecosystems — npm, PyPI, Maven, RubyGems,
-NuGet, Go, crates.io and Composer — which matters because malware advisories and vulnerability
+includes OpenSSF's malicious-packages data across eight ecosystems (npm, PyPI, Maven, RubyGems,
+NuGet, Go, crates.io and Composer), which matters because malware advisories and vulnerability
 advisories are different records. A package with no CVEs can still be malware, and until this
 coverage expanded, those two records lived in different places.
 
@@ -118,13 +118,13 @@ for the failure modes is [MALFEX](/security/malfex-npm-campaign/).
 ## What this does not do
 
 This pipeline is about what happens at install time. It does not constrain what a package does at
-runtime — a dependency that behaves normally until a trigger date passes every check above. Runtime
+runtime: a dependency that behaves normally until a trigger date passes every check above. Runtime
 egress control and secret scoping are the complementary controls, and they live in the deployment,
 not the pipeline.
 
 ## Updating this guide
 
-Re-review monthly or after any install-time incident. When the ecosystem changes a control —
-provenance verification defaults, advisory database coverage, lifecycle-script policy — update the
+Re-review monthly or after any install-time incident. When the ecosystem changes a control
+(provenance verification defaults, advisory database coverage, lifecycle-script policy), update the
 relevant step and bump the review date at the top. The sources below are the primary references
 this revision is built on.

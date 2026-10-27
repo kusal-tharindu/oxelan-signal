@@ -2,19 +2,19 @@
 title: "Open-weight models: the bill arrives after the benchmark"
 date: 2026-10-23
 format: analysis
-summary: "Open weights remove a licence fee, not the operating cost. The decision hinges on utilisation, latency, privacy and the team you can staff."
+summary: "Open weights remove a license fee, not the operating cost. The decision hinges on utilization, latency, privacy and the team you can staff."
 tags: [open-weights, inference, cost, llmops]
 status: current
 briefing:
   changed: "Open-weight models are good enough for a growing set of production tasks, and the tooling to serve them is mature enough to run without a research team."
-  why: "Teams compare a per-token API price with a GPU hourly rate and conclude they will save money. That comparison omits utilisation, operations, evaluation, and the cost of being wrong."
-  action: "Model total cost at your real utilisation: GPU hours, idle capacity, staff time, evaluation, security and failover. Run a shadow workload before moving a customer-facing path."
+  why: "Teams compare a per-token API price with a GPU hourly rate and conclude they will save money. That comparison omits utilization, operations, evaluation, and the cost of being wrong."
+  action: "Model total cost at your real utilization: GPU hours, idle capacity, staff time, evaluation, security and failover. Run a shadow workload before moving a customer-facing path."
 sources:
   - { title: "vLLM documentation", url: "https://docs.vllm.ai/" }
-  - { title: "Hugging Face — text generation inference", url: "https://huggingface.co/docs/text-generation-inference" }
-  - { title: "Mistral — models overview", url: "https://docs.mistral.ai/getting-started/models/" }
-  - { title: "Llama — model and licence information", url: "https://www.llama.com/" }
-  - { title: "NIST — AI Risk Management Framework", url: "https://www.nist.gov/itl/ai-risk-management-framework" }
+  - { title: "Hugging Face: text generation inference", url: "https://huggingface.co/docs/text-generation-inference" }
+  - { title: "Mistral: models overview", url: "https://docs.mistral.ai/getting-started/models/" }
+  - { title: "Llama: model and license information", url: "https://www.llama.com/" }
+  - { title: "NIST: AI Risk Management Framework", url: "https://www.nist.gov/itl/ai-risk-management-framework" }
 ---
 
 The pitch for open weights is simple: you already own the hardware, you control the data, and
@@ -23,10 +23,10 @@ advantages. The third is only true if you can operate the thing.
 
 The financial case is where most evaluations go wrong. A hosted model bills per token, so the
 marginal cost is visible and the fixed cost is zero. A self-hosted model has the opposite shape:
-a large fixed cost, a marginal cost that looks tiny, and a utilisation problem that decides
+a large fixed cost, a marginal cost that looks tiny, and a utilization problem that decides
 whether the maths works.
 
-## The utilisation trap
+## The utilization trap
 
 A GPU that is 15% busy costs the same as one that is 85% busy. If your workload is bursty, you
 either over-provision for the peak or accept queueing at the peak. Hosted APIs pool that
@@ -50,7 +50,7 @@ Public benchmarks are useful for eliminating models, not for choosing one. They 
 
 - How the model behaves on your domain vocabulary and your formatting rules.
 - What happens to latency at the 95th percentile when the context is long.
-- Whether quality degrades after quantisation in a way your users notice.
+- Whether quality degrades after quantization in a way your users notice.
 - How much prompt engineering the smaller model needs to match the larger one.
 - What the failure mode looks like when the model is overloaded.
 
@@ -67,7 +67,7 @@ Serving a model is not a single binary. You are adopting a stack:
 | Hardware | GPU capacity, drivers, firmware | Version drift after a node replacement |
 | Model | Weights, tokenizer, chat template | Template mismatch changes output silently |
 | Gateway | Auth, quotas, routing, retries | One tenant consumes the whole pool |
-| Evaluation | Regression suite, human review | Upgrades ship on vibes |
+| Evaluation | Regression suite, human review | Upgrades need a regression run |
 | Observability | Latency, tokens, errors, cost | You cannot attribute spend to a team |
 | Security | Model supply chain, prompt logging | Weights or prompts leak through telemetry |
 
@@ -77,7 +77,7 @@ Each row is a service you did not have before. The team that runs it needs to be
 
 Most of the analysis above assumes the first deployment is the hard part. In practice the first
 cut is the cheapest month you will have. Three recurring costs are easy to miss because nothing
-breakes when you skip them.
+breaks when you skip them.
 
 **Upgrades are a project, not a patch.** A new model version is not a security update you apply
 and forget. Weights change output, so every upgrade reopens the evaluation workload: run the
@@ -107,7 +107,7 @@ The case is strongest when at least two of these are true:
 
 - **Data cannot leave your environment.** Regulatory, contractual, or threat-model constraints
   make a hosted endpoint a non-starter.
-- **Utilisation is high and predictable.** A batch pipeline that runs all day, or a product with
+- **Utilization is high and predictable.** A batch pipeline that runs all day, or a product with
   steady traffic, can keep the pool busy.
 - **Latency is a product requirement.** Co-locating the model with the application removes a
   network hop and a provider's queue.
@@ -123,29 +123,29 @@ that case, the API is not a compromise. It is the correct build-versus-buy decis
 
 Before moving a customer-facing path:
 
-1. **Pick one bounded task.** Summarisation with a fixed template, classification with a known
+1. **Pick one bounded task.** Summarization with a fixed template, classification with a known
    label set, or extraction with a schema. Avoid open-ended chat for the first migration.
 2. **Freeze the evaluation set.** Include the ugly cases: long inputs, ambiguous labels, missing
    fields, adversarial text.
 3. **Run both paths in parallel.** Send production traffic to the hosted model, mirror a sample
    to the self-hosted one, and compare outputs offline. Do not let the new model take actions.
-4. **Measure the tail.** P50 latency is marketing. P95 and P99 decide whether users wait.
-5. **Model the cost at three utilisation levels.** Current, 2× growth, and a bad week. If the
-   answer only works at perfect utilisation, it does not work.
+4. **Measure the tail.** P50 latency is a poor guide. P95 and P99 decide whether users wait.
+5. **Model the cost at three utilization levels.** Current, 2× growth, and a bad week. If the
+   answer only works at perfect utilization, it does not work.
 6. **Write the rollback.** Keep the hosted path warm until the new path has survived a full
    traffic cycle, including a model upgrade.
 
 <aside class="callout callout-warning">
-  <p class="callout-title">Do not forget the licence</p>
-  <p>“Open weights” is not the same as “no conditions.” Check the licence for commercial use,
-  attribution, acceptable-use terms, and redistribution. Have someone who reads licences confirm
+  <p class="callout-title">Do not forget the license</p>
+  <p>“Open weights” is not the same as “no conditions.” Check the license for commercial use,
+  attribution, acceptable-use terms, and redistribution. Have someone who reads licenses confirm
   the interpretation for your deployment model.</p>
 </aside>
 
 ## The decision, in one page
 
 Self-hosting is a platform investment. It buys control, privacy, and potentially lower marginal
-cost at scale. It costs utilisation risk, operational headcount, and a permanent evaluation
+cost at scale. It costs utilization risk, operational headcount, and a permanent evaluation
 workload.
 
 If you cannot name the engineer who will own the upgrade next quarter, you are not ready to move
