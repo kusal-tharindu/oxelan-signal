@@ -1,7 +1,16 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
 
 import { hrefFromId, sectionFromId, slugFromId } from './content-id.mjs';
-import { displayFormat, formatDate, initials, isoDate, isoDateTime, readingTime } from './format';
+import {
+  displayFormat,
+  formatDate,
+  initials,
+  isoDate,
+  isoDateTime,
+  metaDescription,
+  readingTime,
+  truncate,
+} from './format';
 import { ALERT_MAX_AGE_DAYS, isRecent, PATCH_MAX_AGE_DAYS } from './recency';
 import { impactOrder, sectionOrder, type ImpactKey, type SectionKey } from '../site.config';
 
@@ -186,4 +195,13 @@ export function sectionRank(section: SectionKey): number {
   return index === -1 ? sectionOrder.length : index;
 }
 
-export { displayFormat, formatDate, initials, isoDate, isoDateTime, readingTime };
+export {
+  displayFormat,
+  formatDate,
+  initials,
+  isoDate,
+  isoDateTime,
+  metaDescription,
+  readingTime,
+  truncate,
+};

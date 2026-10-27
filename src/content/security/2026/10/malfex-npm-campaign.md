@@ -3,6 +3,7 @@ title: "MALFEX hides its npm loader in a native Windows addon"
 date: 2026-10-27
 format: news
 summary: "The MALFEX campaign moved its npm loader into a compiled Windows addon that runs on require, not on install. It targets developer machines, and ignore-scripts does not stop it."
+description: "MALFEX hides its npm loader in a Windows addon that runs on require, not install. ignore-scripts does not stop it."
 tags: [supply-chain, npm, malware, ci-cd, package-security]
 impact: high
 action: review

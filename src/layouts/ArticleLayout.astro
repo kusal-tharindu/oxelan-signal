@@ -7,6 +7,7 @@ import {
   initials,
   isoDate,
   isoDateTime,
+  metaDescription,
   readingTime,
   sectionOf,
 } from '../lib/posts';
@@ -39,6 +40,7 @@ const minutes = readingTime(post.body);
 const canonical = new URL(hrefOf(post), site.url).toString();
 const ogImage = `/og/${post.id}.png`;
 const summary = post.data.summary;
+const description = metaDescription(summary, post.data.description);
 const modified = post.data.updated ?? post.data.date;
 const isGuide = post.data.format === 'guide';
 const isSuperseded = post.data.status === 'superseded';
@@ -48,7 +50,7 @@ const articleSchema = {
   '@id': `${canonical}#article`,
   mainEntityOfPage: canonical,
   headline: post.data.title,
-  description: summary,
+  description,
   datePublished: isoDateTime(post.data.date),
   dateModified: isoDateTime(modified),
   articleSection: section.label,
@@ -67,7 +69,7 @@ const articleSchema = {
 
 <BaseLayout
   title={post.data.title}
-  description={summary}
+  description={description}
   image={ogImage}
   type="article"
   publishedTime={isoDateTime(post.data.date)}

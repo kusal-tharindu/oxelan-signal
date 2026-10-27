@@ -54,3 +54,12 @@ export function truncate(value: string, max: number): string {
   if (value.length <= max) return value;
   return `${value.slice(0, Math.max(0, max - 1)).trimEnd()}…`;
 }
+
+/**
+ * Meta description for search results and share cards, kept within 160 characters.
+ * Uses the explicit `description` when present, else a truncated summary (BLOG-L8).
+ */
+export function metaDescription(summary: string, description?: string): string {
+  const source = description?.trim() || summary;
+  return truncate(source.trim(), 160);
+}

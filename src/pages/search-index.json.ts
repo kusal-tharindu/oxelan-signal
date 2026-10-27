@@ -29,10 +29,16 @@ export const GET: APIRoute = async () => {
     body: plainText(post.body),
   }));
 
+  // Pagefind is the production index; this fallback exists only for `astro dev`, where
+  // the Pagefind bundle is not generated. Keeping it out of production avoids shipping
+  // a duplicate 50 KB+ index. See review BLOG-L10.
+  if (!import.meta.env.DEV) {
+    return new Response(JSON.stringify([]), {
+      headers: { 'Content-Type': 'application/json; charset=utf-8' },
+    });
+  }
+
   return new Response(JSON.stringify(index), {
-    headers: {
-      'Content-Type': 'application/json; charset=utf-8',
-      'Cache-Control': 'public, max-age=3600',
-    },
+    headers: { 'Content-Type': 'application/json; charset=utf-8' },
   });
 };

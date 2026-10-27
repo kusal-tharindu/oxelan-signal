@@ -60,10 +60,11 @@ ${items}
 </rss>
 `;
 
+  // GitHub Pages discards headers from static endpoints, so caching is owned by the
+  // Cloudflare layer in front of the site. We set only the content type here.
   return new Response(xml, {
     headers: {
       'Content-Type': 'application/rss+xml; charset=utf-8',
-      'Cache-Control': 'public, max-age=3600',
     },
   });
 }

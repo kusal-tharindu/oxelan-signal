@@ -10,6 +10,36 @@ import Footer from '../components/Footer.astro';
 import SearchOverlay from '../components/SearchOverlay.astro';
 import { site } from '../site.config';
 
+// The inline theme script is the only inline script on the page. Defining it once lets
+// us hash it for the CSP so we never need 'unsafe-inline' for scripts.
+const themeScript = `(function () {
+  var stored = null;
+  try { stored = localStorage.getItem('theme'); } catch (_) {}
+  var theme = stored === 'light' || stored === 'dark' ? stored : 'dark';
+  document.documentElement.dataset.theme = theme;
+  var meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.setAttribute('content', theme === 'light' ? '#f6f2e8' : '#0a0e17');
+})();`;
+
+const crypto = await import('node:crypto');
+const themeScriptHash = crypto.createHash('sha256').update(themeScript, 'utf8').digest('base64');
+
+// Content-Security-Policy. Referrer-Policy and X-Content-Type-Options are best set as
+// real headers (a Cloudflare Transform Rule); see operations.md. The meta CSP below
+// still constrains markup-served pages on GitHub Pages.
+const csp = [
+  "default-src 'self'",
+  `script-src 'self' 'sha256-${themeScriptHash}'`,
+  "style-src 'self' 'unsafe-inline'",
+  "img-src 'self' data:",
+  "font-src 'self'",
+  "connect-src 'self'",
+  'frame-src giscus.app',
+  "object-src 'none'",
+  "base-uri 'self'",
+  "form-action 'self'",
+].join('; ');
+
 interface Props {
   title?: string;
   description?: string;
@@ -19,6 +49,8 @@ interface Props {
   modifiedTime?: string;
   tags?: string[];
   noindex?: boolean;
+  /** Extra robots directive, e.g. 'follow' for tag pages that are noindexed but still crawlable. */
+  robotsExtra?: string;
   bodyClass?: string;
   jsonLd?: Record<string, unknown>[];
 }
@@ -32,6 +64,7 @@ const {
   modifiedTime,
   tags = [],
   noindex = false,
+  robotsExtra,
   bodyClass = '',
   jsonLd = [],
 } = Astro.props;
@@ -77,8 +110,9 @@ const structuredData = {
     <meta name="generator" content={Astro.generator} />
     <meta name="theme-color" content="#0a0e17" />
     <meta name="color-scheme" content="dark light" />
+    <meta http-equiv="Content-Security-Policy" content={csp} />
 
-    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    {noindex && <meta name="robots" content={`noindex, ${robotsExtra ?? 'nofollow'}`} />}
 
     <meta property="og:type" content={type} />
     <meta property="og:site_name" content={site.name} />
@@ -113,22 +147,7 @@ const structuredData = {
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
 
-    <script is:inline>
-      (function () {
-        try {
-          var stored = localStorage.getItem('theme');
-          var theme = stored === 'light' || stored === 'dark' ? stored : 'dark';
-          document.documentElement.dataset.theme = theme;
-        } catch (_) {
-          var theme = 'dark';
-          document.documentElement.dataset.theme = theme;
-        }
-        // Keep the browser chrome in step with the active theme (not the OS preference).
-        var meta = document.querySelector('meta[name="theme-color"]');
-        if (meta) meta.setAttribute('content', theme === 'light' ? '#f6f2e8' : '#0a0e17');
-      })();
-    </script>
-
+    <script is:inline set:html={themeScript} />
     <script
       type="application/ld+json"
       set:html={JSON.stringify(structuredData).replaceAll('<', '\\u003c')}

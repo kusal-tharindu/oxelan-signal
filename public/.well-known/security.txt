@@ -1,9 +1,6 @@
-# Oxelan Signal
-
-```
+# Oxelan Signal — vulnerability disclosure
 Contact: mailto:hello@oxelan.com
-Expires: 2027-10-27T00:00:00.000Z
+Expires: 2027-04-27T00:00:00.000Z
 Preferred-Languages: en
 Canonical: https://blog.oxelan.com/.well-known/security.txt
-Policy: https://blog.oxelan.com/about/#disclaimer
-```
+Policy: https://github.com/kusal-tharindu/oxelan-signal/blob/main/SECURITY.md

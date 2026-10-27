@@ -99,8 +99,7 @@
   const loadEngine = async () => {
     if (searchEngine !== undefined) return searchEngine;
     try {
-      const dynamicImport = new Function('url', 'return import(url)');
-      searchEngine = await dynamicImport('/pagefind/pagefind.js');
+      searchEngine = await import(/* @vite-ignore */ '/pagefind/pagefind.js');
       if (typeof searchEngine.init === 'function') await searchEngine.init();
     } catch (_) {
       searchEngine = null;

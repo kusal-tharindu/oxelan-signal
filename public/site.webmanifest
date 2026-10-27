@@ -1,7 +1,7 @@
 {
   "name": "Oxelan Signal",
   "short_name": "Signal",
-  "description": "What changed in AI and security. Why it matters. What to do.",
+  "description": "What changed in AI, security and engineering. Why it matters. What to do.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0A0E17",

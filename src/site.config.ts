@@ -8,7 +8,7 @@ export const site = {
   shortName: 'Signal',
   domain: 'blog.oxelan.com',
   url: 'https://blog.oxelan.com',
-  tagline: 'What changed in AI and security. Why it matters. What to do.',
+  tagline: 'What changed in AI, security and engineering. Why it matters. What to do.',
   description:
     'Production-focused news and analysis for people who ship AI and secure it. Every post says what changed, why it matters, and what to do next.',
   author: {

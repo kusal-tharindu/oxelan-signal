@@ -90,6 +90,13 @@ for (const post of posts) {
     if (data.summary.length > 320) fail(post, 'summary is longer than 320 characters');
   }
 
+  // Meta description: an explicit description (<=160) is used for SEO; otherwise the
+  // summary is truncated to 160 for the meta tag. Warn when the summary alone is long
+  // enough that search engines will cut it off (BLOG-L8).
+  if (!data.description && typeof data.summary === 'string' && data.summary.length > 160) {
+    warn(post, 'summary is over 160 chars; add a `description` (<=160) for the meta tag');
+  }
+
   checkDate(post, 'date', data.date, { required: true });
   checkDate(post, 'updated', data.updated);
   if (data.date && data.updated && data.updated < data.date) {

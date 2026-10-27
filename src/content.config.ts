@@ -41,6 +41,8 @@ const posts = defineCollection({
     updated: z.coerce.date().optional(),
     format: z.enum(Object.keys(formats) as [string, ...string[]]),
     summary: z.string().min(40).max(320),
+    /** Optional short meta description (<=160 chars). Defaults to a truncated summary. */
+    description: z.string().max(160).optional(),
     tags: z.array(z.string().regex(tagPattern)).min(1).max(8),
     impact: z.enum(Object.keys(impacts) as [string, ...string[]]).optional(),
     action: z.enum(['none', 'review', 'patch-now']).optional(),
@@ -67,8 +69,14 @@ const radar = defineCollection({
     links: z
       .array(
         z.object({
-          label: z.string(),
-          href: z.string(),
+          label: z.string().min(1),
+          // Restrict to http(s) so a javascript: or data: href can never be rendered.
+          href: z
+            .string()
+            .url()
+            .refine((u) => /^https?:\/\//i.test(u), {
+              message: 'radar link href must be an http(s) URL',
+            }),
         }),
       )
       .default([]),

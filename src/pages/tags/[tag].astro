@@ -5,6 +5,7 @@ import FilterBar from '../../components/FilterBar.astro';
 import PostFeed from '../../components/PostFeed.astro';
 import Sidebar from '../../components/Sidebar.astro';
 import { getAllPosts, postsForTag, getLatestDigest } from '../../lib/posts';
+import { MIN_INDEXED_TAG_POSTS } from '../../lib/seo';
 
 export const getStaticPaths = (async () => {
   const posts = await getAllPosts();
@@ -19,9 +20,16 @@ const { tag } = Astro.props;
 const allPosts = await getAllPosts();
 const posts = postsForTag(allPosts, tag);
 const digest = getLatestDigest(allPosts);
+// Thin tag pages stay for navigation but are kept out of the index and sitemap.
+const thin = posts.length < MIN_INDEXED_TAG_POSTS;
 ---
 
-<BaseLayout title={`#${tag}`} description={`Posts tagged ${tag} on AI, security and engineering.`}>
+<BaseLayout
+  title={`#${tag}`}
+  description={`Posts tagged ${tag} on AI, security and engineering.`}
+  noindex={thin}
+  robotsExtra={thin ? 'follow' : undefined}
+>
   <header class="section-header" style="--section-color: var(--brand)">
     <div class="container-wide">
       <p class="section-label">Tag</p>

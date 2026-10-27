@@ -1,5 +1,6 @@
 import type { APIRoute } from 'astro';
 import { getAllPosts, isoDate } from '../lib/posts';
+import { isIndexableTag } from '../lib/seo';
 import { site, sectionOrder, sections } from '../site.config';
 
 function escapeXml(value: string): string {
@@ -13,7 +14,11 @@ function escapeXml(value: string): string {
 
 export const GET: APIRoute = async () => {
   const posts = await getAllPosts();
-  const tags = [...new Set(posts.flatMap((post) => post.data.tags))].sort();
+  const allTags = [...new Set(posts.flatMap((post) => post.data.tags))].sort();
+  // Thin tag pages are noindexed; keep them out of the sitemap too (BLOG-M7).
+  const tags = allTags.filter((tag) =>
+    isIndexableTag(posts.filter((post) => post.data.tags.includes(tag)).length),
+  );
   const lastmod = posts[0]?.data.updated ?? posts[0]?.data.date ?? new Date();
 
   const entries = [
@@ -53,7 +58,6 @@ ${body}
     {
       headers: {
         'Content-Type': 'application/xml; charset=utf-8',
-        'Cache-Control': 'public, max-age=3600',
       },
     },
   );

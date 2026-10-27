@@ -3,6 +3,7 @@ title: "MCP is turning agents into a network. Treat it like one."
 date: 2026-10-27
 format: analysis
 summary: "Agents now call agents over MCP. Each hop forwards instructions the origin never saw, and tool registries keyed by name are a spoofing surface. The boundary has to move from the model to the protocol."
+description: "Agents now call agents over MCP, making prompt injection transitive. Move the trust boundary from the model to the protocol."
 tags: [ai-agents, mcp, llm-security, prompt-injection, architecture]
 status: current
 briefing:
