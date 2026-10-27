@@ -155,6 +155,24 @@ test.describe('post cards', () => {
   });
 });
 
+test.describe('home pagination', () => {
+  test('shows ten posts and pages to the rest', async ({ page }) => {
+    await page.goto('/');
+    await expect(page.locator('[data-post-card]')).toHaveCount(10);
+    const older = page.getByRole('link', { name: /Older/ });
+    await expect(older).toBeVisible();
+    await older.click();
+    await expect(page).toHaveURL(/\/page\/2\/$/);
+    await expect(page.locator('[data-post-card]')).toHaveCount(2);
+
+    const newer = page.getByRole('link', { name: /Newer/ });
+    await expect(newer).toBeVisible();
+    await newer.click();
+    await expect(page).toHaveURL(/\/$/);
+    await expect(page.locator('[data-post-card]')).toHaveCount(10);
+  });
+});
+
 test.describe('home hero', () => {
   test('renders a data-driven 3D signal sphere', async ({ page }) => {
     await page.goto('/');

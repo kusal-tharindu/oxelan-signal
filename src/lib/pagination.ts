@@ -3,11 +3,11 @@
  *
  * Every listing renders at most FEED_PAGE_SIZE cards and exposes real URLs for the
  * previous/next page. This is what keeps the site correct at thousands of posts:
- * filters are links to canonical archives, not JavaScript over a 30-card window.
+ * filters are links to canonical archives, not JavaScript over a small window.
  */
 
-/** Maximum cards rendered on a listing page. */
-export const FEED_PAGE_SIZE = 30;
+/** Maximum cards rendered on a listing page. Ten keeps mobile pages short. */
+export const FEED_PAGE_SIZE = 10;
 
 /** Total pages needed for `total` items. Always at least 1. */
 export function pageCount(total: number, pageSize = FEED_PAGE_SIZE): number {
