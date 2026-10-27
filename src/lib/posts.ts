@@ -2,9 +2,13 @@ import { getCollection, type CollectionEntry } from 'astro:content';
 
 import { hrefFromId, sectionFromId, slugFromId } from './content-id.mjs';
 import { displayFormat, formatDate, isoDate, isoDateTime, readingTime } from './format';
+import { ALERT_MAX_AGE_DAYS, isRecent, PATCH_MAX_AGE_DAYS } from './recency';
 import { impactOrder, sectionOrder, type ImpactKey, type SectionKey } from '../site.config';
 
 export type Post = CollectionEntry<'posts'>;
+
+// Re-export the recency helpers so pages and components can reason about the rails.
+export { ALERT_MAX_AGE_DAYS, isRecent, PATCH_MAX_AGE_DAYS };
 
 const isProduction = import.meta.env.PROD;
 
@@ -66,13 +70,14 @@ export function getLeadPost(posts: Post[]): Post | undefined {
   );
 }
 
-export function getAlerts(posts: Post[], limit = 3): Post[] {
+export function getAlerts(posts: Post[], limit = 3, now = new Date()): Post[] {
   return posts
     .filter(
       (post) =>
         !isDigest(post) &&
         post.data.status !== 'superseded' &&
-        (post.data.impact === 'critical' || post.data.impact === 'high'),
+        (post.data.impact === 'critical' || post.data.impact === 'high') &&
+        isRecent(post, ALERT_MAX_AGE_DAYS, now),
     )
     .sort((a, b) => {
       const impactDelta = impactRank(a) - impactRank(b);
@@ -81,9 +86,14 @@ export function getAlerts(posts: Post[], limit = 3): Post[] {
     .slice(0, limit);
 }
 
-export function getPatchNow(posts: Post[], limit = 5): Post[] {
+export function getPatchNow(posts: Post[], limit = 5, now = new Date()): Post[] {
   return posts
-    .filter((post) => post.data.action === 'patch-now' && post.data.status !== 'superseded')
+    .filter(
+      (post) =>
+        post.data.action === 'patch-now' &&
+        post.data.status !== 'superseded' &&
+        isRecent(post, PATCH_MAX_AGE_DAYS, now),
+    )
     .sort(sortByDateDesc)
     .slice(0, limit);
 }
