@@ -4,7 +4,7 @@ date: 2026-10-21
 updated: 2026-10-25
 format: guide
 summary: "A six-month path from Linux and networking to a platform you can operate. Ordered by dependency, not by hype."
-tags: [platform-engineering, career, kubernetes, devops, learning-path]
+tags: [platform-engineering, kubernetes, learning-path]
 status: current
 updates:
   - { date: 2026-10-25, note: "Added the “build one thing” milestones and a review checklist." }

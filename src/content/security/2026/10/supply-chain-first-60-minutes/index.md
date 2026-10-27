@@ -3,7 +3,7 @@ title: "The first 60 minutes of a supply-chain incident"
 date: 2026-10-24
 format: analysis
 summary: "A package compromise is a race between your rebuild and the attacker's next publish. Here is the order of operations that limits the blast radius."
-tags: [supply-chain, incident-response, ci-cd, npm]
+tags: [supply-chain, incident-response, ci-cd]
 featured: true
 status: current
 action: review

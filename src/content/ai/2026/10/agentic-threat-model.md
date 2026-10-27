@@ -3,7 +3,7 @@ title: "Agentic AI changes the threat model, not just the prompt"
 date: 2026-10-20
 format: analysis
 summary: "Once a model can call tools, the interesting asset is no longer the prompt. It is the identity, the data in context, and the actions you forgot to scope."
-tags: [ai-agents, llm-security, threat-model, architecture]
+tags: [ai-agents, llm-security, threat-model]
 status: current
 briefing:
   changed: "Agent frameworks moved from chat to execution. A model can now read private data, call internal APIs, and write to systems outside the conversation."

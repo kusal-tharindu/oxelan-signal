@@ -1,0 +1,35 @@
+OXELAN SIGNAL — NOTICE
+
+Copyright (c) 2026 Kusal Tharindu (Oxelan). All rights reserved.
+See LICENSE, LICENSE-CONTENT and PRIVACY.md.
+
+TRADEMARKS AND THIRD-PARTY NAMES
+Company, product, project and service names mentioned on this site or in this
+repository — including but not limited to Microsoft, Google, NGINX, F5,
+Cloudflare, GitHub, Astro, Node.js, Kubernetes and npm — are trademarks or
+registered trademarks of their respective owners.
+
+They are used nominatively, solely to identify a product, event, standard,
+advisory or organisation for educational and journalistic purposes. Their use
+does not imply affiliation, sponsorship, endorsement, partnership or approval by
+the trademark owner. No ownership of these marks is claimed.
+
+EDITORIAL PURPOSE AND NO DEFAMATION
+The publication reports on security advisories, incidents, products and industry
+events. Nothing here is intended to defame, disparage, accuse or imply unlawful
+conduct by any company or individual. Claims are based on published sources and
+are corrected when they are wrong. See the Corrections section at
+https://blog.oxelan.com/about/#corrections.
+
+SECURITY CONTENT IS EDUCATIONAL
+Security and AI content is provided for education and professional awareness. It
+is not legal, security, financial or professional advice, and it is not a
+substitute for a vendor advisory, a threat model or an incident-response plan.
+Verify versions, fixes and affected configurations with the vendor before acting.
+
+THIRD-PARTY SOFTWARE
+Dependencies, fonts, libraries and quoted material remain under their own
+licences. This repository's proprietary licence does not alter those terms.
+
+This notice is not legal advice. For permissions or corrections, contact
+hello@oxelan.com.

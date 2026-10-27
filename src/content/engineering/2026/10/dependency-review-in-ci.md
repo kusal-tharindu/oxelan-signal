@@ -5,7 +5,7 @@ updated: 2026-10-27
 format: guide
 summary: "A practical pipeline for catching malicious dependencies before they run: pin with a lockfile, block install scripts, verify provenance where it exists, and diff dependencies on every pull request."
 description: "A CI pipeline that catches malicious dependencies before they run: lockfiles, blocked install scripts, provenance and PR diffs."
-tags: [supply-chain, ci-cd, npm, devops, security]
+tags: [supply-chain, ci-cd, npm]
 status: current
 action: review
 sources:

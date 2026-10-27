@@ -3,7 +3,7 @@ title: "Next.js middleware bypass: patch 15.2.3 now"
 date: 2025-03-24
 format: news
 summary: "CVE-2025-29927 lets a crafted request skip Next.js middleware, including auth checks implemented there. Fixed versions are available."
-tags: [nextjs, cve, middleware, authentication]
+tags: [nextjs, cve, authentication]
 impact: critical
 action: review
 affects: ["next >= 11.1.4 < 12.3.5", "next >= 13.0.0 < 13.5.9", "next >= 14.0.0 < 14.2.25", "next >= 15.0.0 < 15.2.3"]

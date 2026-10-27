@@ -119,25 +119,88 @@ const coverage = [
 
         <h2 id="corrections">Corrections</h2>
         <p>
-          Send corrections to <a href={`mailto:${site.author.email}`}>{site.author.email}</a> with
-          the post URL and the passage that is wrong. Factual corrections are applied to the post
-          and, when material, recorded in its story timeline. A post that is no longer safe to
-          follow is marked <strong>superseded</strong> and linked to the replacement.
+          Send corrections to <a href={`mailto:${site.author.email}`}>{site.author.email}</a>, or
+          open a
+          <a href={`${site.socials.github}/oxelan-signal/issues/new?template=correction.yml`}>
+            correction issue
+          </a>
+          with the post URL and the passage that is wrong. Include a primary source if you have one.
+          Factual corrections are applied to the post and, when material, recorded in its story
+          timeline. A post that is no longer safe to follow is marked <strong>superseded</strong>
+          and linked to the replacement.
         </p>
 
-        <h2 id="privacy">Privacy and independence</h2>
+        <h2 id="licensing">Licensing and permitted use</h2>
         <p>
-          The site is static, has no accounts, and sets no advertising cookies. Analytics, when
-          enabled, is cookieless and aggregate. There is no sponsored content and no affiliate
-          links. If that changes, it will be stated on the post, not buried in a footer.
+          Copyright © 2026 Kusal Tharindu / Oxelan. <strong>All rights reserved.</strong> The source
+          code, site design, structure and editorial content are proprietary. Public visibility of
+          this repository is for transparency and review; it is not an open-source licence.
+        </p>
+        <p>
+          No permission is granted to copy, modify, redistribute, sublicense, sell, scrape in bulk,
+          or use the code, design or content to train models, except:
+        </p>
+        <ul>
+          <li>viewing the public site and repository;</li>
+          <li>
+            short quotations of published articles with clear attribution and a link, for
+            commentary, criticism, review or news reporting;
+          </li>
+          <li>rights GitHub, Inc. requires for public repositories under its Terms of Service.</li>
+        </ul>
+        <p>
+          Third-party dependencies remain under their own licences. For permission beyond the above,
+          email <a href={`mailto:${site.author.email}`}>{site.author.email}</a>. The full terms are
+          in <a href={`${site.socials.github}/oxelan-signal/blob/main/LICENSE`}>LICENSE</a> and
+          <a href={`${site.socials.github}/oxelan-signal/blob/main/LICENSE-CONTENT`}>
+            LICENSE-CONTENT
+          </a>
+          .
+        </p>
+
+        <h2 id="privacy">Privacy</h2>
+        <p>
+          The site is static. It has no accounts, no login, no advertising cookies and no analytics
+          by default. There is no tracking pixel, no newsletter tracker and no affiliate link.
+        </p>
+        <p>
+          The hosting and delivery providers (GitHub Pages and, when proxied, Cloudflare) may
+          process request metadata such as IP address, user agent and timestamps for delivery,
+          security and abuse prevention. If you email, your address and message are used only to
+          respond. GitHub issues are public by design. RSS readers fetch feeds directly; the site
+          does not track them. Data is not sold.
+        </p>
+        <p>
+          If analytics is enabled in the future, it will be cookieless, aggregate and disclosed
+          here. The repository's default configuration blocks third-party analytics scripts unless
+          the feature flag and token are set.
         </p>
 
         <h2 id="disclaimer">Disclaimer</h2>
         <p>
-          Oxelan Signal is not a substitute for a security incident response plan, legal advice, or
-          your own threat model. Severity and impact labels describe the editor’s assessment at the
-          time of writing. Verify versions and advisories against the vendor before acting. Nothing
-          here is a warranty that a system is secure.
+          Oxelan Signal is an educational and journalistic publication. It is not legal, security,
+          financial or professional advice, and it is not a substitute for a security incident
+          response plan, a legal review, or your own threat model. Severity and impact labels
+          describe the editor’s assessment at the time of writing.
+        </p>
+        <p>
+          Verify versions, advisories and fixes against the vendor before acting. The site is
+          provided “as is”, without warranties of any kind. Nothing here is a warranty that a system
+          is secure or that a fix is complete.
+        </p>
+
+        <h2 id="trademarks">Names, trademarks and educational use</h2>
+        <p>
+          Company, product and project names — including Microsoft, Google, NGINX, F5, Cloudflare,
+          GitHub and others — are trademarks or registered trademarks of their respective owners.
+          They are used nominatively, to identify a product, event, standard or advisory for
+          educational and journalistic purposes.
+        </p>
+        <p>
+          Their use does not imply affiliation, sponsorship, endorsement or partnership. Nothing on
+          this site is intended to defame, disparage or accuse any company or individual of unlawful
+          activity. Claims are based on published sources and are corrected when they are wrong.
+          Trade names are the property of their owners; no ownership is claimed here.
         </p>
 
         <h2 id="contact">Contact</h2>
@@ -182,12 +245,12 @@ const coverage = [
               <dd class="text-muted-strong">2026</dd>
             </div>
             <div class="flex justify-between gap-2">
-              <dt class="text-muted">Content license</dt>
-              <dd class="text-muted-strong">CC BY 4.0</dd>
+              <dt class="text-muted">Content</dt>
+              <dd class="text-muted-strong">All rights reserved</dd>
             </div>
             <div class="flex justify-between gap-2">
-              <dt class="text-muted">Code license</dt>
-              <dd class="text-muted-strong">MIT</dd>
+              <dt class="text-muted">Code</dt>
+              <dd class="text-muted-strong">Proprietary</dd>
             </div>
             <div class="flex justify-between gap-2">
               <dt class="text-muted">Last updated</dt>
@@ -199,9 +262,14 @@ const coverage = [
         </div>
 
         <div class="sidebar-panel">
-          <p class="eyebrow">Built in the open</p>
+          <p class="eyebrow">Source available</p>
           <p class="mt-2 text-xs leading-relaxed text-muted">
-            Astro, Markdown, and GitHub Actions. The source is public and the build is reproducible.
+            Astro, Markdown and GitHub Actions. The source is published for transparency and review.
+            Public visibility is not a licence to reuse it; see
+            <a href="/about/#licensing" class="text-brand hover:underline">
+              Licensing
+            </a>
+            .
           </p>
           <a
             href={`${site.socials.github}/oxelan-signal`}

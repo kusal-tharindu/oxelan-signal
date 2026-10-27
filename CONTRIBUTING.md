@@ -1,35 +1,42 @@
 # Contributing
 
-This is primarily a personal publication, but corrections and reproducible bug reports are
-welcome.
+Oxelan Signal is a proprietary publication. **Code and content contributions are
+not accepted**, and unsolicited pull requests may be closed without review.
 
-## Before opening a pull request
+What is welcome:
 
-```bash
-npm ci
-npm run format:check
-npm run ci
-```
+- **Factual corrections** to a published article.
+- **Reproducible bug reports** about the site (broken link, layout, feed, search).
+- **Security reports**, sent privately as described in [SECURITY.md](./SECURITY.md).
 
-`npm run ci` runs type checking, unit tests, content validation, image policy, the production
-build, internal link checking and artifact verification. Pull requests run the same command.
+## Report a correction
 
-## Content changes
+Use the [correction issue form](https://github.com/kusal-tharindu/oxelan-signal/issues/new?template=correction.yml)
+or email **hello@oxelan.com** with:
 
-- Read `docs/content-guide.md` in the documentation repository.
-- The folder decides the section. Do not add a `section` field.
-- News needs a source. Claims that can be checked should link to primary material.
-- Images are local, under 200 KB, and need alt text.
-- Corrections get an `updated` date and a line in `updates`.
-- A superseded post points at its replacement.
+- the article URL and the exact passage;
+- what is wrong;
+- a primary source that supports the correction (if available);
+- the suggested wording.
 
-## Code changes
+Do not include confidential information, personal data or exploit details in a
+public issue. Corrections are applied to the post and, when material, recorded in
+its `updates` timeline. See `LICENSE-CONTENT` for quotation rules.
 
-- Keep the build deterministic. No network calls at build time except optional assets.
-- Pin dependencies and GitHub Actions.
-- Prefer small, dependency-free enhancements.
-- Add a unit test for a pure helper, and run the full build for a template change.
+## Report a bug
+
+Open an issue with the page URL, the browser/device, what you expected and what
+happened. For build-related reports, include the command and the smallest
+reproduction. Do not open a public issue for a security vulnerability.
 
 ## Security
 
-See [SECURITY.md](./SECURITY.md).
+Email **hello@oxelan.com**; see [SECURITY.md](./SECURITY.md). Do not test against
+production in a way that could disrupt service or expose data.
+
+## Licensing
+
+By sending a correction or report you confirm that you are not granting, and do
+not expect, any licence to your contribution beyond the ability to use it to fix
+the issue. The repository remains proprietary; see [LICENSE](./LICENSE) and
+[LICENSE-CONTENT](./LICENSE-CONTENT).

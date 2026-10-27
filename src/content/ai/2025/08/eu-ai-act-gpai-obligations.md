@@ -4,7 +4,7 @@ date: 2025-08-02
 format: news
 summary: "General-purpose AI obligations began applying in August 2025. If you buy or deploy a model, the documentation you can obtain is now part of your risk assessment."
 description: "EU AI Act GPAI obligations apply since August 2025. Model documentation is now part of your risk assessment."
-tags: [ai-governance, eu-ai-act, compliance, procurement]
+tags: [ai-governance, eu-ai-act]
 impact: medium
 action: review
 status: current

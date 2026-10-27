@@ -4,7 +4,7 @@ date: 2026-10-22
 updated: 2026-10-26
 format: guide
 summary: "A gateway centralizes model access, but it also centralizes credentials, data and failure. Use this checklist before it becomes the single point of compromise."
-tags: [llm-security, gateway, kubernetes, production]
+tags: [llm-security, gateway, kubernetes]
 status: current
 action: review
 updates:

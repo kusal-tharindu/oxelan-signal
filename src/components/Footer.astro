@@ -108,9 +108,20 @@ const currentYear = new Date().getUTCFullYear();
     </div>
 
     <div class="footer-base">
-      <p>
-        © {currentYear} Oxelan · Content CC BY 4.0 · Code MIT ·
-        <a href="/about/#disclaimer">Disclaimer</a>
+      <p class="flex flex-wrap items-center gap-x-2 gap-y-1">
+        <span>© {currentYear} Oxelan · All rights reserved</span>
+        <span aria-hidden="true">·</span>
+        <a href="/about/#licensing" class="hover:text-brand">
+          License
+        </a>
+        <span aria-hidden="true">·</span>
+        <a href="/about/#privacy" class="hover:text-brand">
+          Privacy
+        </a>
+        <span aria-hidden="true">·</span>
+        <a href="/about/#disclaimer" class="hover:text-brand">
+          Disclaimer
+        </a>
       </p>
       <p class="flex flex-wrap items-center gap-x-4 gap-y-1">
         <a href={site.socials.oxelan} class="inline-flex items-center gap-1" rel="noopener">

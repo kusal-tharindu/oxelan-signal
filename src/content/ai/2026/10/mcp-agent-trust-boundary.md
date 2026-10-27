@@ -4,7 +4,7 @@ date: 2026-10-27
 format: analysis
 summary: "Agents now call agents over MCP. Each hop forwards instructions the origin never saw, and tool registries keyed by name are a spoofing surface. The boundary has to move from the model to the protocol."
 description: "Agents now call agents over MCP, making prompt injection transitive. Move the trust boundary from the model to the protocol."
-tags: [ai-agents, mcp, llm-security, prompt-injection, architecture]
+tags: [ai-agents, mcp, llm-security, prompt-injection]
 status: current
 briefing:
   changed: "Over the past five months, Google and four other organizations acknowledged vulnerabilities in how agents pass instructions to each other over MCP. This month's advisories make the same point from the implementation side: a malicious remote MCP server hijacking tool execution through a name collision (CVE-2026-30856), and untrusted prompt input reaching a file parser and the OS shell (CVE-2026-0755)."

@@ -4,7 +4,7 @@ date: 2026-10-27
 format: news
 summary: "NGINX 1.30.6 and 1.31.7 close three 9.2 memory bugs, a TLS client-certificate bypass and an HTTP/3 injection path. None is known exploited, and each needs a specific configuration to reach."
 description: "NGINX 1.30.6 and 1.31.7 fix three 9.2 memory bugs, a TLS bypass and an HTTP/3 injection path. Each needs a specific config."
-tags: [nginx, ingress-nginx, kubernetes, cve, web-security]
+tags: [nginx, ingress-nginx, kubernetes, cve]
 impact: high
 action: review
 status: current

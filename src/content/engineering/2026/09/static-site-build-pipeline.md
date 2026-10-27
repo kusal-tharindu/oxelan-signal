@@ -4,7 +4,7 @@ date: 2026-09-18
 updated: 2026-10-27
 format: guide
 summary: "Static output hides the complexity in the build. The sites that age well treat the pipeline as a product: pinned, cached, observable and reproducible."
-tags: [astro, github-actions, performance, build]
+tags: [astro, github-actions]
 status: current
 sources:
   - { title: "Astro: content collections", url: "https://docs.astro.build/en/guides/content-collections/" }

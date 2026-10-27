@@ -3,14 +3,14 @@
 Production-focused news and analysis for people who ship AI and secure it. Every post answers
 three questions: **what changed, why it matters in production, and what to do next.**
 
-|                 |                                                                           |
-| --------------- | ------------------------------------------------------------------------- |
-| Site            | [blog.oxelan.com](https://blog.oxelan.com) (configured, not yet deployed) |
-| Stack           | Astro 7, Markdown content collections, Tailwind CSS 4, Pagefind           |
-| Hosting         | GitHub Pages, built by GitHub Actions                                     |
-| Content         | Git, validated with Zod + editorial checks                                |
-| Code licence    | MIT                                                                       |
-| Content licence | CC BY 4.0                                                                 |
+|                 |                                                                       |
+| --------------- | --------------------------------------------------------------------- |
+| Site            | [blog.oxelan.com](https://blog.oxelan.com) (deployed on GitHub Pages) |
+| Stack           | Astro 7, Markdown content collections, Tailwind CSS 4, Pagefind       |
+| Hosting         | GitHub Pages, built by GitHub Actions                                 |
+| Content         | Git, validated with Zod + editorial checks                            |
+| Code licence    | Proprietary — all rights reserved                                     |
+| Content licence | All rights reserved                                                   |
 
 ## Quick start
 
@@ -77,11 +77,23 @@ Start with `README.md`, then `implementation.md`, `architecture.md`, `content-gu
 
 ## Deployment
 
-The repository is ready for GitHub Pages. The first deploy requires repository, DNS and Pages
-settings that cannot be performed from this workspace; see `operations.md` in the documentation
-folder. `public/CNAME` already contains `blog.oxelan.com`.
+The site is live at <https://blog.oxelan.com/>. `main` deploys through GitHub Pages on push; a
+daily rebuild runs at 04:17 UTC. See `operations.md` in the documentation folder.
 
-## Licence
+## Licence and reuse
 
-Code is MIT (`LICENSE`). Editorial content is CC BY 4.0 (`LICENSE-CONTENT`). The Oxelan name and
-marks are not covered by either licence.
+This is a **proprietary, all-rights-reserved** repository. It is public for transparency and
+review; public visibility is **not** an open-source licence.
+
+- Code, design and structure: [LICENSE](./LICENSE).
+- Editorial content: [LICENSE-CONTENT](./LICENSE-CONTENT).
+- Third-party names and editorial notice: [NOTICE](./NOTICE).
+- Privacy: [PRIVACY.md](./PRIVACY.md).
+- Corrections and reports: [CONTRIBUTING.md](./CONTRIBUTING.md).
+- Security reports: [SECURITY.md](./SECURITY.md).
+
+Short quotations of published articles with attribution and a link are permitted for commentary,
+criticism, review or news reporting. Republishing, scraping, commercial reuse and model training
+are not permitted without written permission. The Oxelan name and marks are not licensed.
+
+For permission or corrections: **hello@oxelan.com**.

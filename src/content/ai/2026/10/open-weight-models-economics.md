@@ -3,7 +3,7 @@ title: "Open-weight models: the bill arrives after the benchmark"
 date: 2026-10-23
 format: analysis
 summary: "Open weights remove a license fee, not the operating cost. The decision hinges on utilization, latency, privacy and the team you can staff."
-tags: [open-weights, inference, cost, llmops]
+tags: [open-weights, inference]
 status: current
 briefing:
   changed: "Open-weight models are good enough for a growing set of production tasks, and the tooling to serve them is mature enough to run without a research team."

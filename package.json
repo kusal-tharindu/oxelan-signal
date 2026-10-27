@@ -2,6 +2,7 @@
   "name": "oxelan-signal",
   "version": "1.0.0",
   "private": true,
+  "license": "UNLICENSED",
   "description": "Oxelan Signal \u2014 what changed in AI and security, why it matters, and what to do.",
   "type": "module",
   "engines": {
