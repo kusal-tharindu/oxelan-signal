@@ -142,77 +142,6 @@ const method = [
     </div>
   </section>
 
-  <!-- =================================================================== Method -->
-  <section class="method reveal" aria-labelledby="method-title">
-    <div class="container-wide">
-      <div class="block-head">
-        <p class="kicker">How every story works</p>
-        <h2 id="method-title" class="h-section">
-          Three questions. <em class="accent">Every time.</em>
-        </h2>
-      </div>
-      <ol class="method-list">
-        {method.map((step) => (
-          <li class="method-step">
-            <span class="method-num" aria-hidden="true">
-              {step.num}
-            </span>
-            <h3 class="method-title">{step.title}</h3>
-            <p class="method-body">{step.body}</p>
-          </li>
-        ))}
-      </ol>
-    </div>
-  </section>
-
-  <!-- ==================================================================== Desks -->
-  <section class="desks reveal" aria-labelledby="desks-title">
-    <div class="container-wide">
-      <div class="block-head block-head-split">
-        <div>
-          <p class="kicker">The desks</p>
-          <h2 id="desks-title" class="h-section">
-            Three beats. <em class="accent">One standard.</em>
-          </h2>
-        </div>
-        <a href="/tags/" class="link-arrow">
-          Browse every topic <Icon name="arrowRight" size={15} />
-        </a>
-      </div>
-
-      <div class="desk-row">
-        {desks.map((desk) => (
-          <article class="desk" style={`--section-color: var(${desk.section.cssVar})`}>
-            <div class="desk-top">
-              <span class="desk-icon" aria-hidden="true">
-                <Icon name={desk.icon} size={20} />
-              </span>
-              <span class="desk-count">
-                {desk.count} {desk.count === 1 ? 'story' : 'stories'}
-              </span>
-            </div>
-            <h3 class="desk-name">
-              <a href={desk.section.path} class="desk-link">
-                <span class="absolute inset-0" aria-hidden="true"></span>
-                {desk.section.label}
-              </a>
-            </h3>
-            <p class="desk-blurb">{desk.blurb}</p>
-            {desk.top && (
-              <p class="desk-latest">
-                <span class="desk-latest-label">Latest</span>
-                <span class="desk-latest-title">{desk.top.data.title}</span>
-              </p>
-            )}
-            <span class="desk-cta" aria-hidden="true">
-              Open the desk <Icon name="arrowRight" size={14} />
-            </span>
-          </article>
-        ))}
-      </div>
-    </div>
-  </section>
-
   <!-- =================================================================== Latest -->
   <section class="latest" aria-labelledby="latest-title">
     <div class="container-wide">
@@ -296,6 +225,77 @@ const method = [
       </div>
     </section>
   )}
+
+  <!-- =================================================================== Method -->
+  <section class="method reveal" aria-labelledby="method-title">
+    <div class="container-wide">
+      <div class="block-head">
+        <p class="kicker">How every story works</p>
+        <h2 id="method-title" class="h-section">
+          Three questions. <em class="accent">Every time.</em>
+        </h2>
+      </div>
+      <ol class="method-list">
+        {method.map((step) => (
+          <li class="method-step">
+            <span class="method-num" aria-hidden="true">
+              {step.num}
+            </span>
+            <h3 class="method-title">{step.title}</h3>
+            <p class="method-body">{step.body}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <!-- ==================================================================== Desks -->
+  <section class="desks reveal" aria-labelledby="desks-title">
+    <div class="container-wide">
+      <div class="block-head block-head-split">
+        <div>
+          <p class="kicker">The desks</p>
+          <h2 id="desks-title" class="h-section">
+            Three beats. <em class="accent">One standard.</em>
+          </h2>
+        </div>
+        <a href="/tags/" class="link-arrow">
+          Browse every topic <Icon name="arrowRight" size={15} />
+        </a>
+      </div>
+
+      <div class="desk-row">
+        {desks.map((desk) => (
+          <article class="desk" style={`--section-color: var(${desk.section.cssVar})`}>
+            <div class="desk-top">
+              <span class="desk-icon" aria-hidden="true">
+                <Icon name={desk.icon} size={20} />
+              </span>
+              <span class="desk-count">
+                {desk.count} {desk.count === 1 ? 'story' : 'stories'}
+              </span>
+            </div>
+            <h3 class="desk-name">
+              <a href={desk.section.path} class="desk-link">
+                <span class="absolute inset-0" aria-hidden="true"></span>
+                {desk.section.label}
+              </a>
+            </h3>
+            <p class="desk-blurb">{desk.blurb}</p>
+            {desk.top && (
+              <p class="desk-latest">
+                <span class="desk-latest-label">Latest</span>
+                <span class="desk-latest-title">{desk.top.data.title}</span>
+              </p>
+            )}
+            <span class="desk-cta" aria-hidden="true">
+              Open the desk <Icon name="arrowRight" size={14} />
+            </span>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
 
   <!-- ================================================================= Sign off -->
   <section class="signoff reveal" aria-labelledby="signoff-title">
