@@ -1,6 +1,6 @@
 ---
 title: "PHP2Shell: two 9.2 RCE flaws, exploit attempts before disclosure"
-date: 2026-10-27
+date: 2026-10-27T15:30:00Z
 format: news
 summary: "CISA urges immediate patching of CVE-2026-109618 and CVE-2026-109619, two critical unauthenticated RCE bugs in PHP. Amazon saw an exploitation attempt four days before disclosure; both are now in CISA's KEV catalog."
 description: "PHP2Shell (CVE-2026-109618/109619) is unauthenticated RCE in PHP. Patch to 8.5.12, 8.4.27, 8.3.36 or 8.2.35 now; already exploited."

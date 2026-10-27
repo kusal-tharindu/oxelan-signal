@@ -8,6 +8,9 @@ import { latestContentDate } from '../lib/freshness';
 const posts = await getAllPosts();
 const alerts = getAlerts(posts, Number.MAX_SAFE_INTEGER);
 const patches = getPatchNow(posts, Number.MAX_SAFE_INTEGER);
+// A critical/high post can be both an alert and patch-now. Show it once, above.
+const alertIds = new Set(alerts.map((post) => post.id));
+const additionalPatches = patches.filter((post) => !alertIds.has(post.id));
 const latest = latestContentDate(posts);
 ---
 
@@ -68,11 +71,25 @@ const latest = latestContentDate(posts);
             </h2>
             <span class="text-[0.75rem] text-muted">Action required · last 90 days</span>
           </div>
-          {patches.length > 0 ? (
+          {additionalPatches.length > 0 ? (
             <div class="divide-y divide-line">
-              {patches.map((post) => (
+              {additionalPatches.map((post) => (
                 <PostCard post={post} showTags />
               ))}
+            </div>
+          ) : patches.length > 0 ? (
+            <div class="empty-state">
+              <p class="font-display text-2xl text-fg">
+                {patches.length === 1 ? 'One patch-now item is' : 'All patch-now items are'} listed
+                under Needs attention above.
+              </p>
+              <p class="mt-1 text-sm">
+                Critical and high items are not repeated here. The action is still{' '}
+                <code class="rounded border border-line bg-surface-2 px-1 py-0.5 font-mono text-[0.75rem]">
+                  patch-now
+                </code>
+                .
+              </p>
             </div>
           ) : (
             <div class="empty-state">
@@ -112,7 +129,11 @@ const latest = latestContentDate(posts);
               </code>{' '}
               within 90 days. Updating a post resets its window.
             </p>
-            <p>The daily rebuild ages items out automatically. Nothing here needs a manual edit.</p>
+            <p>
+              Critical/high items that also need patching appear under Needs attention and are not
+              repeated below. The daily rebuild ages items out automatically; nothing here needs a
+              manual edit.
+            </p>
           </div>
         </section>
         <section class="sidebar-panel">

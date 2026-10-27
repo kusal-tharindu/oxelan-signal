@@ -279,14 +279,23 @@ test.describe('advisories', () => {
     await expect(page.getByRole('heading', { level: 2, name: 'Patch now' })).toBeVisible();
     await expect(page.locator('body')).toContainText('Critical and high');
 
-    // "Patch now" either lists posts or shows its empty state; both are valid content.
+    // Critical/high patch-now items appear once, under Needs attention.
     const patch = page.locator('section[aria-labelledby="patch-title"]');
     const patchPosts = await patch.locator('[data-post-card]').count();
-    if (patchPosts === 0) {
+    const headerText = (await page.locator('header.section-header').innerText()) ?? '';
+    const patchTotal = Number(headerText.match(/(\d+)\s+patch-now/)?.[1] ?? 0);
+    if (patchTotal === 0) {
       await expect(patch).toContainText('Nothing needs an emergency patch');
+    } else if (patchPosts === 0) {
+      await expect(patch).toContainText('listed under Needs attention above');
     } else {
       await expect(patch).not.toContainText('Nothing needs an emergency patch');
     }
+
+    const titles = (await page.locator('[data-post-card] .post-card-title').allTextContents()).map(
+      (title) => title.trim(),
+    );
+    expect(new Set(titles).size, 'advisories page repeats a card').toBe(titles.length);
   });
 
   test('the home page shows a freshness summary', async ({ page }) => {
