@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 
 /**
  * T5 — client-side interaction tests against the production build.
@@ -152,15 +152,30 @@ test.describe('post cards', () => {
   });
 });
 
+/** Total published posts, read from the home freshness line ("14 posts"). */
+async function totalPosts(page: Page): Promise<number> {
+  const text = (await page.locator('.hero-live').textContent()) ?? '';
+  const match = text.match(/(\d+)\s+posts/);
+  expect(match, `no post count in the freshness line: "${text}"`).not.toBeNull();
+  return Number(match![1]);
+}
+
 test.describe('home pagination', () => {
   test('shows ten posts and pages to the rest', async ({ page }) => {
     await page.goto('/');
-    await expect(page.locator('[data-post-card]')).toHaveCount(10);
+    // Counts are derived from the site itself so publishing a post never breaks the test.
+    const total = await totalPosts(page);
+    const feedSize = 10;
+    // The lead story sits in the hero; the feed starts with the next post.
+    const remaining = total - 1 - feedSize;
+    test.skip(remaining <= 0, 'not enough posts for a second page yet');
+
+    await expect(page.locator('[data-post-card]')).toHaveCount(feedSize);
     const older = page.getByRole('link', { name: /Older/ });
     await expect(older).toBeVisible();
     await older.click();
     await expect(page).toHaveURL(/\/page\/2\/$/);
-    await expect(page.locator('[data-post-card]')).toHaveCount(2);
+    await expect(page.locator('[data-post-card]')).toHaveCount(Math.min(remaining, feedSize));
 
     const newer = page.getByRole('link', { name: /Newer/ });
     await expect(newer).toBeVisible();
@@ -255,7 +270,7 @@ test.describe('advisories', () => {
     const strip = page.locator('.alert-strip');
     await expect(strip).toBeVisible();
     await expect(strip).toContainText('Advisories');
-    await expect(strip).toContainText('2');
+    await expect(strip).toContainText(/\d+/);
 
     await strip.locator('a[href="/advisories/"]').first().click();
     await expect(page).toHaveURL(/\/advisories\/$/);
@@ -263,15 +278,31 @@ test.describe('advisories', () => {
     await expect(page.getByRole('heading', { level: 2, name: 'Needs attention' })).toBeVisible();
     await expect(page.getByRole('heading', { level: 2, name: 'Patch now' })).toBeVisible();
     await expect(page.locator('body')).toContainText('Critical and high');
-    await expect(page.locator('body')).toContainText('Nothing needs an emergency patch');
+
+    // "Patch now" either lists posts or shows its empty state; both are valid content.
+    const patch = page.locator('section[aria-labelledby="patch-title"]');
+    const patchPosts = await patch.locator('[data-post-card]').count();
+    if (patchPosts === 0) {
+      await expect(patch).toContainText('Nothing needs an emergency patch');
+    } else {
+      await expect(patch).not.toContainText('Nothing needs an emergency patch');
+    }
   });
 
   test('the home page shows a freshness summary', async ({ page }) => {
     await page.goto('/');
-    const summary = page.locator('body');
-    await expect(summary).toContainText('Updated');
-    await expect(summary).toContainText('13 posts');
-    await expect(summary).toContainText('2 advisories');
+    const line = page.locator('.hero-live');
+    await expect(line).toContainText('Updated');
+    await expect(line).toContainText(/\d+\s+posts/);
+    await expect(line).toContainText(/\d+\s+advisor(y|ies)/);
+
+    // The advisory count in the summary must agree with the alert strip badge.
+    const text = (await line.textContent()) ?? '';
+    const summaryCount = Number(text.match(/(\d+)\s+advisor/)?.[1]);
+    const stripText =
+      (await page.locator('.alert-strip a[href="/advisories/"]').first().textContent()) ?? '';
+    const stripCount = Number(stripText.match(/(\d+)/)?.[1]);
+    expect(summaryCount).toBe(stripCount);
   });
 });
 

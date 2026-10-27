@@ -1,9 +1,12 @@
 name: Pull request checks
 
+# Pushing to stg runs nothing. Pipelines run for main only:
+#   - deploy.yml on every push to main (full `npm run ci` gate, then deploy)
+#   - this workflow on pull requests into main, or manually from the Actions tab
 on:
   pull_request:
-  push:
-    branches: [stg]
+    branches: [main]
+  workflow_dispatch:
 
 permissions:
   contents: read
