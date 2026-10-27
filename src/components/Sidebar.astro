@@ -1,6 +1,13 @@
 ---
 import type { Post } from '../lib/posts';
-import { formatDate, hrefOf, isRecent, PATCH_MAX_AGE_DAYS, trendingTags } from '../lib/posts';
+import {
+  formatDate,
+  hrefOf,
+  isRecent,
+  PATCH_MAX_AGE_DAYS,
+  sortByDateDesc,
+  trendingTags,
+} from '../lib/posts';
 import Icon from './Icon.astro';
 import ImpactBadge from './ImpactBadge.astro';
 import { site } from '../site.config';
@@ -21,7 +28,7 @@ const patchNow = posts
       post.data.status !== 'superseded' &&
       isRecent(post, PATCH_MAX_AGE_DAYS),
   )
-  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+  .sort(sortByDateDesc)
   .slice(0, compact ? 3 : 5);
 const tags = trendingTags(posts, compact ? 5 : 8);
 ---

@@ -12,6 +12,7 @@ import {
   truncate,
 } from './format';
 import { ALERT_MAX_AGE_DAYS, isRecent, PATCH_MAX_AGE_DAYS } from './recency';
+import { comparePosts, compareUpdatedPosts } from './sort';
 import { impactOrder, sectionOrder, type ImpactKey, type SectionKey } from '../site.config';
 
 export type Post = CollectionEntry<'posts'>;
@@ -45,13 +46,11 @@ export async function getRegularPosts(): Promise<Post[]> {
 }
 
 export function sortByDateDesc(a: Post, b: Post): number {
-  return b.data.date.getTime() - a.data.date.getTime();
+  return comparePosts(a, b);
 }
 
 export function sortByUpdateDesc(a: Post, b: Post): number {
-  const aDate = a.data.updated ?? a.data.date;
-  const bDate = b.data.updated ?? b.data.date;
-  return bDate.getTime() - aDate.getTime();
+  return compareUpdatedPosts(a, b);
 }
 
 export function sectionOf(post: Post): SectionKey {
@@ -144,10 +143,7 @@ export function relatedPosts(post: Post, posts: Post[], limit = 3): Post[] {
       return { candidate, score };
     })
     .filter(({ score }) => score > 0)
-    .sort(
-      (a, b) =>
-        b.score - a.score || b.candidate.data.date.getTime() - a.candidate.data.date.getTime(),
-    )
+    .sort((a, b) => b.score - a.score || comparePosts(a.candidate, b.candidate))
     .slice(0, limit)
     .map(({ candidate }) => candidate);
 }
