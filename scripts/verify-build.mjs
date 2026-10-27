@@ -70,7 +70,6 @@ for (const file of htmlFiles) {
 
 const sitemap = await read('sitemap.xml');
 const rss = await read('rss.xml');
-const searchIndex = JSON.parse(await read('search-index.json'));
 
 for (const post of published) {
   const url = `/${post.id}/`;
@@ -78,7 +77,12 @@ for (const post of published) {
   if (!(await fileExists(page))) errors.push(`published post missing from output: ${url}`);
   if (!sitemap.includes(url)) errors.push(`sitemap missing ${url}`);
   if (!rss.includes(url)) errors.push(`RSS missing ${url}`);
-  if (!searchIndex.some((entry) => entry.url === url)) errors.push(`search index missing ${url}`);
+  // Production search is Pagefind; the post must carry the body marker Pagefind indexes.
+  // (/search-index.json is a dev-only fallback and is empty in production — BLOG-L10.)
+  const pageHtml = await readFile(page, 'utf8');
+  if (!pageHtml.includes('data-pagefind-body')) {
+    errors.push(`search index missing ${url} (no data-pagefind-body marker)`);
+  }
   if (!(await fileExists(path.join(DIST_DIR, 'og', `${post.id}.png`)))) {
     errors.push(`OG image missing: /og/${post.id}.png`);
   }

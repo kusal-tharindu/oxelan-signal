@@ -6,18 +6,28 @@ on:
     - cron: '0 6 * * 1'
   workflow_dispatch:
 
+# Least privilege by job. The `build` job runs `npm ci` (and therefore the install
+# scripts of every dependency) with only `contents: read` and NO persisted credentials,
+# so a compromised dependency cannot push to the repo. The separate `pr` job holds the
+# write token but runs no npm at all — it only downloads the reviewed artifact, commits
+# it, and opens the pull request. See review BLOG-M9.
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read
 
 jobs:
-  digest:
+  build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      week: ${{ steps.draft.outputs.week }}
+      created: ${{ steps.draft.outputs.created }}
     steps:
-      - name: Checkout main
+      - name: Checkout stg
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: main
+          ref: stg
+          persist-credentials: false
 
       - name: Set up Node
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
@@ -47,11 +57,38 @@ jobs:
         if: steps.draft.outputs.created == 'true'
         run: npm run ci
 
-      - name: Open pull request
+      - name: Upload the draft artifact
         if: steps.draft.outputs.created == 'true'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: digest-${{ steps.draft.outputs.week }}
+          path: src/content/digest/${{ steps.draft.outputs.week }}.md
+          retention-days: 1
+
+  pr:
+    needs: build
+    if: needs.build.outputs.created == 'true'
+    runs-on: ubuntu-latest
+    # This job holds the write token but never runs npm; it only moves the artifact.
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout stg
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: stg
+
+      - name: Download the draft artifact
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: digest-${{ needs.build.outputs.week }}
+          path: src/content/digest/
+
+      - name: Open pull request
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          WEEK: ${{ steps.draft.outputs.week }}
+          WEEK: ${{ needs.build.outputs.week }}
         run: |
           set -euo pipefail
           BRANCH="digest/${WEEK}"
@@ -66,7 +103,7 @@ jobs:
           git commit -m "content: add ${WEEK} digest draft"
           git push -u origin "$BRANCH"
           gh pr create \
-            --base main \
+            --base stg \
             --head "$BRANCH" \
             --title "content: ${WEEK} digest" \
-            --body "Automated draft for the week of ${WEEK}. Review the links, add anything worth watching, and remove \`draft: true\` before merging. The digest was validated by this workflow. If branch protection requires the pull-request check, configure a PAT so the PR can trigger it; GITHUB_TOKEN-created events do not start new workflows."
+            --body "Automated draft for the week of ${WEEK}. Review the links, add anything worth watching, and remove \`draft: true\` before merging. The digest was validated by the build job. Merges land on \`stg\`; production deploys from \`main\`."
