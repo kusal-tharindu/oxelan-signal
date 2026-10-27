@@ -578,6 +578,8 @@
   }
 
   .tag {
+    position: relative;
+    z-index: 1;
     display: inline-flex;
     align-items: center;
     min-height: 1.5rem;
@@ -760,6 +762,8 @@
     place-items: center;
     width: 2.25rem;
     height: 2.25rem;
+    /* Decorative: the card-wide stretched link underneath must receive the click. */
+    pointer-events: none;
     border: 1px solid var(--line);
     border-radius: 50%;
     color: var(--muted);
@@ -2895,6 +2899,8 @@
 
   .desk-cta {
     display: inline-flex;
+    /* Decorative: the desk card's stretched link receives the click. */
+    pointer-events: none;
     align-items: center;
     gap: 0.45rem;
     color: var(--section-color);

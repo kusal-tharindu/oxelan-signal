@@ -136,6 +136,25 @@ test.describe('theme', () => {
   });
 });
 
+test.describe('post cards', () => {
+  test('clicking the circular arrow opens the post', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.goto('/');
+    const card = page.locator('[data-post-card]').first();
+    const link = card.locator('.post-card-title a');
+    const href = await link.getAttribute('href');
+    expect(href).toBeTruthy();
+
+    const arrow = card.locator('.post-card-arrow');
+    await arrow.scrollIntoViewIfNeeded();
+    await expect(arrow).toBeVisible();
+    const box = await arrow.boundingBox();
+    if (!box) throw new Error('post-card arrow has no bounding box');
+    await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
+    await expect(page).toHaveURL(href!);
+  });
+});
+
 test.describe('home hero', () => {
   test('renders a data-driven 3D signal sphere', async ({ page }) => {
     await page.goto('/');
