@@ -1,14 +1,11 @@
 ---
 title: "A static site is a build pipeline, not a folder"
 date: 2026-09-18
-format: analysis
+updated: 2026-10-27
+format: guide
 summary: "Static output hides the complexity in the build. The sites that age well treat the pipeline as a product: pinned, cached, observable and reproducible."
 tags: [astro, github-actions, performance, build]
 status: current
-briefing:
-  changed: "Static site generators now handle content collections, image pipelines, search indexes and share images at build time. The deploy is simple because the build is not."
-  why: "A slow or flaky build becomes a publishing tax. An unpinned build becomes a supply-chain risk. A non-reproducible build makes “it worked yesterday” impossible to debug."
-  action: "Pin the toolchain, cache the right things, make the build fail on bad content, and measure build time and output size on every pull request."
 sources:
   - { title: "Astro — content collections", url: "https://docs.astro.build/en/guides/content-collections/" }
   - { title: "Astro — images", url: "https://docs.astro.build/en/guides/images/" }

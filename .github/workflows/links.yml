@@ -1,0 +1,71 @@
+name: Check external links
+
+on:
+  schedule:
+    # Weekly, off-peak. External sources rot; this keeps citations honest.
+    - cron: '41 5 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  lychee:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      # Collect every external URL from post frontmatter sources and Markdown body
+      # links so the report points at the posts that cite a dead page.
+      - name: Extract external URLs
+        id: urls
+        run: |
+          set -euo pipefail
+          node -e '
+            const fs = require("fs"), path = require("path");
+            const { execSync } = require("child_process");
+            const files = execSync("find src/content -name *.md -o -name *.mdx").toString().trim().split("\n");
+            const urls = new Set();
+            for (const file of files) {
+              const text = fs.readFileSync(file, "utf8");
+              // frontmatter sources[].url and any inline https?:// link
+              for (const m of text.matchAll(/https?:\/\/[^\s)"<>]+/g)) urls.add(m[0].replace(/[.,;]+$/, ""));
+            }
+            fs.writeFileSync("external-urls.txt", [...urls].sort().join("\n") + "\n");
+            console.log("Found " + urls.size + " unique external URLs");
+          '
+
+      - name: Run lychee
+        id: lychee
+        uses: lycheeverse/lychee-action@v2.0.2
+        with:
+          args: --no-progress --max-concurrency 8 --timeout 30 --accept 200,206,429,403 --exclude-mail external-urls.txt
+          fail: false
+          output: lychee-report.md
+
+      # 403 often means a bot block, not a dead link — do not fail the job on it.
+      # A real failure (404/DNS) opens an issue so a human can fix the citation.
+      - name: Open an issue on broken links
+        if: steps.lychee.outputs.exit_code != '0'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          TITLE="External link check found broken sources"
+          if gh issue list --state open --search "$TITLE" --json number --jq 'length' | grep -qv '^0$'; then
+            echo "An open link-check issue already exists; skipping."
+            exit 0
+          fi
+          {
+            echo "The weekly external link check (lychee) found links that no longer resolve."
+            echo
+            echo "A 403 is usually a bot block, not a dead page — verify before editing a post."
+            echo
+            echo "## Report"
+            echo
+            cat lychee-report.md
+          } | gh issue create --title "$TITLE" --body-file -

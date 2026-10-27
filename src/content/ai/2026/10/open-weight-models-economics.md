@@ -73,6 +73,34 @@ Serving a model is not a single binary. You are adopting a stack:
 
 Each row is a service you did not have before. The team that runs it needs to be on call for it.
 
+## The costs that survive a successful migration
+
+Most of the analysis above assumes the first deployment is the hard part. In practice the first
+cut is the cheapest month you will have. Three recurring costs are easy to miss because nothing
+breakes when you skip them.
+
+**Upgrades are a project, not a patch.** A new model version is not a security update you apply
+and forget. Weights change output, so every upgrade reopens the evaluation workload: run the
+frozen set, review the diffs, and decide whether the regression is acceptable. Budget a fixed
+fraction of someone's month for this, in perpetuity. A platform with no upgrade budget is a
+platform that quietly freezes on a version from two years ago.
+
+**Failover is a second deployment.** If the model is load-bearing, you need a plan for the node,
+the driver, or the weights failing. The cheap version is a warm fallback to the hosted API for the
+same task; the expensive version is a second self-hosted pool. Whichever you choose, it costs
+capacity you pay for and rarely use. Leaving the hosted path cold to save money is a bet that your
+hardware never fails at a bad time.
+
+**The exit path is a design constraint.** If every prompt, tool schema and output parser is
+entangled with one model's quirks, moving later is a rewrite. Keep the model behind a narrow
+interface: a typed task contract, a pinned prompt template, and an evaluation that runs against
+any implementation. The point is not to leave. The point is that a credible exit keeps both the
+hosted provider and your own platform honest on price and reliability.
+
+These three costs are why the decision is a platform investment rather than a line item. They are
+also why the correct first move is a bounded workload: it lets you measure the recurring cost on
+something small before you commit a customer-facing path to it.
+
 ## When self-hosting wins
 
 The case is strongest when at least two of these are true:
