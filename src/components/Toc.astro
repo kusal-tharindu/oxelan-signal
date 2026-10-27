@@ -7,25 +7,47 @@ export interface Heading {
 
 interface Props {
   headings: Heading[];
+  /** "desktop" renders the sticky sidebar nav; "mobile" wraps the same links in a <details>. */
+  variant?: 'desktop' | 'mobile';
 }
 
-const { headings } = Astro.props;
+const { headings, variant = 'desktop' } = Astro.props;
 const items = headings.filter((heading) => heading.depth === 2 || heading.depth === 3).slice(0, 14);
+// Unique ids so the desktop and mobile TOCs can coexist on the same page.
+const titleId = variant === 'mobile' ? 'toc-title-mobile' : 'toc-title';
 ---
 
-{items.length >= 2 && (
-  <nav class="toc" aria-labelledby="toc-title" data-toc data-pagefind-ignore>
-    <h2 id="toc-title" class="eyebrow mb-2">
-      On this page
-    </h2>
-    {items.map((heading) => (
-      <a
-        href={`#${heading.slug}`}
-        class:list={[heading.depth === 3 && 'toc-h3']}
-        data-toc-link={heading.slug}
-      >
-        {heading.text}
-      </a>
-    ))}
-  </nav>
-)}
+{items.length >= 2 &&
+  (variant === 'mobile' ? (
+    <details class="toc toc-mobile lg:hidden" data-toc data-pagefind-ignore>
+      <summary class="eyebrow mb-2 cursor-pointer select-none" aria-controls={titleId}>
+        <span id={titleId}>On this page</span>
+      </summary>
+      <nav aria-labelledby={titleId}>
+        {items.map((heading) => (
+          <a
+            href={`#${heading.slug}`}
+            class:list={[heading.depth === 3 && 'toc-h3']}
+            data-toc-link={heading.slug}
+          >
+            {heading.text}
+          </a>
+        ))}
+      </nav>
+    </details>
+  ) : (
+    <nav class="toc" aria-labelledby={titleId} data-toc data-pagefind-ignore>
+      <h2 id={titleId} class="eyebrow mb-2">
+        On this page
+      </h2>
+      {items.map((heading) => (
+        <a
+          href={`#${heading.slug}`}
+          class:list={[heading.depth === 3 && 'toc-h3']}
+          data-toc-link={heading.slug}
+        >
+          {heading.text}
+        </a>
+      ))}
+    </nav>
+  ))}

@@ -4,6 +4,15 @@ import Icon from './Icon.astro';
 
 const enabled =
   site.features.comments && site.comments.repo && site.comments.repoId && site.comments.categoryId;
+
+// Never expose configuration state to readers. If comments are switched on but the
+// Giscus IDs are missing, warn the maintainer at build time instead of rendering
+// developer instructions on a public article page.
+if (site.features.comments && !enabled) {
+  console.warn(
+    'Comments are enabled but Giscus IDs are missing in src/site.config.ts; hiding the discussion section.',
+  );
+}
 ---
 
 {enabled && (
@@ -46,8 +55,11 @@ const enabled =
       Discussion
     </h2>
     <p class="text-sm text-muted">
-      Comments are configured but not connected yet. Set the Giscus IDs in
-      <code class="text-brand">src/site.config.ts</code>.
+      Spotted an error or have something to add? Send corrections to
+      <a href={`mailto:${site.author.email}`} class="text-brand hover:underline">
+        {site.author.email}
+      </a>
+      .
     </p>
   </section>
 )}
@@ -63,11 +75,13 @@ const enabled =
     </h2>
     <p class="flex flex-wrap items-center gap-2 text-sm text-muted">
       <Icon name="mail" size={14} />
-      Comments open after launch. Until then, send corrections to
-      <a href={`mailto:${site.author.email}`} class="text-brand hover:underline">
-        {site.author.email}
-      </a>
-      .
+      <span>
+        Spotted an error? Send corrections to
+        <a href={`mailto:${site.author.email}`} class="text-brand hover:underline">
+          {site.author.email}
+        </a>
+        .
+      </span>
     </p>
   </section>
 )}

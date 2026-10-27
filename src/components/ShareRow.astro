@@ -11,7 +11,7 @@ const xHref = `https://x.com/intent/post?text=${encodeURIComponent(title)}&url=$
 const liHref = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
 ---
 
-<div class="share-row" aria-label="Share this post" data-pagefind-ignore>
+<div class="share-row" role="group" aria-label="Share this post" data-pagefind-ignore>
   <a
     href={xHref}
     class="btn btn-ghost !min-h-0 !px-2 !py-1.5 !text-[0.68rem]"

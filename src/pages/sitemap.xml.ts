@@ -1,6 +1,6 @@
 import type { APIRoute } from 'astro';
 import { getAllPosts, isoDate } from '../lib/posts';
-import { sectionOrder, sections } from '../site.config';
+import { site, sectionOrder, sections } from '../site.config';
 
 function escapeXml(value: string): string {
   return value
@@ -37,7 +37,7 @@ export const GET: APIRoute = async () => {
   const body = entries
     .map(
       (entry) => `  <url>
-    <loc>${escapeXml(new URL(entry.loc, 'https://blog.oxelan.com').toString())}</loc>
+    <loc>${escapeXml(new URL(entry.loc, site.url).toString())}</loc>
     <lastmod>${isoDate(entry.lastmod)}</lastmod>
     <priority>${entry.priority}</priority>
   </url>`,

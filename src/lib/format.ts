@@ -35,6 +35,17 @@ export function displayFormat(format: string): string {
   return format.replace(/^./, (letter) => letter.toUpperCase());
 }
 
+/** Derive author initials ("Kusal Tharindu" -> "KT") so components never hard-code them. */
+export function initials(name: string): string {
+  return name
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((part) => part[0])
+    .slice(0, 2)
+    .join('')
+    .toUpperCase();
+}
+
 export function pluralise(count: number, singular: string, plural = `${singular}s`): string {
   return `${count} ${count === 1 ? singular : plural}`;
 }

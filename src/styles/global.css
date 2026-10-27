@@ -778,6 +778,48 @@
     font-size: 0.73rem !important;
   }
 
+  /* Mobile TOC: a collapsible <details> shown only below the desktop breakpoint. */
+  .toc-mobile {
+    margin-bottom: 2rem;
+    border: 1px solid var(--line);
+    border-left: 2px solid var(--brand);
+    border-radius: 0.25rem;
+    background: var(--surface);
+    padding: 0.75rem 1rem;
+  }
+
+  .toc-mobile summary {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+
+  .toc-mobile summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .toc-mobile summary::after {
+    content: '';
+    width: 0.4rem;
+    height: 0.4rem;
+    border-right: 1.5px solid var(--muted);
+    border-bottom: 1.5px solid var(--muted);
+    transform: rotate(45deg);
+    transition: transform 140ms ease;
+  }
+
+  .toc-mobile[open] summary::after {
+    transform: rotate(-135deg);
+  }
+
+  .toc-mobile nav {
+    border-left: 1px solid var(--line);
+    margin-top: 0.5rem;
+    padding-left: 0.75rem;
+  }
+
   .sources-list {
     counter-reset: source;
     list-style: none;
