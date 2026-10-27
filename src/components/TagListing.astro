@@ -1,0 +1,73 @@
+---
+import type { Post } from '../lib/posts';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import FilterBar from './FilterBar.astro';
+import PostFeed from './PostFeed.astro';
+import Sidebar from './Sidebar.astro';
+
+interface Props {
+  tag: string;
+  posts: Post[];
+  allPosts: Post[];
+  digest: Post | undefined;
+  page: number;
+  pages: number;
+  total: number;
+  olderHref?: string | undefined;
+  newerHref?: string | undefined;
+  thin: boolean;
+  noindex: boolean;
+}
+
+const { tag, posts, allPosts, digest, page, pages, total, olderHref, newerHref, thin, noindex } =
+  Astro.props;
+---
+
+<BaseLayout
+  title={page > 1 ? `#${tag} — page ${page}` : `#${tag}`}
+  description={`Posts tagged ${tag} on AI, security and engineering.`}
+  noindex={noindex}
+  robotsExtra={noindex ? 'follow' : undefined}
+>
+  <header class="section-header" style="--section-color: var(--brand)">
+    <div class="container-wide">
+      <p class="section-label">Tag</p>
+      <h1 class="section-title mt-2">#{tag}</h1>
+      <p class="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted">
+        <span>
+          {total}
+          {total === 1 ? 'post' : 'posts'} across AI, security and engineering.
+        </span>
+        {pages > 1 && (
+          <span class="text-[0.8125rem]">
+            Page {page} of {pages}
+          </span>
+        )}
+        <a href="/tags/" class="text-brand hover:underline">
+          All tags
+        </a>
+        {thin && <span class="text-[0.75rem]">Not indexed</span>}
+      </p>
+    </div>
+  </header>
+
+  <section class="container-wide pt-6">
+    <div class="grid gap-10 lg:grid-cols-[minmax(0,1fr)_20rem]">
+      <div class="min-w-0">
+        <div class="border-b border-line pb-3">
+          <FilterBar />
+        </div>
+        <PostFeed
+          posts={posts}
+          olderHref={olderHref}
+          newerHref={newerHref}
+          page={page}
+          pages={pages}
+        />
+      </div>
+      <div class="lg:sticky lg:top-24 lg:self-start">
+        <Sidebar posts={allPosts} digest={digest} compact />
+      </div>
+    </div>
+  </section>
+</BaseLayout>

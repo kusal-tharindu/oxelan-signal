@@ -1,5 +1,6 @@
 import type { APIRoute } from 'astro';
 import { getAllPosts, isoDate } from '../lib/posts';
+import { formatOrder, formats } from '../lib/formats';
 import { isIndexableTag } from '../lib/seo';
 import { site, sectionOrder, sections } from '../site.config';
 
@@ -27,6 +28,11 @@ export const GET: APIRoute = async () => {
       loc: sections[section].path,
       lastmod,
       priority: section === 'digest' ? '0.7' : '0.8',
+    })),
+    ...formatOrder.map((format) => ({
+      loc: formats[format].path,
+      lastmod,
+      priority: '0.6',
     })),
     { loc: '/about/', lastmod, priority: '0.4' },
     { loc: '/radar/', lastmod, priority: '0.5' },

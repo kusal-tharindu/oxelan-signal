@@ -5,44 +5,68 @@ import Icon from './Icon.astro';
 
 interface Props {
   posts: Post[];
-  pageSize?: number;
-  sectionFilter?: string;
+  /** Link to the next (older) archive page. */
+  olderHref?: string | undefined;
+  /** Link to the previous (newer) archive page. */
+  newerHref?: string | undefined;
+  page?: number | undefined;
+  pages?: number | undefined;
   emptyTitle?: string;
   emptyBody?: string;
-  /** Link to the next static archive page, shown once the rendered window is exhausted. */
-  olderHref?: string | undefined;
 }
 
 const {
   posts,
-  pageSize = 10,
-  sectionFilter = 'all',
-  emptyTitle = 'Nothing matches those filters.',
-  emptyBody = 'Try clearing one filter or browse the latest posts.',
   olderHref,
+  newerHref,
+  page,
+  pages,
+  emptyTitle = 'Nothing here yet.',
+  emptyBody = 'Browse another section or the latest posts.',
 } = Astro.props;
+
+const showPager = Boolean(newerHref || olderHref);
 ---
 
-<div data-filter-target data-section-filter={sectionFilter} data-page-size={pageSize}>
-  <div class="divide-y divide-line" data-post-list>
-    {posts.map((post) => (
-      <PostCard post={post} />
-    ))}
-  </div>
+<div>
+  {posts.length > 0 ? (
+    <div class="divide-y divide-line">
+      {posts.map((post) => (
+        <PostCard post={post} />
+      ))}
+    </div>
+  ) : (
+    <div class="empty-state">
+      <p class="font-display text-2xl text-fg">{emptyTitle}</p>
+      <p class="mt-1 text-sm">{emptyBody}</p>
+    </div>
+  )}
 
-  <div class="empty-state" data-filter-empty hidden>
-    <p class="font-display text-2xl text-fg">{emptyTitle}</p>
-    <p class="mt-1 text-sm">{emptyBody}</p>
-  </div>
+  {showPager && (
+    <nav class="feed-pagination" aria-label="Pagination">
+      {newerHref ? (
+        <a href={newerHref} class="btn btn-ghost">
+          <Icon name="arrowLeft" size={14} /> Newer
+        </a>
+      ) : (
+        <span></span>
+      )}
 
-  <div class="mt-6 flex flex-col items-center gap-3">
-    <button type="button" class="btn" data-load-more hidden>
-      Load older posts
-    </button>
-    {olderHref && (
-      <a href={olderHref} class="btn btn-ghost">
-        Older posts <Icon name="arrowRight" size={14} />
-      </a>
-    )}
-  </div>
+      {page && pages ? (
+        <span class="feed-pagination-status">
+          Page {page} of {pages}
+        </span>
+      ) : (
+        <span></span>
+      )}
+
+      {olderHref ? (
+        <a href={olderHref} class="btn btn-ghost">
+          Older <Icon name="arrowRight" size={14} />
+        </a>
+      ) : (
+        <span></span>
+      )}
+    </nav>
+  )}
 </div>

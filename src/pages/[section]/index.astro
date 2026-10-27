@@ -72,9 +72,9 @@ const olderHref =
             </div>
             <PostFeed
               posts={visiblePosts}
-              pageSize={12}
-              sectionFilter={sectionKey}
               olderHref={olderHref}
+              page={1}
+              pages={pageCount(posts.length)}
             />
           </>
         ) : (

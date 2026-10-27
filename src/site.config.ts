@@ -34,6 +34,7 @@ export const site = {
     { label: 'AI', href: '/ai/' },
     { label: 'Security', href: '/security/' },
     { label: 'Engineering', href: '/engineering/' },
+    { label: 'Guides', href: '/format/guide/' },
     { label: 'Radar', href: '/radar/' },
     { label: 'About', href: '/about/' },
   ],

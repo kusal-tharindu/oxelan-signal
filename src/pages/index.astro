@@ -21,7 +21,7 @@ import {
   sectionOf,
 } from '../lib/posts';
 import { latestContentDate } from '../lib/freshness';
-import { FEED_PAGE_SIZE, nextArchiveHref } from '../lib/pagination';
+import { FEED_PAGE_SIZE, nextArchiveHref, pageCount } from '../lib/pagination';
 import { sections, site } from '../site.config';
 
 const posts = await getAllPosts();
@@ -131,7 +131,12 @@ const guidesHeading = 'Guides that stay current';
           </div>
 
           <div class="mt-1">
-            <PostFeed posts={visibleFeed} pageSize={10} olderHref={olderHref} />
+            <PostFeed
+              posts={visibleFeed}
+              olderHref={olderHref}
+              page={1}
+              pages={pageCount(feed.length)}
+            />
           </div>
         </section>
 

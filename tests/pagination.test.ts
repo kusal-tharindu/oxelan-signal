@@ -1,6 +1,13 @@
 import { describe, expect, it } from 'vitest';
 
-import { FEED_PAGE_SIZE, nextArchiveHref, pageCount, pageSlice } from '../src/lib/pagination';
+import {
+  archiveHref,
+  FEED_PAGE_SIZE,
+  nextArchiveHref,
+  pageCount,
+  pageSlice,
+  prevArchiveHref,
+} from '../src/lib/pagination';
 
 function makePosts(count: number): number[] {
   return Array.from({ length: count }, (_, index) => index);
@@ -61,5 +68,32 @@ describe('nextArchiveHref', () => {
   it('links to the next section page with the section base path', () => {
     expect(nextArchiveHref(1, FEED_PAGE_SIZE + 1, '/security/')).toBe('/security/page/2/');
     expect(nextArchiveHref(2, FEED_PAGE_SIZE * 2 + 1, '/security/')).toBe('/security/page/3/');
+  });
+});
+
+describe('archiveHref', () => {
+  it('returns the listing root for page 1', () => {
+    expect(archiveHref('/', 1)).toBe('/');
+    expect(archiveHref('/security/', 1)).toBe('/security/');
+    expect(archiveHref('/tags/nginx/', 1)).toBe('/tags/nginx/');
+  });
+
+  it('builds nested page URLs without duplicate slashes', () => {
+    expect(archiveHref('/', 2)).toBe('/page/2/');
+    expect(archiveHref('/security/', 2)).toBe('/security/page/2/');
+    expect(archiveHref('/tags/nginx/', 3)).toBe('/tags/nginx/page/3/');
+    expect(archiveHref('/format/news/', 4)).toBe('/format/news/page/4/');
+  });
+});
+
+describe('prevArchiveHref', () => {
+  it('is undefined on page 1', () => {
+    expect(prevArchiveHref(1, '/security/')).toBeUndefined();
+  });
+
+  it('returns the root from page 2 and the previous page otherwise', () => {
+    expect(prevArchiveHref(2, '/security/')).toBe('/security/');
+    expect(prevArchiveHref(3, '/security/')).toBe('/security/page/2/');
+    expect(prevArchiveHref(2, '/')).toBe('/');
   });
 });

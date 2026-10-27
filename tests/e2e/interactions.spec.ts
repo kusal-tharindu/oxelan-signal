@@ -3,91 +3,76 @@ import { expect, test } from '@playwright/test';
 /**
  * T5 — client-side interaction tests against the production build.
  *
- * Covers the progressive-enhancement paths that unit tests cannot reach:
- *   - filter state round-trips through the URL and survives a reload
- *   - "load older posts" extends the rendered window
+ * Covers the paths that unit tests cannot reach:
+ *   - browse chips are canonical, shareable archive URLs
+ *   - the tag index filters without a reload
  *   - the search overlay renders the last query (race guard) and navigates by keyboard
  *   - theme choice persists across reloads
- *   - the mobile TOC expands
+ *   - the mobile menu and TOC work by keyboard/touch
  */
 
-test.describe('filters', () => {
-  test('writes filter state to the URL, survives reload, and clears', async ({ page }) => {
+test.describe('browse archives', () => {
+  test('section and format chips are real, shareable URLs', async ({ page }) => {
     await page.goto('/');
-    const cards = page.locator('[data-post-card]:visible');
-    await expect(cards.first()).toBeVisible();
+    const browse = page.locator('nav[data-browse]');
 
-    await page.locator('[data-filter-group="section"][data-filter-value="security"]').click();
-    await expect(page).toHaveURL(/[?&]section=security/);
-
-    const count = await cards.count();
-    expect(count).toBeGreaterThan(0);
-    for (const card of await cards.all()) {
-      await expect(card).toHaveAttribute('data-section', 'security');
-    }
-    await expect(
-      page.locator('[data-filter-group="section"][data-filter-value="security"]'),
-    ).toHaveAttribute('aria-pressed', 'true');
-    await expect(page.locator('[data-filter-count]')).toContainText('of');
-
-    // Reload: the URL is the source of truth, so the filter must re-apply.
-    await page.reload();
-    await expect(
-      page.locator('[data-filter-group="section"][data-filter-value="security"]'),
-    ).toHaveAttribute('aria-pressed', 'true');
-    for (const card of await page.locator('[data-post-card]:visible').all()) {
+    await browse.getByRole('link', { name: 'Security', exact: true }).click();
+    await expect(page).toHaveURL(/\/security\/$/);
+    await expect(page.getByRole('heading', { level: 1, name: 'Security' })).toBeVisible();
+    const securityCards = page.locator('[data-post-card]');
+    expect(await securityCards.count()).toBeGreaterThan(0);
+    for (const card of await securityCards.all()) {
       await expect(card).toHaveAttribute('data-section', 'security');
     }
 
-    await page.locator('[data-filter-clear]').click();
-    await expect(page).not.toHaveURL(/section=/);
-    await expect(
-      page.locator('[data-filter-group="section"][data-filter-value="all"]'),
-    ).toHaveAttribute('aria-pressed', 'true');
-  });
-
-  test('combines format and impact filters', async ({ page }) => {
-    await page.goto('/');
-    await page.locator('[data-filter-group="format"][data-filter-value="news"]').click();
-    await expect(page).toHaveURL(/[?&]format=news/);
-    const visible = page.locator('[data-post-card]:visible');
-    expect(await visible.count()).toBeGreaterThan(0);
-    for (const card of await visible.all()) {
+    // On a section page the section group is hidden; format links still work.
+    await page.locator('nav[data-browse]').getByRole('link', { name: 'News', exact: true }).click();
+    await expect(page).toHaveURL(/\/format\/news\/$/);
+    await expect(page.getByRole('heading', { level: 1, name: 'News' })).toBeVisible();
+    for (const card of await page.locator('[data-post-card]').all()) {
       await expect(card).toHaveAttribute('data-format', 'news');
     }
-
-    await page.locator('[data-filter-group="impact"][data-filter-value="urgent"]').click();
-    await expect(page).toHaveURL(/impact=urgent/);
-    const impacts = await page
-      .locator('[data-post-card]:visible')
-      .evaluateAll((nodes) => nodes.map((node) => (node as HTMLElement).dataset.impact));
-    for (const impact of impacts) expect(['critical', 'high']).toContain(impact);
+    await expect(
+      page.locator('nav[data-browse]').getByRole('link', { name: 'News', exact: true }),
+    ).toHaveAttribute('aria-current', 'page');
   });
 
-  test('shows the empty state when nothing matches', async ({ page }) => {
+  test('the impact chip opens the generated advisories page', async ({ page }) => {
     await page.goto('/');
-    // Combine a section and format that have no posts in common on the home feed.
-    await page.locator('[data-filter-group="section"][data-filter-value="engineering"]').click();
-    await page.locator('[data-filter-group="format"][data-filter-value="news"]').click();
-    const empty = page.locator('[data-filter-empty]');
-    await expect(empty).toBeVisible();
-    await expect(empty).toContainText('Nothing matches those filters.');
+    await page.locator('nav[data-browse]').getByRole('link', { name: 'Critical + high' }).click();
+    await expect(page).toHaveURL(/\/advisories\/$/);
+  });
+
+  test('omits the pager when a listing fits on one page', async ({ page }) => {
+    await page.goto('/format/analysis/');
+    await expect(page.getByRole('heading', { level: 1, name: 'Analysis' })).toBeVisible();
+    await expect(page.locator('.feed-pagination')).toHaveCount(0);
   });
 });
 
-test.describe('load older posts', () => {
-  test('extends the rendered window in pages', async ({ page }) => {
-    await page.goto('/');
-    const visible = page.locator('[data-post-card]:visible');
-    const firstPage = await visible.count();
-    expect(firstPage).toBe(10);
+test.describe('tag index', () => {
+  test('filters tags without a page reload', async ({ page }) => {
+    await page.goto('/tags/');
+    const input = page.locator('[data-tag-filter]');
+    await input.fill('nginx');
+    const visible = page.locator('[data-tag-item]:visible');
+    expect(await visible.count()).toBeGreaterThan(0);
+    await expect(page.locator('[data-tag-item="nginx"]')).toBeVisible();
+    await expect(page.locator('[data-tag-count]')).toContainText('of');
 
-    const more = page.locator('[data-load-more]');
-    await expect(more).toBeVisible();
-    await more.click();
+    await input.fill('zzz-no-tag');
+    await expect(page.locator('[data-tag-empty]')).toBeVisible();
+    await expect(page.locator('[data-tag-item]:visible')).toHaveCount(0);
 
-    await expect(visible).toHaveCount(12);
-    await expect(more).toBeHidden();
+    await input.fill('');
+    await expect(page.locator('[data-tag-empty]')).toBeHidden();
+    expect(await page.locator('[data-tag-item]:visible').count()).toBeGreaterThan(10);
+  });
+
+  test('tag pages are crawlable URLs', async ({ page }) => {
+    await page.goto('/tags/nginx/');
+    await expect(page.getByRole('heading', { level: 1, name: '#nginx' })).toBeVisible();
+    await expect(page.locator('[data-post-card]').first()).toBeVisible();
   });
 });
 

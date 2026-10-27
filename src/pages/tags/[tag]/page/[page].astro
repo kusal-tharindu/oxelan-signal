@@ -1,0 +1,51 @@
+---
+import type { GetStaticPaths } from 'astro';
+import TagListing from '../../../../components/TagListing.astro';
+import { getAllPosts, postsForTag, getLatestDigest } from '../../../../lib/posts';
+import { nextArchiveHref, pageCount, pageSlice, prevArchiveHref } from '../../../../lib/pagination';
+import { MIN_INDEXED_TAG_POSTS } from '../../../../lib/seo';
+
+export const getStaticPaths = (async () => {
+  const allPosts = await getAllPosts();
+  const tags = [...new Set(allPosts.flatMap((post) => post.data.tags))].sort();
+  const paths: { params: { tag: string; page: string }; props: { tag: string; page: number } }[] =
+    [];
+  for (const tag of tags) {
+    const total = postsForTag(allPosts, tag).length;
+    const pages = pageCount(total);
+    for (let page = 2; page <= pages; page += 1) {
+      paths.push({ params: { tag, page: String(page) }, props: { tag, page } });
+    }
+  }
+  return paths;
+}) satisfies GetStaticPaths;
+
+interface Props {
+  tag: string;
+  page: number;
+}
+
+const { tag, page } = Astro.props;
+const allPosts = await getAllPosts();
+const tagged = postsForTag(allPosts, tag);
+const pages = pageCount(tagged.length);
+const posts = pageSlice(tagged, page);
+const digest = getLatestDigest(allPosts);
+const thin = tagged.length < MIN_INDEXED_TAG_POSTS;
+const olderHref = nextArchiveHref(page, tagged.length, `/tags/${tag}/`);
+const newerHref = prevArchiveHref(page, `/tags/${tag}/`);
+---
+
+<TagListing
+  tag={tag}
+  posts={posts}
+  allPosts={allPosts}
+  digest={digest}
+  page={page}
+  pages={pages}
+  total={tagged.length}
+  olderHref={olderHref}
+  newerHref={newerHref}
+  thin={thin}
+  noindex={true}
+/>

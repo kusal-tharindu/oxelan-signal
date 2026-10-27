@@ -318,108 +318,35 @@
     if (event.key === 'Escape' && dialog?.open) closeSearch();
   });
 
-  /* --------------------------------------------------------------- Filters */
-  const filterRoot = $('[data-filter-root]');
-  const filterTarget = $('[data-filter-target]');
-  if (filterRoot && filterTarget) {
-    const cards = $$('[data-post-card]', filterTarget);
-    const fixedSection = filterTarget.dataset.sectionFilter ?? 'all';
-    const state = { section: 'all', format: 'all', impact: 'all' };
-    const pageSize = Number(filterTarget.dataset.pageSize ?? 10);
-    let visibleLimit = pageSize;
+  /* ------------------------------------------------------------ Tag filter */
+  const tagFilter = $('[data-tag-filter]');
+  const tagItems = $$('[data-tag-item]');
+  if (tagFilter && tagItems.length > 0) {
+    const groups = $$('[data-tag-group]');
+    const empty = $('[data-tag-empty]');
+    const countLabel = $('[data-tag-count]');
+    const total = tagItems.length;
 
-    const readUrl = () => {
-      const params = new URLSearchParams(window.location.search);
-      if (params.get('section')) state.section = params.get('section');
-      if (params.get('format')) state.format = params.get('format');
-      if (params.get('impact')) state.impact = params.get('impact');
-    };
-
-    const writeUrl = () => {
-      const params = new URLSearchParams(window.location.search);
-      for (const key of ['section', 'format', 'impact']) {
-        if (state[key] === 'all') params.delete(key);
-        else params.set(key, state[key]);
-      }
-      const query = params.toString();
-      window.history.replaceState({}, '', `${window.location.pathname}${query ? `?${query}` : ''}`);
-    };
-
-    const syncButtons = () => {
-      $$('[data-filter-group]', filterRoot).forEach((button) => {
-        const group = button.dataset.filterGroup;
-        button.setAttribute('aria-pressed', String(state[group] === button.dataset.filterValue));
-      });
-    };
-
-    const matches = (card) => {
-      if (fixedSection !== 'all' && card.dataset.section !== fixedSection) return false;
-      if (state.section !== 'all' && card.dataset.section !== state.section) return false;
-      if (state.format !== 'all' && card.dataset.format !== state.format) return false;
-      if (state.impact === 'urgent' && !['critical', 'high'].includes(card.dataset.impact))
-        return false;
-      if (
-        state.impact !== 'all' &&
-        state.impact !== 'urgent' &&
-        card.dataset.impact !== state.impact
-      )
-        return false;
-      return true;
-    };
-
-    const applyFilters = () => {
-      let matched = 0;
+    const applyTagFilter = () => {
+      const query = tagFilter.value.trim().toLowerCase();
       let shown = 0;
-      cards.forEach((card) => {
-        const ok = matches(card);
-        if (ok) matched += 1;
-        const visible = ok && shown < visibleLimit;
-        if (visible) shown += 1;
-        card.hidden = !visible;
+      tagItems.forEach((item) => {
+        const match = query === '' || (item.dataset.tagItem ?? '').includes(query);
+        item.hidden = !match;
+        if (match) shown += 1;
       });
-
-      const empty = $('[data-filter-empty]', filterTarget);
-      if (empty) empty.hidden = matched !== 0;
-
-      const count = $('[data-filter-count]', filterRoot);
-      if (count) {
-        count.textContent =
-          matched === cards.length ? `${matched} posts` : `${matched} of ${cards.length} posts`;
+      groups.forEach((group) => {
+        const visible = $$('[data-tag-item]', group).some((item) => !item.hidden);
+        group.hidden = !visible;
+      });
+      if (empty) empty.hidden = shown !== 0;
+      if (countLabel) {
+        countLabel.textContent = query === '' ? `${total} tags` : `${shown} of ${total} tags`;
       }
-
-      const more = $('[data-load-more]', filterTarget);
-      if (more) more.hidden = matched <= visibleLimit;
     };
 
-    $$('[data-filter-group]', filterRoot).forEach((button) => {
-      button.addEventListener('click', () => {
-        state[button.dataset.filterGroup] = button.dataset.filterValue;
-        visibleLimit = pageSize;
-        syncButtons();
-        writeUrl();
-        applyFilters();
-      });
-    });
-
-    $('[data-filter-clear]', filterRoot)?.addEventListener('click', () => {
-      state.section = 'all';
-      state.format = 'all';
-      state.impact = 'all';
-      visibleLimit = pageSize;
-      syncButtons();
-      writeUrl();
-      applyFilters();
-    });
-
-    $('[data-load-more]', filterTarget)?.addEventListener('click', () => {
-      visibleLimit += pageSize;
-      applyFilters();
-    });
-
-    readUrl();
-    if (fixedSection !== 'all' && state.section === 'all') state.section = fixedSection;
-    syncButtons();
-    applyFilters();
+    tagFilter.addEventListener('input', applyTagFilter);
+    applyTagFilter();
   }
 
   /* ------------------------------------------- Read-only task list labels */

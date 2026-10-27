@@ -1,6 +1,7 @@
 ---
 import Icon from './Icon.astro';
 import Logo from './Logo.astro';
+import { formatOrder, formats } from '../lib/formats';
 import { site, sections } from '../site.config';
 import { getAllPosts, trendingTags } from '../lib/posts';
 
@@ -56,6 +57,17 @@ const currentYear = new Date().getUTCFullYear();
               Advisories
             </a>
           </li>
+        </ul>
+
+        <h2 class="eyebrow mt-6">Formats</h2>
+        <ul class="mt-4 space-y-2 text-sm text-muted-strong">
+          {formatOrder.map((key) => (
+            <li>
+              <a href={formats[key].path} class="hover:text-brand">
+                {formats[key].label}
+              </a>
+            </li>
+          ))}
         </ul>
       </div>
 

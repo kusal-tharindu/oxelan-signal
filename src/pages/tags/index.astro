@@ -1,46 +1,93 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { allTags, getAllPosts } from '../../lib/posts';
 import Icon from '../../components/Icon.astro';
+import { allTags, getAllPosts } from '../../lib/posts';
 
 const posts = await getAllPosts();
-const tags = allTags(posts);
+const tags = [...allTags(posts)].sort((a, b) => a.tag.localeCompare(b.tag));
+
+const groups = new Map<string, { tag: string; count: number }[]>();
+for (const entry of tags) {
+  const key = /^[a-z]/.test(entry.tag) ? entry.tag.charAt(0).toUpperCase() : '#';
+  const list = groups.get(key) ?? [];
+  list.push(entry);
+  groups.set(key, list);
+}
 const max = Math.max(...tags.map((tag) => tag.count), 1);
 ---
 
-<BaseLayout title="Tags" description="Browse every topic covered on Oxelan Signal.">
+<BaseLayout title="Tags" description="Browse every topic covered on Oxelan Signal by tag.">
   <header class="section-header" style="--section-color: var(--brand)">
     <div class="container-wide">
       <p class="section-label">Index</p>
       <h1 class="section-title mt-2">Tags</h1>
       <p class="mt-3 max-w-xl text-sm leading-relaxed text-muted">
         Specific models, vulnerabilities, tools and practices. Tags cut across sections, so a
-        Kubernetes security post appears in both Security and Engineering.
+        Kubernetes security post appears in both Security and Engineering. Tag pages are generated
+        from the posts themselves.
+      </p>
+      <p class="mt-3 text-[0.8125rem] text-muted">
+        {tags.length} tags across {posts.length} posts
       </p>
     </div>
   </header>
 
-  <section class="container-wide pt-8">
-    <div class="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-      {tags.map(({ tag, count }) => (
-        <a
-          href={`/tags/${tag}/`}
-          class="group flex items-center justify-between gap-4 rounded border border-line bg-surface/60 px-4 py-3 transition-colors hover:border-brand/50 hover:bg-surface-2"
-        >
-          <span class="flex items-center gap-2">
-            <Icon name="tag" size={13} class="text-muted" />
-            <span class="font-label text-sm text-muted-strong group-hover:text-brand">#{tag}</span>
-          </span>
-          <span class="flex items-center gap-2">
-            <span
-              class="h-1 rounded-full bg-brand/70"
-              style={`width: ${Math.max(8, (count / max) * 48)}px`}
-              aria-hidden="true"
-            ></span>
-            <span class="w-5 text-right text-[0.75rem] text-muted">{count}</span>
-          </span>
-        </a>
+  <section class="container-wide pt-6">
+    <div class="flex flex-wrap items-center gap-3 border-b border-line pb-4">
+      <label class="sr-only" for="tag-filter">
+        Filter tags
+      </label>
+      <input
+        id="tag-filter"
+        type="search"
+        data-tag-filter
+        class="tag-filter-input"
+        placeholder="Filter tags…"
+        autocomplete="off"
+        spellcheck="false"
+      />
+      <span data-tag-count class="text-[0.8125rem] text-muted">
+        {tags.length} tags
+      </span>
+    </div>
+
+    <div data-tag-groups>
+      {[...groups.entries()].map(([letter, items]) => (
+        <section data-tag-group class="mt-7" aria-labelledby={`tag-group-${letter}`}>
+          <h2 id={`tag-group-${letter}`} class="font-display text-2xl text-fg/80">
+            {letter}
+          </h2>
+          <div class="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+            {items.map(({ tag, count }) => (
+              <a
+                href={`/tags/${tag}/`}
+                data-tag-item={tag}
+                class="group flex items-center justify-between gap-4 rounded border border-line bg-surface/60 px-4 py-3 transition-colors hover:border-brand/50 hover:bg-surface-2"
+              >
+                <span class="flex min-w-0 items-center gap-2">
+                  <Icon name="tag" size={13} class="shrink-0 text-muted" />
+                  <span class="truncate font-label text-sm text-muted-strong group-hover:text-brand">
+                    #{tag}
+                  </span>
+                </span>
+                <span class="flex shrink-0 items-center gap-2">
+                  <span
+                    class="h-1 rounded-full bg-brand/70"
+                    style={`width: ${Math.max(8, (count / max) * 48)}px`}
+                    aria-hidden="true"
+                  ></span>
+                  <span class="w-6 text-right text-[0.75rem] text-muted">{count}</span>
+                </span>
+              </a>
+            ))}
+          </div>
+        </section>
       ))}
+    </div>
+
+    <div data-tag-empty hidden class="empty-state mt-8">
+      <p class="font-display text-2xl text-fg">No tags match that filter.</p>
+      <p class="mt-1 text-sm">Clear the box to see every topic.</p>
     </div>
   </section>
 </BaseLayout>

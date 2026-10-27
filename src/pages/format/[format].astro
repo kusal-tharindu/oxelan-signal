@@ -1,0 +1,77 @@
+---
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import FilterBar from '../../components/FilterBar.astro';
+import PostFeed from '../../components/PostFeed.astro';
+import Sidebar from '../../components/Sidebar.astro';
+import Icon from '../../components/Icon.astro';
+import { getAllPosts, getLatestDigest } from '../../lib/posts';
+import { formatOrder, formats, type FormatKey } from '../../lib/formats';
+import { nextArchiveHref, pageCount, pageSlice } from '../../lib/pagination';
+
+export const getStaticPaths = (() =>
+  formatOrder.map((format) => ({
+    params: { format },
+    props: { format },
+  }))) satisfies GetStaticPaths;
+
+interface Props {
+  format: FormatKey;
+}
+
+const { format: formatKey } = Astro.props;
+const format = formats[formatKey];
+const allPosts = await getAllPosts();
+const matching = allPosts.filter((post) => post.data.format === formatKey);
+const pages = pageCount(matching.length);
+const posts = pageSlice(matching, 1);
+const digest = getLatestDigest(allPosts);
+const olderHref = nextArchiveHref(1, matching.length, format.path);
+---
+
+<BaseLayout
+  title={format.label}
+  description={format.description}
+  bodyClass={`format-${format.key}`}
+>
+  <header class="section-header" style={`--section-color: var(${format.cssVar})`}>
+    <div class="container-wide">
+      <div class="flex flex-wrap items-end justify-between gap-6">
+        <div>
+          <p class="section-label">Format</p>
+          <h1 class="section-title mt-2">{format.label}</h1>
+          <p class="measure mt-4 text-sm leading-relaxed text-muted-strong md:text-base">
+            {format.description}
+          </p>
+        </div>
+        <div class="flex flex-col items-start gap-2 text-[0.8125rem] text-muted md:items-end">
+          <span>
+            {matching.length} {matching.length === 1 ? 'post' : 'posts'}
+          </span>
+          <a href="/rss.xml" class="inline-flex items-center gap-1.5 hover:text-brand">
+            <Icon name="rss" size={12} /> All posts RSS
+          </a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <section class="container-wide pt-6">
+    <div class="grid gap-10 lg:grid-cols-[minmax(0,1fr)_20rem]">
+      <div class="min-w-0">
+        <div class="border-b border-line pb-3">
+          <FilterBar />
+        </div>
+        <PostFeed
+          posts={posts}
+          olderHref={matching.length > 0 ? olderHref : undefined}
+          page={1}
+          pages={pages}
+        />
+      </div>
+      <div class="lg:sticky lg:top-24 lg:self-start">
+        <Sidebar posts={allPosts} digest={digest} compact />
+      </div>
+    </div>
+  </section>
+</BaseLayout>

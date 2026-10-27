@@ -1,9 +1,11 @@
 ---
+import { browseFormats, formats } from '../lib/formats';
+import { sections } from '../site.config';
+
 interface Props {
   showSection?: boolean;
   showFormat?: boolean;
   showImpact?: boolean;
-  showClear?: boolean;
   label?: string;
 }
 
@@ -11,91 +13,65 @@ const {
   showSection = true,
   showFormat = true,
   showImpact = true,
-  showClear = true,
-  label = 'Filter posts',
+  label = 'Browse posts',
 } = Astro.props;
 
+const path = Astro.url.pathname;
+
 const sectionOptions = [
-  { value: 'all', label: 'All' },
-  { value: 'ai', label: 'AI' },
-  { value: 'security', label: 'Security' },
-  { value: 'engineering', label: 'Engineering' },
+  { value: 'all', label: 'All', href: '/' },
+  { value: 'ai', label: 'AI', href: sections.ai.path },
+  { value: 'security', label: 'Security', href: sections.security.path },
+  { value: 'engineering', label: 'Engineering', href: sections.engineering.path },
 ];
 
-const formatOptions = [
-  { value: 'all', label: 'All' },
-  { value: 'news', label: 'News' },
-  { value: 'analysis', label: 'Analysis' },
-  { value: 'guide', label: 'Guide' },
-];
+const isSectionActive = (href: string) =>
+  href === '/' ? path === '/' : path === href || path.startsWith(href);
+
+const isFormatActive = (href: string) => path.startsWith(href);
 ---
 
-<div class="filter-bar" data-filter-root aria-label={label} role="group">
+<nav class="filter-bar" data-browse aria-label={label}>
   {showSection && (
     <div class="filter-group" role="group" aria-label="Section">
       {sectionOptions.map((option) => (
-        <button
-          type="button"
+        <a
+          href={option.href}
           class="chip"
-          data-filter-group="section"
-          data-filter-value={option.value}
-          aria-pressed={option.value === 'all' ? 'true' : 'false'}
+          aria-current={isSectionActive(option.href) ? 'page' : undefined}
         >
           {option.label}
-        </button>
+        </a>
       ))}
     </div>
   )}
 
   {showFormat && (
     <div class="filter-group" role="group" aria-label="Format">
-      {formatOptions.map((option) => (
-        <button
-          type="button"
-          class="chip"
-          data-filter-group="format"
-          data-filter-value={option.value}
-          aria-pressed={option.value === 'all' ? 'true' : 'false'}
-        >
-          {option.label}
-        </button>
-      ))}
+      {browseFormats.map((key) => {
+        const format = formats[key];
+        return (
+          <a
+            href={format.path}
+            class="chip"
+            aria-current={isFormatActive(format.path) ? 'page' : undefined}
+          >
+            {format.label}
+          </a>
+        );
+      })}
     </div>
   )}
 
   {showImpact && (
     <div class="filter-group" role="group" aria-label="Impact">
-      <button
-        type="button"
+      <a
+        href="/advisories/"
         class="chip"
-        data-filter-group="impact"
-        data-filter-value="all"
-        aria-pressed="true"
-      >
-        Any impact
-      </button>
-      <button
-        type="button"
-        class="chip"
-        data-filter-group="impact"
-        data-filter-value="urgent"
-        aria-pressed="false"
+        aria-current={path.startsWith('/advisories/') ? 'page' : undefined}
       >
         Critical + high
-      </button>
+      </a>
     </div>
   )}
-
-  <div class="flex items-center gap-3 md:ml-auto">
-    <span class="text-[0.75rem] text-muted" data-filter-count aria-live="polite"></span>
-    {showClear && (
-      <button
-        type="button"
-        class="text-[0.75rem] text-muted underline decoration-line-strong underline-offset-4 hover:text-brand"
-        data-filter-clear
-      >
-        Clear
-      </button>
-    )}
-  </div>
-</div>
+</nav>

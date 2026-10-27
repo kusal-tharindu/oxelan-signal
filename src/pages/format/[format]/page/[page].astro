@@ -1,0 +1,89 @@
+---
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import FilterBar from '../../../../components/FilterBar.astro';
+import PostFeed from '../../../../components/PostFeed.astro';
+import Sidebar from '../../../../components/Sidebar.astro';
+import Icon from '../../../../components/Icon.astro';
+import { getAllPosts, getLatestDigest } from '../../../../lib/posts';
+import { formatOrder, formats, type FormatKey } from '../../../../lib/formats';
+import { nextArchiveHref, pageCount, pageSlice, prevArchiveHref } from '../../../../lib/pagination';
+
+export const getStaticPaths = (async () => {
+  const allPosts = await getAllPosts();
+  const paths: {
+    params: { format: string; page: string };
+    props: { format: FormatKey; page: number };
+  }[] = [];
+  for (const format of formatOrder) {
+    const total = allPosts.filter((post) => post.data.format === format).length;
+    const pages = pageCount(total);
+    for (let page = 2; page <= pages; page += 1) {
+      paths.push({ params: { format, page: String(page) }, props: { format, page } });
+    }
+  }
+  return paths;
+}) satisfies GetStaticPaths;
+
+interface Props {
+  format: FormatKey;
+  page: number;
+}
+
+const { format: formatKey, page } = Astro.props;
+const format = formats[formatKey];
+const allPosts = await getAllPosts();
+const matching = allPosts.filter((post) => post.data.format === formatKey);
+const pages = pageCount(matching.length);
+const posts = pageSlice(matching, page);
+const digest = getLatestDigest(allPosts);
+const olderHref = nextArchiveHref(page, matching.length, format.path);
+const newerHref = prevArchiveHref(page, format.path);
+---
+
+<BaseLayout
+  title={`${format.label} — page ${page}`}
+  description={`Older ${format.label} posts on Oxelan Signal, page ${page}.`}
+  noindex
+  bodyClass={`format-${format.key}`}
+>
+  <header class="section-header" style={`--section-color: var(${format.cssVar})`}>
+    <div class="container-wide">
+      <div class="flex flex-wrap items-end justify-between gap-6">
+        <div>
+          <p class="section-label">{format.label} · Archive</p>
+          <h1 class="section-title mt-2">Older {format.label.toLowerCase()}</h1>
+          <p class="mt-3 text-sm text-muted">
+            Page {page} of {pages} · {matching.length} posts
+          </p>
+        </div>
+        <a
+          href={format.path}
+          class="inline-flex items-center gap-1 text-[0.8125rem] text-muted hover:text-brand"
+        >
+          {format.label} <Icon name="arrowRight" size={12} />
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <section class="container-wide pt-6">
+    <div class="grid gap-10 lg:grid-cols-[minmax(0,1fr)_20rem]">
+      <div class="min-w-0">
+        <div class="border-b border-line pb-3">
+          <FilterBar />
+        </div>
+        <PostFeed
+          posts={posts}
+          olderHref={olderHref}
+          newerHref={newerHref}
+          page={page}
+          pages={pages}
+        />
+      </div>
+      <div class="lg:sticky lg:top-24 lg:self-start">
+        <Sidebar posts={allPosts} digest={digest} compact />
+      </div>
+    </div>
+  </section>
+</BaseLayout>
