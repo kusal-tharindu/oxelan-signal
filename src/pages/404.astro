@@ -1,0 +1,39 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PostCard from '../components/PostCard.astro';
+import Icon from '../components/Icon.astro';
+import { getAllPosts } from '../lib/posts';
+
+const posts = await getAllPosts();
+const latest = posts.filter((post) => post.data.format !== 'digest').slice(0, 5);
+---
+
+<BaseLayout
+  title="Page not found"
+  description="That page does not exist. Search the archive or read the latest posts."
+  noindex
+>
+  <section class="container-wide py-16 md:py-24">
+    <p class="eyebrow text-brand">404</p>
+    <h1 class="mt-2 font-display text-6xl leading-none md:text-8xl">Signal lost.</h1>
+    <p class="mt-4 max-w-md text-base leading-relaxed text-muted-strong">
+      That URL does not point to a post. It may have moved, or it may never have existed.
+    </p>
+
+    <div class="mt-7 flex flex-wrap gap-3">
+      <button type="button" class="btn btn-primary" data-search-open>
+        <Icon name="search" size={14} /> Search the archive
+      </button>
+      <a href="/" class="btn btn-ghost">
+        Back to latest <Icon name="arrowRight" size={14} />
+      </a>
+    </div>
+
+    <div class="mt-14 max-w-3xl border-t border-line pt-6">
+      <h2 class="eyebrow mb-3">Latest posts</h2>
+      {latest.map((post) => (
+        <PostCard post={post} showTags={false} />
+      ))}
+    </div>
+  </section>
+</BaseLayout>

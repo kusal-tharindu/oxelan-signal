@@ -1,0 +1,39 @@
+---
+import type { Post } from '../lib/posts';
+import PostCard from './PostCard.astro';
+
+interface Props {
+  posts: Post[];
+  pageSize?: number;
+  sectionFilter?: string;
+  emptyTitle?: string;
+  emptyBody?: string;
+}
+
+const {
+  posts,
+  pageSize = 10,
+  sectionFilter = 'all',
+  emptyTitle = 'Nothing matches those filters.',
+  emptyBody = 'Try clearing one filter or browse the latest posts.',
+} = Astro.props;
+---
+
+<div data-filter-target data-section-filter={sectionFilter} data-page-size={pageSize}>
+  <div class="divide-y divide-line" data-post-list>
+    {posts.map((post) => (
+      <PostCard post={post} />
+    ))}
+  </div>
+
+  <div class="empty-state" data-filter-empty hidden>
+    <p class="font-display text-2xl text-fg">{emptyTitle}</p>
+    <p class="mt-1 text-sm">{emptyBody}</p>
+  </div>
+
+  <div class="mt-6 flex justify-center">
+    <button type="button" class="btn" data-load-more hidden>
+      Load older posts
+    </button>
+  </div>
+</div>

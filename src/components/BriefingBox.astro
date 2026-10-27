@@ -1,0 +1,75 @@
+---
+import type { Post } from '../lib/posts';
+import Icon from './Icon.astro';
+
+interface Props {
+  post: Post;
+}
+
+const { post } = Astro.props;
+const briefing = post.data.briefing;
+const action = post.data.action;
+const affects = post.data.affects ?? [];
+---
+
+{briefing && (
+  <aside class="briefing" aria-label="Briefing">
+    <div class="mb-1 flex items-center justify-between gap-4">
+      <h2 class="label text-brand">Briefing</h2>
+      {post.data.status === 'evolving' && (
+        <span class="inline-flex items-center gap-1.5 text-[0.62rem] font-semibold uppercase tracking-[0.08em] text-medium">
+          <span class="dot animate-pulse" aria-hidden="true"></span> Evolving story
+        </span>
+      )}
+    </div>
+
+    <div class="briefing-row">
+      <span class="briefing-label">What changed</span>
+      <p class="briefing-value">{briefing.changed}</p>
+    </div>
+    <div class="briefing-row">
+      <span class="briefing-label">Why it matters</span>
+      <p class="briefing-value">{briefing.why}</p>
+    </div>
+    <div class="briefing-row">
+      <span class="briefing-label">What to do</span>
+      <p class="briefing-value">{briefing.action}</p>
+    </div>
+
+    {(action || affects.length > 0) && (
+      <div class="mt-2 flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-line pt-3">
+        {action && (
+          <span class="inline-flex items-center gap-1.5 text-[0.68rem] font-semibold uppercase tracking-[0.07em]">
+            <Icon
+              name={action === 'patch-now' ? 'alert' : 'refresh'}
+              size={12}
+              class={action === 'patch-now' ? 'text-critical' : 'text-medium'}
+            />
+            <span class="text-muted">Action:</span>
+            <span
+              class={
+                action === 'patch-now'
+                  ? 'text-critical'
+                  : action === 'review'
+                    ? 'text-medium'
+                    : 'text-muted'
+              }
+            >
+              {action === 'patch-now' ? 'Patch now' : action === 'review' ? 'Review' : 'None'}
+            </span>
+          </span>
+        )}
+        {affects.length > 0 && (
+          <span class="inline-flex flex-wrap items-center gap-1.5 text-[0.68rem] text-muted-strong">
+            <span class="font-semibold uppercase tracking-[0.07em] text-muted">Affects:</span>
+            {affects.map((item) => (
+              <code class="rounded border border-line bg-surface-2 px-1.5 py-0.5 font-mono text-[0.68rem]">
+                {item}
+              </code>
+            ))}
+          </span>
+        )}
+      </div>
+    )}
+  </aside>
+)}

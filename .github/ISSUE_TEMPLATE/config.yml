@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security report
+    url: mailto:hello@oxelan.com
+    about: Do not open a public issue for a vulnerability. Email first.
+  - name: General contact
+    url: mailto:hello@oxelan.com
+    about: Tips, corrections and disagreements.

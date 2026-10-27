@@ -1,0 +1,173 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import AlertStrip from '../components/AlertStrip.astro';
+import FilterBar from '../components/FilterBar.astro';
+import PostFeed from '../components/PostFeed.astro';
+import Sidebar from '../components/Sidebar.astro';
+import SectionBadge from '../components/SectionBadge.astro';
+import FormatBadge from '../components/FormatBadge.astro';
+import ImpactBadge from '../components/ImpactBadge.astro';
+import Icon from '../components/Icon.astro';
+import {
+  formatDate,
+  getAllPosts,
+  getAlerts,
+  getGuides,
+  getLatestDigest,
+  getLeadPost,
+  hrefOf,
+  isoDate,
+  readingTime,
+  sectionOf,
+} from '../lib/posts';
+import { sections, site } from '../site.config';
+
+const posts = await getAllPosts();
+const alerts = getAlerts(posts, 3);
+const lead = getLeadPost(posts);
+const digest = getLatestDigest(posts);
+const guides = getGuides(posts, 3);
+const feed = lead ? posts.filter((post) => post.id !== lead.id) : posts;
+const leadSection = lead ? sections[sectionOf(lead)] : undefined;
+
+const guidesHeading = 'Guides that stay current';
+---
+
+<BaseLayout description={site.description}>
+  <AlertStrip alerts={alerts} />
+
+  <section class="container-wide pt-8 md:pt-10">
+    <div class="mb-6 flex flex-wrap items-end justify-between gap-4 border-b border-line pb-4">
+      <div>
+        <p class="eyebrow">The briefing</p>
+        <h1 class="mt-1 font-display text-3xl leading-none text-fg md:text-4xl">
+          Signal over noise.
+        </h1>
+      </div>
+      <p class="max-w-md text-sm leading-relaxed text-muted">
+        What changed in AI and security. Why it matters in production. What to do next.
+      </p>
+    </div>
+
+    <div class="grid gap-10 lg:grid-cols-[minmax(0,1fr)_20rem]">
+      <div class="min-w-0">
+        {lead && leadSection && (
+          <article class="lead-banner" style={`--section-color: var(${leadSection.cssVar})`}>
+            <div class="lead-banner-inner">
+              <div class="lead-kicker">
+                <SectionBadge section={leadSection.key} />
+                <FormatBadge format={lead.data.format} />
+                {lead.data.impact && <ImpactBadge impact={lead.data.impact} />}
+                {lead.data.status === 'evolving' && (
+                  <span class="inline-flex items-center gap-1.5 text-[0.62rem] font-semibold uppercase tracking-[0.08em] text-medium">
+                    <span class="dot animate-pulse" aria-hidden="true"></span> Evolving
+                  </span>
+                )}
+              </div>
+
+              <a href={hrefOf(lead)} class="group block">
+                <h2 class="lead-title group-hover:text-brand">{lead.data.title}</h2>
+              </a>
+
+              <p class="lead-summary">{lead.data.summary}</p>
+
+              <div class="post-meta">
+                <time datetime={isoDate(lead.data.date)}>{formatDate(lead.data.date)}</time>
+                <span>{readingTime(lead.body)} min read</span>
+                <span>{leadSection.label}</span>
+              </div>
+
+              <div>
+                <a href={hrefOf(lead)} class="btn btn-primary">
+                  Read the briefing <Icon name="arrowRight" size={14} />
+                </a>
+              </div>
+            </div>
+          </article>
+        )}
+
+        <section class="mt-8" aria-labelledby="latest-title">
+          <div class="flex flex-wrap items-end justify-between gap-3">
+            <div>
+              <p class="eyebrow">Latest</p>
+              <h2 id="latest-title" class="mt-1 font-display text-3xl leading-none text-fg">
+                The feed
+              </h2>
+            </div>
+            <span class="text-[0.7rem] text-muted">Newest first · all sections</span>
+          </div>
+
+          <div class="mt-4 border-y border-line py-3">
+            <FilterBar />
+          </div>
+
+          <div class="mt-1">
+            <PostFeed posts={feed} pageSize={10} />
+          </div>
+        </section>
+
+        {guides.length > 0 && (
+          <section class="mt-12" aria-labelledby="guides-title">
+            <div class="mb-4 flex flex-wrap items-end justify-between gap-3 border-b border-line pb-3">
+              <div>
+                <p class="eyebrow">Reference</p>
+                <h2 id="guides-title" class="mt-1 font-display text-3xl leading-none text-fg">
+                  {guidesHeading}
+                </h2>
+              </div>
+              <a
+                href="/engineering/"
+                class="inline-flex items-center gap-1 text-xs font-semibold text-brand hover:underline"
+              >
+                View all <Icon name="arrowRight" size={12} />
+              </a>
+            </div>
+            <div
+              class:list={[
+                'grid gap-px overflow-hidden border border-line bg-line',
+                guides.length >= 3 ? 'sm:grid-cols-2 lg:grid-cols-3' : 'sm:grid-cols-2',
+              ]}
+            >
+              {guides.map((post) => {
+                const section = sections[sectionOf(post)];
+                return (
+                  <a
+                    href={hrefOf(post)}
+                    class="group grid gap-2 bg-surface p-4 transition-colors hover:bg-surface-2"
+                    style={`--section-color: var(${section.cssVar})`}
+                  >
+                    <div class="flex items-center gap-2">
+                      <SectionBadge section={section.key} link={false} />
+                      <FormatBadge format={post.data.format} />
+                    </div>
+                    <h3 class="font-display text-2xl leading-tight group-hover:text-brand">
+                      {post.data.title}
+                    </h3>
+                    <p class="text-xs leading-relaxed text-muted">{post.data.summary}</p>
+                    <span class="mt-auto pt-2 text-[0.66rem] text-muted">
+                      Updated {formatDate(post.data.updated ?? post.data.date)}
+                    </span>
+                  </a>
+                );
+              })}
+            </div>
+          </section>
+        )}
+
+        <div class="mt-10 flex flex-wrap items-center justify-between gap-4 rounded border border-line bg-surface/60 px-4 py-3">
+          <p class="text-sm text-muted-strong">
+            <span class="font-semibold text-fg">Every post answers three questions.</span>
+            What changed, why it matters, and what to do.
+          </p>
+          <a href="/about/" class="btn btn-ghost !min-h-0 !py-2 !text-[0.72rem]">
+            Editorial rules <Icon name="arrowUpRight" size={12} />
+          </a>
+        </div>
+      </div>
+
+      <div class="lg:sticky lg:top-24 lg:self-start">
+        <Sidebar posts={posts} digest={digest} />
+      </div>
+    </div>
+  </section>
+</BaseLayout>

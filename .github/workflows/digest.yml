@@ -1,0 +1,72 @@
+name: Weekly digest draft
+
+on:
+  schedule:
+    # Monday morning: build a draft for the week that just ended.
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  digest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: main
+
+      - name: Set up Node
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Create digest draft
+        id: draft
+        run: |
+          set -euo pipefail
+          WEEK="$(date -u -d '7 days ago' +%G-w%V)"
+          FILE="src/content/digest/${WEEK}.md"
+          echo "week=${WEEK}" >> "$GITHUB_OUTPUT"
+          if [ -f "$FILE" ]; then
+            echo "Digest ${WEEK} already exists; nothing to do."
+            echo "created=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          npm run digest
+          echo "created=true" >> "$GITHUB_OUTPUT"
+
+      - name: Verify the draft
+        if: steps.draft.outputs.created == 'true'
+        run: npm run ci
+
+      - name: Open pull request
+        if: steps.draft.outputs.created == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          WEEK: ${{ steps.draft.outputs.week }}
+        run: |
+          set -euo pipefail
+          BRANCH="digest/${WEEK}"
+          if git ls-remote --exit-code --heads origin "$BRANCH" >/dev/null 2>&1; then
+            echo "Branch ${BRANCH} already exists; nothing to do."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$BRANCH"
+          git add "src/content/digest/${WEEK}.md"
+          git commit -m "content: add ${WEEK} digest draft"
+          git push -u origin "$BRANCH"
+          gh pr create \
+            --base main \
+            --head "$BRANCH" \
+            --title "content: ${WEEK} digest" \
+            --body "Automated draft for the week of ${WEEK}. Review the links, add anything worth watching, and remove \`draft: true\` before merging. The digest was validated by this workflow. If branch protection requires the pull-request check, configure a PAT so the PR can trigger it; GITHUB_TOKEN-created events do not start new workflows."

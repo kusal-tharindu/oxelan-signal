@@ -1,0 +1,31 @@
+# Build output
+dist/
+.astro/
+.pagefind/
+
+# Dependencies
+node_modules/
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Logs and caches
+*.log
+npm-debug.log*
+.vite/
+.eslintcache
+
+# Test and tooling artefacts
+coverage/
+tmp/
+.playwright/
+
+# Editor / OS
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json

@@ -1,0 +1,126 @@
+---
+import Icon from './Icon.astro';
+import Logo from './Logo.astro';
+import { site, sections } from '../site.config';
+import { getAllPosts, trendingTags } from '../lib/posts';
+
+const posts = await getAllPosts();
+const tags = trendingTags(posts, 5);
+const currentYear = new Date().getUTCFullYear();
+---
+
+<footer class="site-footer mt-20 border-t border-line bg-bg-soft/60">
+  <div class="container-wide py-12">
+    <div class="footer-grid">
+      <div>
+        <Logo compact />
+        <p class="mt-4 max-w-xs text-sm leading-relaxed text-muted">{site.tagline}</p>
+        <p class="mt-3 max-w-xs text-xs leading-relaxed text-muted">
+          Independent, production-focused reporting on AI, security and engineering.
+        </p>
+        <div class="mt-5 flex items-center gap-1">
+          <a href={site.socials.github} class="icon-btn" aria-label="GitHub" rel="me noopener">
+            <Icon name="github" size={17} />
+          </a>
+          <a href={site.socials.linkedin} class="icon-btn" aria-label="LinkedIn" rel="me noopener">
+            <Icon name="linkedin" size={17} />
+          </a>
+          <a href={site.socials.x} class="icon-btn" aria-label="X" rel="me noopener">
+            <Icon name="x" size={16} />
+          </a>
+        </div>
+      </div>
+
+      <div>
+        <h2 class="eyebrow">Sections</h2>
+        <ul class="mt-4 space-y-2 text-sm text-muted-strong">
+          {Object.values(sections).map((section) => (
+            <li>
+              <a href={section.path} class="hover:text-brand">
+                {section.label}
+              </a>
+            </li>
+          ))}
+          <li>
+            <a href="/about/" class="hover:text-brand">
+              About
+            </a>
+          </li>
+          <li>
+            <a href="/radar/" class="hover:text-brand">
+              Radar
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <div>
+        <h2 class="eyebrow">Topics</h2>
+        <ul class="mt-4 space-y-2 text-sm text-muted-strong">
+          {tags.map(({ tag }) => (
+            <li>
+              <a href={`/tags/${tag}/`} class="hover:text-brand">
+                #{tag}
+              </a>
+            </li>
+          ))}
+          <li>
+            <a href="/tags/" class="hover:text-brand">
+              All tags
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <div>
+        <h2 class="eyebrow">Stay updated</h2>
+        <ul class="mt-4 space-y-2 text-sm text-muted-strong">
+          <li>
+            <a href="/rss.xml" class="inline-flex items-center gap-2 hover:text-brand">
+              <Icon name="rss" size={13} /> RSS (all)
+            </a>
+          </li>
+          <li>
+            <a href="/security/rss.xml" class="inline-flex items-center gap-2 hover:text-brand">
+              <Icon name="rss" size={13} /> Security feed
+            </a>
+          </li>
+          <li>
+            <a href="/ai/rss.xml" class="inline-flex items-center gap-2 hover:text-brand">
+              <Icon name="rss" size={13} /> AI feed
+            </a>
+          </li>
+          <li class="pt-2 text-xs leading-relaxed text-muted">
+            No tracking. No paywall. Posts live in git.
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="mt-10 flex flex-col gap-4 border-t border-line pt-6 text-xs text-muted md:flex-row md:items-center md:justify-between">
+      <p>
+        © {currentYear} Oxelan · Content CC BY 4.0 · Code MIT ·
+        <a href="/about/#disclaimer" class="hover:text-brand">
+          Disclaimer
+        </a>
+      </p>
+      <p class="flex flex-wrap items-center gap-x-3 gap-y-1">
+        <span>An Oxelan publication</span>
+        <a
+          href={site.socials.oxelan}
+          class="inline-flex items-center gap-1 hover:text-brand"
+          rel="noopener"
+        >
+          oxelan.com <Icon name="arrowUpRight" size={11} />
+        </a>
+        <a
+          href={`${site.socials.github}/oxelan-signal`}
+          class="inline-flex items-center gap-1 hover:text-brand"
+          rel="noopener"
+        >
+          Source on GitHub <Icon name="arrowUpRight" size={11} />
+        </a>
+      </p>
+    </div>
+  </div>
+</footer>

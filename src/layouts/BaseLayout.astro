@@ -1,0 +1,158 @@
+---
+import '@fontsource-variable/inter';
+import '@fontsource/instrument-serif';
+import '@fontsource-variable/space-grotesk';
+import '@fontsource-variable/jetbrains-mono';
+import '../styles/global.css';
+
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import SearchOverlay from '../components/SearchOverlay.astro';
+import { site } from '../site.config';
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  type?: 'website' | 'article';
+  publishedTime?: string;
+  modifiedTime?: string;
+  tags?: string[];
+  noindex?: boolean;
+  bodyClass?: string;
+  jsonLd?: Record<string, unknown>[];
+}
+
+const {
+  title,
+  description = site.description,
+  image = '/og/default.png',
+  type = 'website',
+  publishedTime,
+  modifiedTime,
+  tags = [],
+  noindex = false,
+  bodyClass = '',
+  jsonLd = [],
+} = Astro.props;
+
+const pageTitle = title ? `${title} — ${site.name}` : `${site.name} — ${site.tagline}`;
+const canonical = new URL(Astro.url.pathname, site.url);
+const absoluteImage = new URL(image, site.url);
+const absoluteImageUrl = absoluteImage.toString();
+
+const graph = [
+  {
+    '@type': 'WebSite',
+    '@id': `${site.url}/#website`,
+    url: site.url,
+    name: site.name,
+    description: site.description,
+    publisher: { '@id': `${site.url}/#organization` },
+    inLanguage: site.language,
+  },
+  {
+    '@type': 'Organization',
+    '@id': `${site.url}/#organization`,
+    name: site.publisher.name,
+    url: site.publisher.url,
+    logo: new URL(site.publisher.logo, site.url).toString(),
+  },
+  ...jsonLd,
+];
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@graph': graph,
+};
+---
+
+<!doctype html>
+<html lang={site.language} data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="theme-color" content="#0a0e17" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#f6f2e8" media="(prefers-color-scheme: light)" />
+    <meta name="color-scheme" content="dark light" />
+
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+
+    <meta property="og:type" content={type} />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:locale" content={site.locale} />
+    <meta property="og:title" content={title ?? pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={absoluteImageUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={title ? `${title} — ${site.name}` : site.tagline} />
+    {publishedTime && <meta property="article:published_time" content={publishedTime} />}
+    {modifiedTime && <meta property="article:modified_time" content={modifiedTime} />}
+    {tags.map((tag) => (
+      <meta property="article:tag" content={tag} />
+    ))}
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title ?? pageTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={absoluteImageUrl} />
+    <meta name="twitter:image:alt" content={title ? `${title} — ${site.name}` : site.tagline} />
+
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title={`${site.name} — all posts`}
+      href="/rss.xml"
+    />
+    <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <script is:inline>
+      (function () {
+        try {
+          var stored = localStorage.getItem('theme');
+          var theme = stored === 'light' || stored === 'dark' ? stored : 'dark';
+          document.documentElement.dataset.theme = theme;
+        } catch (_) {
+          document.documentElement.dataset.theme = 'dark';
+        }
+      })();
+    </script>
+
+    <script
+      type="application/ld+json"
+      set:html={JSON.stringify(structuredData).replaceAll('<', '\\u003c')}
+    />
+    {site.features.analytics && site.analytics.cloudflareToken && (
+      <script
+        defer
+        is:inline
+        src="https://static.cloudflareinsights.com/beacon.min.js"
+        data-cf-beacon={JSON.stringify({ token: site.analytics.cloudflareToken })}
+      ></script>
+    )}
+
+    <slot name="head" />
+  </head>
+  <body class={bodyClass}>
+    <a href="#main" class="skip-link">
+      Skip to content
+    </a>
+    <Nav />
+    <main id="main" tabindex="-1">
+      <slot />
+    </main>
+    <Footer />
+    <SearchOverlay />
+    <script>
+      import '../scripts/site.js';
+    </script>
+  </body>
+</html>

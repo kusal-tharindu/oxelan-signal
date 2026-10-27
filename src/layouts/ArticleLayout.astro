@@ -1,0 +1,272 @@
+---
+import type { Post } from '../lib/posts';
+import {
+  formatDate,
+  hrefOf,
+  isoDate,
+  isoDateTime,
+  readingTime,
+  sectionOf,
+  slugOf,
+} from '../lib/posts';
+import { site, sections } from '../site.config';
+import BaseLayout from './BaseLayout.astro';
+import type { Heading } from '../components/Toc.astro';
+import Toc from '../components/Toc.astro';
+import BriefingBox from '../components/BriefingBox.astro';
+import ShareRow from '../components/ShareRow.astro';
+import SectionBadge from '../components/SectionBadge.astro';
+import FormatBadge from '../components/FormatBadge.astro';
+import ImpactBadge from '../components/ImpactBadge.astro';
+import Icon from '../components/Icon.astro';
+import RelatedPosts from '../components/RelatedPosts.astro';
+import ArticleNav from '../components/ArticleNav.astro';
+import Comments from '../components/Comments.astro';
+
+interface Props {
+  post: Post;
+  headings: Heading[];
+  related: Post[];
+  newer?: Post | undefined;
+  older?: Post | undefined;
+}
+
+const { post, headings, related, newer, older } = Astro.props;
+
+const section = sections[sectionOf(post)];
+const minutes = readingTime(post.body);
+const canonical = new URL(hrefOf(post), site.url).toString();
+const ogImage = `/og/${post.id}.png`;
+const summary = post.data.summary;
+const modified = post.data.updated ?? post.data.date;
+const isGuide = post.data.format === 'guide';
+const isSuperseded = post.data.status === 'superseded';
+
+const articleSchema = {
+  '@type': 'Article',
+  '@id': `${canonical}#article`,
+  mainEntityOfPage: canonical,
+  headline: post.data.title,
+  description: summary,
+  datePublished: isoDateTime(post.data.date),
+  dateModified: isoDateTime(modified),
+  articleSection: section.label,
+  keywords: post.data.tags.join(', '),
+  image: [new URL(ogImage, site.url).toString()],
+  author: {
+    '@type': 'Person',
+    name: site.author.name,
+    url: site.author.url,
+  },
+  publisher: { '@id': `${site.url}/#organization` },
+  isAccessibleForFree: true,
+  inLanguage: site.language,
+};
+---
+
+<BaseLayout
+  title={post.data.title}
+  description={summary}
+  image={ogImage}
+  type="article"
+  publishedTime={isoDateTime(post.data.date)}
+  modifiedTime={isoDateTime(modified)}
+  tags={post.data.tags}
+  jsonLd={[articleSchema]}
+  noindex={post.data.draft || post.data.date > new Date()}
+  bodyClass="article-page"
+>
+  <div class="reading-progress" data-reading-progress aria-hidden="true"></div>
+
+  <div class="container-wide pt-6">
+    <nav aria-label="Breadcrumb" class="flex items-center gap-2 text-[0.7rem] text-muted">
+      <a href="/" class="hover:text-brand">
+        Latest
+      </a>
+      <Icon name="chevronRight" size={11} />
+      <a href={section.path} class="hover:text-brand">
+        {section.label}
+      </a>
+      <Icon name="chevronRight" size={11} />
+      <span class="truncate text-muted-strong">{post.data.title}</span>
+    </nav>
+  </div>
+
+  <article
+    class="container-wide pb-8 pt-7"
+    data-article
+    data-pagefind-body
+    data-post-section={section.label}
+  >
+    <span data-pagefind-meta={`section:${section.label}`} aria-hidden="true"></span>
+    <span data-pagefind-meta={`sectionKey:${section.key}`} aria-hidden="true"></span>
+    <div
+      class="mb-5 flex flex-wrap items-center gap-2"
+      style={`--section-color: var(${section.cssVar})`}
+    >
+      <SectionBadge section={section.key} />
+      <FormatBadge format={post.data.format} />
+      {post.data.impact && <ImpactBadge impact={post.data.impact} />}
+      {post.data.status === 'evolving' && (
+        <span class="inline-flex items-center gap-1.5 text-[0.62rem] font-semibold uppercase tracking-[0.08em] text-medium">
+          <span class="dot animate-pulse" aria-hidden="true"></span> Evolving story
+        </span>
+      )}
+      {post.data.draft && <span class="badge badge-draft">Draft — local only</span>}
+    </div>
+
+    <div class="max-w-4xl">
+      <h1 class="article-title">{post.data.title}</h1>
+      <p class="measure mt-4 text-base leading-relaxed text-muted-strong md:text-lg">{summary}</p>
+
+      <div
+        class="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 border-y border-line py-3"
+        data-pagefind-ignore
+      >
+        <span class="flex items-center gap-2 text-[0.78rem] text-muted-strong">
+          <span class="grid h-7 w-7 place-items-center rounded-full border border-line bg-surface-2 font-label text-[0.6rem] font-bold text-brand">
+            KT
+          </span>
+          {site.author.name}
+        </span>
+        <span class="post-meta !gap-0">
+          <time datetime={isoDate(post.data.date)}>{formatDate(post.data.date)}</time>
+          <span>{minutes} min read</span>
+          {post.data.updated && <span>Updated {formatDate(post.data.updated)}</span>}
+        </span>
+        <div class="md:ml-auto">
+          <ShareRow url={canonical} title={post.data.title} />
+        </div>
+      </div>
+    </div>
+
+    {isSuperseded && post.data.supersededBy && (
+      <div class="mt-5 flex flex-wrap items-center gap-3 rounded border border-high/40 bg-high/5 px-4 py-3 text-sm">
+        <Icon name="alert" size={16} class="shrink-0 text-high" />
+        <p class="text-muted-strong">
+          This post is outdated. Read the replacement:
+          <a href={post.data.supersededBy} class="font-semibold text-brand hover:underline">
+            {post.data.supersededBy}
+          </a>
+        </p>
+      </div>
+    )}
+
+    <div class="mt-8 grid gap-10 lg:grid-cols-[minmax(0,1fr)_16rem]">
+      <div class="min-w-0">
+        {!isGuide && !isSuperseded && (
+          <div class="mb-8">
+            <BriefingBox post={post} />
+          </div>
+        )}
+
+        {isGuide && (
+          <div class="mb-8 flex flex-wrap items-center gap-x-6 gap-y-2 rounded border border-eng/30 bg-eng/5 px-4 py-3">
+            <span class="inline-flex items-center gap-2 text-[0.7rem] font-semibold uppercase tracking-[0.08em] text-eng">
+              <Icon name="book" size={13} /> Living guide
+            </span>
+            <span class="text-xs text-muted-strong">Last reviewed {formatDate(modified)}</span>
+            {post.data.updated && post.data.updated > post.data.date && (
+              <span class="text-xs text-muted">
+                Originally published {formatDate(post.data.date)}
+              </span>
+            )}
+          </div>
+        )}
+
+        <div class="prose-signal" data-article-body>
+          <slot />
+        </div>
+
+        {post.data.sources.length > 0 && (
+          <section class="mt-12" aria-labelledby="sources-title" data-pagefind-ignore>
+            <h2 id="sources-title" class="eyebrow mb-3">
+              Sources
+            </h2>
+            <ol class="sources-list">
+              {post.data.sources.map((source) => (
+                <li>
+                  <a
+                    href={source.url}
+                    class="text-muted-strong underline decoration-line-strong underline-offset-4 hover:text-brand"
+                    rel="noopener noreferrer"
+                    target="_blank"
+                  >
+                    {source.title}
+                  </a>
+                </li>
+              ))}
+            </ol>
+          </section>
+        )}
+
+        {post.data.updates.length > 0 && (
+          <section class="mt-10" aria-labelledby="updates-title" data-pagefind-ignore>
+            <h2 id="updates-title" class="eyebrow mb-3">
+              Story timeline
+            </h2>
+            <ol class="timeline">
+              {post.data.updates.map((update) => (
+                <li>
+                  <time
+                    datetime={isoDate(update.date)}
+                    class="font-label text-[0.7rem] font-semibold text-brand"
+                  >
+                    {formatDate(update.date)}
+                  </time>
+                  <p class="mt-0.5">{update.note}</p>
+                </li>
+              ))}
+            </ol>
+          </section>
+        )}
+
+        <div
+          class="mt-10 flex flex-wrap items-center gap-2 border-t border-line pt-5"
+          data-pagefind-ignore
+        >
+          <span class="eyebrow mr-1">Tags</span>
+          {post.data.tags.map((tag) => (
+            <a href={`/tags/${tag}/`} class="tag">
+              {tag}
+            </a>
+          ))}
+        </div>
+
+        <ArticleNav newer={newer} older={older} section={section.key} />
+        <RelatedPosts posts={related} />
+        <Comments />
+      </div>
+
+      <aside class="hidden lg:block" aria-label="Article tools" data-pagefind-ignore>
+        <div class="sticky top-24 space-y-6">
+          <Toc headings={headings} />
+          <div class="border-t border-line pt-4">
+            <ShareRow url={canonical} title={post.data.title} />
+          </div>
+          <div class="rounded border border-line bg-surface/60 p-3">
+            <p class="eyebrow mb-1.5">Identifiers</p>
+            <dl class="space-y-1.5 text-[0.68rem]">
+              <div class="flex justify-between gap-2">
+                <dt class="text-muted">Section</dt>
+                <dd class="text-muted-strong">{section.label}</dd>
+              </div>
+              <div class="flex justify-between gap-2">
+                <dt class="text-muted">Format</dt>
+                <dd class="text-muted-strong">{post.data.format}</dd>
+              </div>
+              <div class="flex justify-between gap-2">
+                <dt class="text-muted">Slug</dt>
+                <dd class="truncate font-mono text-muted-strong">{slugOf(post)}</dd>
+              </div>
+              <div class="flex justify-between gap-2">
+                <dt class="text-muted">Status</dt>
+                <dd class="text-muted-strong">{post.data.status}</dd>
+              </div>
+            </dl>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </article>
+</BaseLayout>

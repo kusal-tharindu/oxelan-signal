@@ -1,0 +1,30 @@
+name: Correction
+description: Report a factual error in a published post
+title: '[Correction] '
+labels: [correction]
+body:
+  - type: input
+    id: url
+    attributes:
+      label: Post URL
+      placeholder: https://blog.oxelan.com/security/...
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: What is wrong?
+      description: Quote the passage and explain the correction.
+    validations:
+      required: true
+  - type: textarea
+    id: source
+    attributes:
+      label: Source
+      description: A primary source that supports the correction, if available.
+  - type: checkboxes
+    id: sensitive
+    attributes:
+      label: Sensitivity
+      options:
+        - label: This report contains exploit details or private data. Please do not publish it.

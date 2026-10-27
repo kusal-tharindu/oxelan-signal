@@ -1,0 +1,18 @@
+---
+import Icon from './Icon.astro';
+---
+
+<button
+  type="button"
+  class="icon-btn"
+  data-theme-toggle
+  aria-label="Switch to light theme"
+  title="Switch theme"
+>
+  <span data-theme-icon="sun" class="grid">
+    <Icon name="sun" size={17} />
+  </span>
+  <span data-theme-icon="moon" class="hidden">
+    <Icon name="moon" size={17} />
+  </span>
+</button>

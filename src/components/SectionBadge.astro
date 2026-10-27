@@ -1,0 +1,21 @@
+---
+import { sections, type SectionKey } from '../site.config';
+
+interface Props {
+  section: SectionKey;
+  link?: boolean;
+  short?: boolean;
+}
+
+const { section, link = true, short = true } = Astro.props;
+const meta = sections[section];
+const Tag = link ? 'a' : 'span';
+---
+
+<Tag
+  {...(link ? { href: meta.path } : {})}
+  class="badge badge-section"
+  style={`--section-color: var(${meta.cssVar})`}
+>
+  {short ? meta.short : meta.label}
+</Tag>

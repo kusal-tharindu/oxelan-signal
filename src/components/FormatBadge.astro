@@ -1,0 +1,12 @@
+---
+import { formats, type FormatKey } from '../site.config';
+
+interface Props {
+  format: FormatKey | string;
+}
+
+const { format } = Astro.props;
+const meta = formats[format as FormatKey];
+---
+
+<span class="badge badge-format">{meta?.label ?? format}</span>

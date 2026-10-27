@@ -1,0 +1,27 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { render } from 'astro:content';
+import ArticleLayout from '../../layouts/ArticleLayout.astro';
+import { getAllPosts, adjacentPosts, relatedPosts, sectionOf, slugOf } from '../../lib/posts';
+
+export const getStaticPaths = (async () => {
+  const posts = await getAllPosts();
+  return posts.map((post) => ({
+    params: {
+      section: sectionOf(post),
+      slug: slugOf(post),
+    },
+    props: { post },
+  }));
+}) satisfies GetStaticPaths;
+
+const { post } = Astro.props;
+const posts = await getAllPosts();
+const { Content, headings } = await render(post);
+const related = relatedPosts(post, posts, 3);
+const { newer, older } = adjacentPosts(post, posts);
+---
+
+<ArticleLayout post={post} headings={headings} related={related} newer={newer} older={older}>
+  <Content />
+</ArticleLayout>

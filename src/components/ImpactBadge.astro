@@ -1,0 +1,15 @@
+---
+import { impacts, type ImpactKey } from '../site.config';
+
+interface Props {
+  impact: ImpactKey | string;
+}
+
+const { impact } = Astro.props;
+const meta = impacts[impact as ImpactKey];
+---
+
+<span class="badge badge-impact" style={`--impact-color: var(--${impact})`}>
+  <span class="dot" aria-hidden="true"></span>
+  {meta?.label ?? impact}
+</span>

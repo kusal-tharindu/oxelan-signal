@@ -1,0 +1,73 @@
+---
+import { site } from '../site.config';
+import Icon from './Icon.astro';
+
+const enabled =
+  site.features.comments && site.comments.repo && site.comments.repoId && site.comments.categoryId;
+---
+
+{enabled && (
+  <section
+    data-pagefind-ignore
+    class="mt-12 border-t border-line pt-8"
+    aria-labelledby="comments-title"
+  >
+    <h2 id="comments-title" class="eyebrow mb-4">
+      Discussion
+    </h2>
+    <script
+      is:inline
+      src="https://giscus.app/client.js"
+      data-repo={site.comments.repo}
+      data-repo-id={site.comments.repoId}
+      data-category={site.comments.category}
+      data-category-id={site.comments.categoryId}
+      data-mapping="pathname"
+      data-strict="1"
+      data-reactions-enabled="1"
+      data-emit-metadata="0"
+      data-input-position="top"
+      data-theme="preferred_color_scheme"
+      data-lang="en"
+      data-loading="lazy"
+      crossorigin="anonymous"
+      async
+    ></script>
+  </section>
+)}
+
+{!enabled && site.features.comments && (
+  <section
+    data-pagefind-ignore
+    class="mt-12 border-t border-line pt-8"
+    aria-labelledby="comments-title"
+  >
+    <h2 id="comments-title" class="eyebrow mb-3">
+      Discussion
+    </h2>
+    <p class="text-sm text-muted">
+      Comments are configured but not connected yet. Set the Giscus IDs in
+      <code class="text-brand">src/site.config.ts</code>.
+    </p>
+  </section>
+)}
+
+{!site.features.comments && (
+  <section
+    data-pagefind-ignore
+    class="mt-12 border-t border-line pt-8"
+    aria-labelledby="comments-title"
+  >
+    <h2 id="comments-title" class="eyebrow mb-3">
+      Discussion
+    </h2>
+    <p class="flex flex-wrap items-center gap-2 text-sm text-muted">
+      <Icon name="mail" size={14} />
+      Comments open after launch. Until then, send corrections to
+      <a href={`mailto:${site.author.email}`} class="text-brand hover:underline">
+        {site.author.email}
+      </a>
+      .
+    </p>
+  </section>
+)}

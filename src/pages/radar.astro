@@ -1,0 +1,155 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Icon from '../components/Icon.astro';
+import { sections } from '../site.config';
+
+const entries = (await getCollection('radar')) as CollectionEntry<'radar'>[];
+const ringOrder = ['adopt', 'trial', 'assess', 'hold'] as const;
+const ringMeta = {
+  adopt: {
+    label: 'Adopt',
+    description: 'Proven in production. Use it unless you have a specific reason not to.',
+    color: 'var(--eng)',
+  },
+  trial: {
+    label: 'Trial',
+    description: 'Worth using on a real project, with an exit plan.',
+    color: 'var(--brand)',
+  },
+  assess: {
+    label: 'Assess',
+    description: 'Promising, but the operational cost is not settled yet.',
+    color: 'var(--low)',
+  },
+  hold: {
+    label: 'Hold',
+    description: 'Avoid for new work until the risk or the ecosystem changes.',
+    color: 'var(--sec)',
+  },
+};
+
+const grouped = ringOrder.map((ring) => ({
+  ring,
+  ...ringMeta[ring],
+  items: entries
+    .filter((entry) => entry.data.ring === ring)
+    .sort((a, b) => a.data.name.localeCompare(b.data.name)),
+}));
+
+const quadrantColor = {
+  ai: 'var(--ai)',
+  security: 'var(--sec)',
+  engineering: 'var(--eng)',
+} as const;
+---
+
+<BaseLayout
+  title="Radar"
+  description="The tools, patterns and risks that are moving in AI, security and engineering — and where they sit right now."
+>
+  <header class="section-header" style="--section-color: var(--brand)">
+    <div class="container-wide">
+      <div class="flex flex-wrap items-end justify-between gap-6">
+        <div>
+          <p class="section-label">Radar</p>
+          <h1 class="section-title mt-2">What is moving.</h1>
+          <p class="measure mt-4 text-sm leading-relaxed text-muted-strong md:text-base">
+            A deliberately short list of tools, patterns and risks worth a decision. Rings describe
+            maturity, not enthusiasm. A blip moves when the evidence changes.
+          </p>
+        </div>
+        <div class="flex items-center gap-4 text-[0.68rem] text-muted">
+          <span class="inline-flex items-center gap-1.5">
+            <span class="h-2 w-2 rotate-45 bg-eng"></span> Adopt
+          </span>
+          <span class="inline-flex items-center gap-1.5">
+            <span class="h-2 w-2 rotate-45 bg-brand"></span> Trial
+          </span>
+          <span class="inline-flex items-center gap-1.5">
+            <span class="h-2 w-2 rotate-45 bg-low"></span> Assess
+          </span>
+          <span class="inline-flex items-center gap-1.5">
+            <span class="h-2 w-2 rotate-45 bg-sec"></span> Hold
+          </span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <section class="container-wide pt-8">
+    <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+      {grouped.map((group) => (
+        <section
+          class="rounded border border-line bg-surface/50"
+          style={`--section-color: ${group.color}`}
+        >
+          <header class="border-b border-line px-4 py-3">
+            <div class="flex items-center justify-between gap-3">
+              <h2 class="font-display text-3xl leading-none" style={`color: ${group.color}`}>
+                {group.label}
+              </h2>
+              <span class="text-[0.66rem] text-muted">{group.items.length}</span>
+            </div>
+            <p class="mt-2 text-[0.72rem] leading-relaxed text-muted">{group.description}</p>
+          </header>
+          <div class="space-y-2 p-3">
+            {group.items.map((entry) => {
+              const section = sections[entry.data.quadrant];
+              return (
+                <article
+                  class="radar-blip"
+                  style={`--section-color: ${quadrantColor[entry.data.quadrant]}`}
+                >
+                  <div class="flex items-start justify-between gap-2">
+                    <h3 class="text-sm font-semibold leading-snug text-fg">{entry.data.name}</h3>
+                    <span
+                      class="label shrink-0 text-[0.58rem]"
+                      style={`color: ${quadrantColor[entry.data.quadrant]}`}
+                    >
+                      {section.short}
+                    </span>
+                  </div>
+                  <p class="text-[0.72rem] leading-relaxed text-muted">{entry.data.summary}</p>
+                  <div class="flex items-center justify-between gap-2 pt-0.5">
+                    <span class="radar-moved">
+                      {entry.data.moved === 'new'
+                        ? 'New'
+                        : entry.data.moved === 'same'
+                          ? 'Holding'
+                          : `Moved ${entry.data.moved}`}
+                      {entry.data.since ? ` · ${entry.data.since}` : ''}
+                    </span>
+                    {entry.data.links.map((link) => (
+                      <a
+                        href={link.href}
+                        class="inline-flex items-center gap-1 text-[0.66rem] font-semibold text-muted-strong hover:text-brand"
+                        rel="noopener"
+                      >
+                        {link.label} <Icon name="arrowUpRight" size={10} />
+                      </a>
+                    ))}
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+        </section>
+      ))}
+    </div>
+
+    <div class="mt-8 grid gap-4 rounded border border-line bg-surface/40 p-5 md:grid-cols-[1fr_auto] md:items-center">
+      <div>
+        <p class="eyebrow">How to read this</p>
+        <p class="mt-2 max-w-3xl text-sm leading-relaxed text-muted">
+          Radar is a decision aid, not a ranking. “Adopt” means the operational cost is understood.
+          “Hold” means the risk outweighs the benefit for new work right now. Every entry links to
+          the primary documentation so you can disagree with the placement.
+        </p>
+      </div>
+      <a href="/tags/" class="btn btn-ghost !min-h-0 !py-2 !text-[0.72rem]">
+        Browse the archive <Icon name="arrowRight" size={12} />
+      </a>
+    </div>
+  </section>
+</BaseLayout>

@@ -1,0 +1,31 @@
+---
+export interface Heading {
+  depth: number;
+  slug: string;
+  text: string;
+}
+
+interface Props {
+  headings: Heading[];
+}
+
+const { headings } = Astro.props;
+const items = headings.filter((heading) => heading.depth === 2 || heading.depth === 3).slice(0, 14);
+---
+
+{items.length >= 2 && (
+  <nav class="toc" aria-labelledby="toc-title" data-toc data-pagefind-ignore>
+    <h2 id="toc-title" class="eyebrow mb-2">
+      On this page
+    </h2>
+    {items.map((heading) => (
+      <a
+        href={`#${heading.slug}`}
+        class:list={[heading.depth === 3 && 'toc-h3']}
+        data-toc-link={heading.slug}
+      >
+        {heading.text}
+      </a>
+    ))}
+  </nav>
+)}

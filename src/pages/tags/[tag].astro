@@ -1,0 +1,51 @@
+---
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import FilterBar from '../../components/FilterBar.astro';
+import PostFeed from '../../components/PostFeed.astro';
+import Sidebar from '../../components/Sidebar.astro';
+import { getAllPosts, postsForTag, getLatestDigest } from '../../lib/posts';
+
+export const getStaticPaths = (async () => {
+  const posts = await getAllPosts();
+  const tags = [...new Set(posts.flatMap((post) => post.data.tags))].sort();
+  return tags.map((tag) => ({
+    params: { tag },
+    props: { tag },
+  }));
+}) satisfies GetStaticPaths;
+
+const { tag } = Astro.props;
+const allPosts = await getAllPosts();
+const posts = postsForTag(allPosts, tag);
+const digest = getLatestDigest(allPosts);
+---
+
+<BaseLayout title={`#${tag}`} description={`Posts tagged ${tag} on AI, security and engineering.`}>
+  <header class="section-header" style="--section-color: var(--brand)">
+    <div class="container-wide">
+      <p class="section-label">Tag</p>
+      <h1 class="section-title mt-2">#{tag}</h1>
+      <p class="mt-3 text-sm text-muted">
+        {posts.length} {posts.length === 1 ? 'post' : 'posts'} across AI, security and engineering.
+        <a href="/tags/" class="ml-2 text-brand hover:underline">
+          All tags
+        </a>
+      </p>
+    </div>
+  </header>
+
+  <section class="container-wide pt-6">
+    <div class="grid gap-10 lg:grid-cols-[minmax(0,1fr)_20rem]">
+      <div class="min-w-0">
+        <div class="border-b border-line pb-3">
+          <FilterBar />
+        </div>
+        <PostFeed posts={posts} pageSize={12} />
+      </div>
+      <div class="lg:sticky lg:top-24 lg:self-start">
+        <Sidebar posts={allPosts} digest={digest} compact />
+      </div>
+    </div>
+  </section>
+</BaseLayout>

@@ -1,0 +1,215 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Icon from '../components/Icon.astro';
+import { site } from '../site.config';
+
+const lastUpdated = '2026-10-27';
+const principles = [
+  {
+    title: 'Facts before takes',
+    body: 'A post starts with what changed, not what I think about it. Claims that can be checked carry a source. Uncertainty is labelled, not hidden.',
+  },
+  {
+    title: 'Production first',
+    body: 'A release note is not useful until it answers: what breaks, what gets cheaper, what needs a migration, and who owns it. Every post ends with an action.',
+  },
+  {
+    title: 'Corrections in public',
+    body: 'When a post is wrong, the correction is visible. Material changes get an “Updated” date and a line in the story timeline. Superseded posts point at their replacement.',
+  },
+  {
+    title: 'No engagement bait',
+    body: 'No urgency without evidence, no “you won’t believe” headlines, no invented benchmarks. Severity labels are reserved for issues with a real exploit path.',
+  },
+];
+
+const coverage = [
+  {
+    label: 'AI',
+    body: 'Models and releases, agents, evaluation, inference economics, LLMOps, and AI in production.',
+  },
+  {
+    label: 'Security',
+    body: 'Incidents, CVEs, AI security, cloud and Kubernetes, and the software supply chain.',
+  },
+  {
+    label: 'Engineering',
+    body: 'Architecture, platform and SRE practice, reliability, and learning paths that hold up.',
+  },
+];
+---
+
+<BaseLayout
+  title="About"
+  description="Who writes Oxelan Signal, what it covers, how posts are sourced, and the editorial rules behind the site."
+>
+  <header class="section-header" style="--section-color: var(--brand)">
+    <div class="container-wide">
+      <p class="section-label">About</p>
+      <h1 class="section-title mt-2 max-w-4xl">A briefing, not a feed.</h1>
+      <p class="mt-5 max-w-2xl text-base leading-relaxed text-muted-strong md:text-lg">
+        Oxelan Signal is an independent publication about AI, security and the engineering work
+        between them. It exists for people who have to make a decision after reading the news.
+      </p>
+    </div>
+  </header>
+
+  <section class="container-wide pt-10">
+    <div class="grid gap-12 lg:grid-cols-[minmax(0,1fr)_18rem]">
+      <div class="prose-signal">
+        <h2 id="what-this-is">What this is</h2>
+        <p>
+          Most technology news stops at <em>what happened</em>. That is the easy part. The useful
+          part is the next two questions: why does it matter in a real system, and what should you
+          do before Monday?
+        </p>
+        <p>
+          Every post is built around those three questions. News is short and sourced. Analysis goes
+          deep enough to explain the mechanism. Guides are checklists that get reviewed and dated.
+          Digests collect the week without pretending every item deserves equal attention.
+        </p>
+        <blockquote>
+          <p>Signal over noise. The rest is commentary.</p>
+        </blockquote>
+
+        <h2 id="coverage">What it covers</h2>
+        <div class="not-prose my-6 grid gap-px overflow-hidden rounded border border-line bg-line sm:grid-cols-3">
+          {coverage.map((item) => (
+            <div class="bg-surface p-4">
+              <p class="font-label text-[0.68rem] font-bold uppercase tracking-[0.12em] text-brand">
+                {item.label}
+              </p>
+              <p class="mt-2 text-sm leading-relaxed text-muted-strong">{item.body}</p>
+            </div>
+          ))}
+        </div>
+        <p>
+          Overlapping topics are filed under one section and tagged with the other. A post about an
+          LLM gateway vulnerability belongs in Security, but it is also tagged{' '}
+          <code>llm-security</code>
+          so it shows up when you are working on the AI side.
+        </p>
+
+        <h2 id="editorial-rules">Editorial rules</h2>
+        <div class="not-prose mt-5 space-y-4">
+          {principles.map((principle, index) => (
+            <div class="grid gap-2 border-l border-line pl-4 sm:grid-cols-[2.5rem_1fr] sm:gap-4">
+              <span class="font-display text-3xl leading-none text-brand">0{index + 1}</span>
+              <div>
+                <h3 class="font-sans text-base font-semibold text-fg">{principle.title}</h3>
+                <p class="mt-1 text-sm leading-relaxed text-muted">{principle.body}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <h2 id="sourcing">Sourcing and AI use</h2>
+        <p>
+          Primary sources are preferred: vendor advisories, CVE records, release notes, standards
+          documents, and the code itself. Secondary reporting is used to find primary sources, not
+          to replace them.
+        </p>
+        <p>
+          AI tools may be used for research, outlining, and copy editing. They do not get a byline,
+          they are not treated as a source, and anything they produce is checked against primary
+          material before publication. The responsibility for every claim is human.
+        </p>
+
+        <h2 id="corrections">Corrections</h2>
+        <p>
+          Send corrections to <a href={`mailto:${site.author.email}`}>{site.author.email}</a> with
+          the post URL and the passage that is wrong. Factual corrections are applied to the post
+          and, when material, recorded in its story timeline. A post that is no longer safe to
+          follow is marked <strong>superseded</strong> and linked to the replacement.
+        </p>
+
+        <h2 id="privacy">Privacy and independence</h2>
+        <p>
+          The site is static, has no accounts, and sets no advertising cookies. Analytics, when
+          enabled, is cookieless and aggregate. There is no sponsored content and no affiliate
+          links. If that changes, it will be stated on the post, not buried in a footer.
+        </p>
+
+        <h2 id="disclaimer">Disclaimer</h2>
+        <p>
+          Oxelan Signal is not a substitute for a security incident response plan, legal advice, or
+          your own threat model. Severity and impact labels describe the editor’s assessment at the
+          time of writing. Verify versions and advisories against the vendor before acting. Nothing
+          here is a warranty that a system is secure.
+        </p>
+
+        <h2 id="contact">Contact</h2>
+        <p>
+          Corrections, tips, and disagreements:{' '}
+          <a href={`mailto:${site.author.email}`}>{site.author.email}</a>. For sensitive
+          disclosures, say so in the first line and do not include exploit details in an initial
+          email.
+        </p>
+      </div>
+
+      <aside class="space-y-4 lg:sticky lg:top-24 lg:self-start">
+        <div class="sidebar-panel">
+          <p class="eyebrow">Written by</p>
+          <div class="mt-3 flex items-center gap-3">
+            <span class="grid h-11 w-11 place-items-center rounded-full border border-line bg-surface-2 font-label text-xs font-bold text-brand">
+              KT
+            </span>
+            <div>
+              <p class="text-sm font-semibold text-fg">{site.author.name}</p>
+              <p class="text-[0.7rem] text-muted">Oxelan</p>
+            </div>
+          </div>
+          <p class="mt-3 text-xs leading-relaxed text-muted">
+            Platform and security engineer. I write about the parts of AI and infrastructure that
+            survive contact with production.
+          </p>
+          <a
+            href={site.socials.oxelan}
+            class="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-brand hover:underline"
+            rel="noopener"
+          >
+            oxelan.com <Icon name="arrowUpRight" size={11} />
+          </a>
+        </div>
+
+        <div class="sidebar-panel">
+          <p class="eyebrow">Details</p>
+          <dl class="mt-3 space-y-2 text-xs">
+            <div class="flex justify-between gap-2">
+              <dt class="text-muted">Launched</dt>
+              <dd class="text-muted-strong">2026</dd>
+            </div>
+            <div class="flex justify-between gap-2">
+              <dt class="text-muted">Content licence</dt>
+              <dd class="text-muted-strong">CC BY 4.0</dd>
+            </div>
+            <div class="flex justify-between gap-2">
+              <dt class="text-muted">Code licence</dt>
+              <dd class="text-muted-strong">MIT</dd>
+            </div>
+            <div class="flex justify-between gap-2">
+              <dt class="text-muted">Last updated</dt>
+              <dd class="text-muted-strong">
+                <time datetime={lastUpdated}>Oct 27, 2026</time>
+              </dd>
+            </div>
+          </dl>
+        </div>
+
+        <div class="sidebar-panel">
+          <p class="eyebrow">Built in the open</p>
+          <p class="mt-2 text-xs leading-relaxed text-muted">
+            Astro, Markdown, and GitHub Actions. The source is public and the build is reproducible.
+          </p>
+          <a
+            href={`${site.socials.github}/oxelan-signal`}
+            class="mt-3 inline-flex items-center gap-1.5 text-xs font-semibold text-brand hover:underline"
+            rel="noopener"
+          >
+            <Icon name="github" size={12} /> View source
+          </a>
+        </div>
+      </aside>
+    </div>
+  </section>
+</BaseLayout>

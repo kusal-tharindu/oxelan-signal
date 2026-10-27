@@ -1,0 +1,9 @@
+# Oxelan Signal
+
+```
+Contact: mailto:hello@oxelan.com
+Expires: 2027-10-27T00:00:00.000Z
+Preferred-Languages: en
+Canonical: https://blog.oxelan.com/.well-known/security.txt
+Policy: https://blog.oxelan.com/about/#disclaimer
+```

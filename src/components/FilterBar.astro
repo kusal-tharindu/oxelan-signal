@@ -1,0 +1,101 @@
+---
+interface Props {
+  showSection?: boolean;
+  showFormat?: boolean;
+  showImpact?: boolean;
+  showClear?: boolean;
+  label?: string;
+}
+
+const {
+  showSection = true,
+  showFormat = true,
+  showImpact = true,
+  showClear = true,
+  label = 'Filter posts',
+} = Astro.props;
+
+const sectionOptions = [
+  { value: 'all', label: 'All' },
+  { value: 'ai', label: 'AI' },
+  { value: 'security', label: 'Security' },
+  { value: 'engineering', label: 'Engineering' },
+];
+
+const formatOptions = [
+  { value: 'all', label: 'All' },
+  { value: 'news', label: 'News' },
+  { value: 'analysis', label: 'Analysis' },
+  { value: 'guide', label: 'Guide' },
+];
+---
+
+<div class="filter-bar" data-filter-root aria-label={label} role="group">
+  {showSection && (
+    <div class="filter-group" role="group" aria-label="Section">
+      {sectionOptions.map((option) => (
+        <button
+          type="button"
+          class="chip"
+          data-filter-group="section"
+          data-filter-value={option.value}
+          aria-pressed={option.value === 'all' ? 'true' : 'false'}
+        >
+          {option.label}
+        </button>
+      ))}
+    </div>
+  )}
+
+  {showFormat && (
+    <div class="filter-group" role="group" aria-label="Format">
+      {formatOptions.map((option) => (
+        <button
+          type="button"
+          class="chip"
+          data-filter-group="format"
+          data-filter-value={option.value}
+          aria-pressed={option.value === 'all' ? 'true' : 'false'}
+        >
+          {option.label}
+        </button>
+      ))}
+    </div>
+  )}
+
+  {showImpact && (
+    <div class="filter-group" role="group" aria-label="Impact">
+      <button
+        type="button"
+        class="chip"
+        data-filter-group="impact"
+        data-filter-value="all"
+        aria-pressed="true"
+      >
+        Any impact
+      </button>
+      <button
+        type="button"
+        class="chip"
+        data-filter-group="impact"
+        data-filter-value="urgent"
+        aria-pressed="false"
+      >
+        Critical + high
+      </button>
+    </div>
+  )}
+
+  <div class="flex items-center gap-3 md:ml-auto">
+    <span class="text-[0.7rem] text-muted" data-filter-count aria-live="polite"></span>
+    {showClear && (
+      <button
+        type="button"
+        class="text-[0.7rem] text-muted underline decoration-line-strong underline-offset-4 hover:text-brand"
+        data-filter-clear
+      >
+        Clear
+      </button>
+    )}
+  </div>
+</div>

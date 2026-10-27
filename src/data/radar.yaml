@@ -1,0 +1,109 @@
+- id: astro-content-collections
+  name: Astro content collections
+  ring: adopt
+  quadrant: engineering
+  moved: same
+  since: 2024
+  summary: Typed Markdown with build-time validation. The schema catches bad frontmatter before a deploy, not after.
+  links:
+    - label: Docs
+      href: https://docs.astro.build/en/guides/content-collections/
+
+- id: opentelemetry
+  name: OpenTelemetry
+  ring: adopt
+  quadrant: engineering
+  moved: same
+  since: 2023
+  summary: Vendor-neutral traces, metrics and logs. Instrument once; change backends without rewriting the app.
+  links:
+    - label: Docs
+      href: https://opentelemetry.io/docs/
+
+- id: pagefind
+  name: Pagefind
+  ring: adopt
+  quadrant: engineering
+  moved: same
+  since: 2025
+  summary: Static full-text search that ships as small per-page chunks. No search cluster, no API key, no runtime.
+  links:
+    - label: Docs
+      href: https://pagefind.app/
+
+- id: mcp-gateways
+  name: MCP gateways
+  ring: trial
+  quadrant: ai
+  moved: up
+  since: 2026
+  summary: A policy and audit point between agents and tool servers. Useful, but the auth model is still settling.
+  links:
+    - label: Spec
+      href: https://modelcontextprotocol.io/
+
+- id: ebpf-runtime-security
+  name: eBPF runtime security
+  ring: trial
+  quadrant: security
+  moved: up
+  since: 2025
+  summary: Kernel-level detection without a sidecar per pod. Strong signal, but tuning alerts is real work.
+  links:
+    - label: eBPF.io
+      href: https://ebpf.io/
+
+- id: static-og-images
+  name: Build-time OG images
+  ring: trial
+  quadrant: engineering
+  moved: up
+  since: 2025
+  summary: Generate share cards at build with Satori. One design, zero runtime, no per-post cover art.
+  links:
+    - label: Satori
+      href: https://github.com/vercel/satori
+
+- id: agent-sandboxes
+  name: Agent sandboxes
+  ring: assess
+  quadrant: ai
+  moved: up
+  since: 2026
+  summary: Isolated execution for tool-using agents. The right idea; the escape hatches and snapshot story are immature.
+  links:
+    - label: OWASP LLM Top 10
+      href: https://genai.owasp.org/llm-top-10/
+
+- id: post-quantum-tls
+  name: Post-quantum TLS
+  ring: assess
+  quadrant: security
+  moved: up
+  since: 2026
+  summary: Hybrid key exchange is deployable now. Certificate migration is the long pole, so inventory matters more than the cipher.
+  links:
+    - label: NIST
+      href: https://csrc.nist.gov/projects/post-quantum-cryptography
+
+- id: unpinned-actions
+  name: Unpinned GitHub Actions
+  ring: hold
+  quadrant: security
+  moved: same
+  since: 2024
+  summary: Tags are mutable. A compromised action tag is a supply-chain path into your deploy. Pin to a commit SHA.
+  links:
+    - label: GitHub docs
+      href: https://docs.github.com/en/actions/security-for-github-actions/security-guides/security-hardening-for-github-actions
+
+- id: prompt-only-guardrails
+  name: Prompt-only guardrails
+  ring: hold
+  quadrant: ai
+  moved: down
+  since: 2025
+  summary: A system prompt is not an authorization boundary. Pair policy with deterministic checks and least-privilege tools.
+  links:
+    - label: OWASP LLM Top 10
+      href: https://genai.owasp.org/llm-top-10/
