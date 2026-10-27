@@ -20,6 +20,7 @@ import {
   readingTime,
   sectionOf,
 } from '../lib/posts';
+import { FEED_PAGE_SIZE, nextArchiveHref } from '../lib/pagination';
 import { sections, site } from '../site.config';
 
 const posts = await getAllPosts();
@@ -28,6 +29,10 @@ const lead = getLeadPost(posts);
 const digest = getLatestDigest(posts);
 const guides = getGuides(posts, 3);
 const feed = lead ? posts.filter((post) => post.id !== lead.id) : posts;
+// Cap the server-rendered feed so the home HTML stays a fixed size; overflow lives on
+// the static archive pages reached through the "Older posts" link (review BLOG-M12).
+const visibleFeed = feed.slice(0, FEED_PAGE_SIZE);
+const olderHref = nextArchiveHref(1, feed.length, '/');
 const leadSection = lead ? sections[sectionOf(lead)] : undefined;
 
 const guidesHeading = 'Guides that stay current';
@@ -102,7 +107,7 @@ const guidesHeading = 'Guides that stay current';
           </div>
 
           <div class="mt-1">
-            <PostFeed posts={feed} pageSize={10} />
+            <PostFeed posts={visibleFeed} pageSize={10} olderHref={olderHref} />
           </div>
         </section>
 

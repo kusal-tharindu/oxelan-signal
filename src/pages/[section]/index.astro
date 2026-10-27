@@ -6,6 +6,7 @@ import PostFeed from '../../components/PostFeed.astro';
 import Sidebar from '../../components/Sidebar.astro';
 import Icon from '../../components/Icon.astro';
 import { getAllPosts, getLatestDigest } from '../../lib/posts';
+import { FEED_PAGE_SIZE, nextArchiveHref, pageCount } from '../../lib/pagination';
 import { sectionOrder, sections, type SectionKey } from '../../site.config';
 
 export const getStaticPaths = (() =>
@@ -25,6 +26,10 @@ const posts = allPosts.filter((post) => post.id.startsWith(`${sectionKey}/`));
 const digest = getLatestDigest(allPosts);
 const isDigest = sectionKey === 'digest';
 const hasPosts = posts.length > 0;
+// Cap the server-rendered feed; overflow lives on /<section>/page/2/ and beyond.
+const visiblePosts = posts.slice(0, FEED_PAGE_SIZE);
+const olderHref =
+  pageCount(posts.length) > 1 ? nextArchiveHref(1, posts.length, section.path) : undefined;
 ---
 
 <BaseLayout
@@ -65,7 +70,12 @@ const hasPosts = posts.length > 0;
             <div class="border-b border-line pb-3">
               <FilterBar showSection={false} showFormat={!isDigest} showImpact={!isDigest} />
             </div>
-            <PostFeed posts={posts} pageSize={12} sectionFilter={sectionKey} />
+            <PostFeed
+              posts={visiblePosts}
+              pageSize={12}
+              sectionFilter={sectionKey}
+              olderHref={olderHref}
+            />
           </>
         ) : (
           <div class="empty-state">

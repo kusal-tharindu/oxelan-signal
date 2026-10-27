@@ -1,0 +1,86 @@
+---
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import FilterBar from '../../components/FilterBar.astro';
+import PostFeed from '../../components/PostFeed.astro';
+import Sidebar from '../../components/Sidebar.astro';
+import Icon from '../../components/Icon.astro';
+import { getAllPosts, getLatestDigest } from '../../lib/posts';
+import { nextArchiveHref, pageCount, pageSlice } from '../../lib/pagination';
+
+// Static archive pages for the home feed beyond the first page. The lead post is
+// excluded to match the home feed, so the archive continues exactly where it stops.
+export const getStaticPaths = (async () => {
+  const posts = await getAllPosts();
+  const lead =
+    posts.find((post) => post.data.featured) ??
+    posts.find((post) => post.data.format === 'analysis') ??
+    posts[0];
+  const feed = lead ? posts.filter((post) => post.id !== lead.id) : posts;
+  const pages = pageCount(feed.length);
+  if (pages < 2) return [];
+  return Array.from({ length: pages - 1 }, (_, index) => index + 2).map((page) => ({
+    params: { page: String(page) },
+    props: { page, total: feed.length },
+  }));
+}) satisfies GetStaticPaths;
+
+interface Props {
+  page: number;
+  total: number;
+}
+
+const { page, total } = Astro.props;
+const posts = await getAllPosts();
+const lead =
+  posts.find((post) => post.data.featured) ??
+  posts.find((post) => post.data.format === 'analysis') ??
+  posts[0];
+const feed = lead ? posts.filter((post) => post.id !== lead.id) : posts;
+const slice = pageSlice(feed, page);
+const digest = getLatestDigest(posts);
+const olderHref = nextArchiveHref(page, total, '/');
+---
+
+<BaseLayout
+  title={`Archive — page ${page}`}
+  description={`Older posts from Oxelan Signal, page ${page} of the archive.`}
+  noindex
+>
+  <section class="container-wide pt-8">
+    <div class="mb-6 flex flex-wrap items-end justify-between gap-4 border-b border-line pb-4">
+      <div>
+        <p class="eyebrow">Archive</p>
+        <h1 class="mt-1 font-display text-3xl leading-none text-fg">Older posts</h1>
+      </div>
+      <div class="flex items-center gap-4 text-[0.75rem] text-muted">
+        <span>
+          Page {page} of {pageCount(total)}
+        </span>
+        {page > 2 && (
+          <a
+            href={page === 2 ? '/' : `/page/${page - 1}/`}
+            class="inline-flex items-center gap-1 hover:text-brand"
+          >
+            <Icon name="arrowRight" size={12} class="rotate-180" /> Newer
+          </a>
+        )}
+        <a href="/" class="inline-flex items-center gap-1 hover:text-brand">
+          Latest <Icon name="arrowRight" size={12} />
+        </a>
+      </div>
+    </div>
+
+    <div class="grid gap-10 lg:grid-cols-[minmax(0,1fr)_20rem]">
+      <div class="min-w-0">
+        <div class="border-b border-line pb-3">
+          <FilterBar />
+        </div>
+        <PostFeed posts={slice} pageSize={12} olderHref={olderHref} />
+      </div>
+      <div class="lg:sticky lg:top-24 lg:self-start">
+        <Sidebar posts={posts} digest={digest} compact />
+      </div>
+    </div>
+  </section>
+</BaseLayout>

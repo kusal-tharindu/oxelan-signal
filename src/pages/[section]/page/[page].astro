@@ -1,0 +1,94 @@
+---
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import FilterBar from '../../../components/FilterBar.astro';
+import PostFeed from '../../../components/PostFeed.astro';
+import Sidebar from '../../../components/Sidebar.astro';
+import Icon from '../../../components/Icon.astro';
+import { getAllPosts, getLatestDigest } from '../../../lib/posts';
+import { FEED_PAGE_SIZE, nextArchiveHref, pageCount, pageSlice } from '../../../lib/pagination';
+import { sectionOrder, sections, type SectionKey } from '../../../site.config';
+
+// Static archive pages for a section beyond the first page.
+export const getStaticPaths = (async () => {
+  const allPosts = await getAllPosts();
+  const paths: {
+    params: { section: string; page: string };
+    props: { section: SectionKey; page: number; total: number };
+  }[] = [];
+  for (const sectionKey of sectionOrder) {
+    const posts = allPosts.filter((post) => post.id.startsWith(`${sectionKey}/`));
+    const pages = pageCount(posts.length, FEED_PAGE_SIZE);
+    for (let page = 2; page <= pages; page += 1) {
+      paths.push({
+        params: { section: sectionKey, page: String(page) },
+        props: { section: sectionKey, page, total: posts.length },
+      });
+    }
+  }
+  return paths;
+}) satisfies GetStaticPaths;
+
+interface Props {
+  section: SectionKey;
+  page: number;
+  total: number;
+}
+
+const { section: sectionKey, page, total } = Astro.props;
+const section = sections[sectionKey];
+const allPosts = await getAllPosts();
+const posts = allPosts.filter((post) => post.id.startsWith(`${sectionKey}/`));
+const slice = pageSlice(posts, page);
+const digest = getLatestDigest(allPosts);
+const isDigest = sectionKey === 'digest';
+const olderHref = nextArchiveHref(page, total, section.path);
+---
+
+<BaseLayout
+  title={`${section.label} — page ${page}`}
+  description={`Older ${section.label} posts from Oxelan Signal, page ${page}.`}
+  bodyClass={`section-${section.key}`}
+  noindex
+>
+  <header class="section-header" style={`--section-color: var(${section.cssVar})`}>
+    <div class="container-wide">
+      <div class="flex flex-wrap items-end justify-between gap-6">
+        <div>
+          <p class="section-label">{section.label} · Archive</p>
+          <h1 class="section-title mt-2">Older {section.label}</h1>
+        </div>
+        <div class="flex items-center gap-4 text-[0.75rem] text-muted">
+          <span>
+            Page {page} of {pageCount(total, FEED_PAGE_SIZE)}
+          </span>
+          {page > 2 && (
+            <a
+              href={`${section.path}page/${page - 1}/`}
+              class="inline-flex items-center gap-1 hover:text-brand"
+            >
+              <Icon name="arrowRight" size={12} class="rotate-180" /> Newer
+            </a>
+          )}
+          <a href={section.path} class="inline-flex items-center gap-1 hover:text-brand">
+            {section.label} <Icon name="arrowRight" size={12} />
+          </a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <section class="container-wide pt-6">
+    <div class="grid gap-10 lg:grid-cols-[minmax(0,1fr)_20rem]">
+      <div class="min-w-0">
+        <div class="border-b border-line pb-3">
+          <FilterBar showSection={false} showFormat={!isDigest} showImpact={!isDigest} />
+        </div>
+        <PostFeed posts={slice} pageSize={12} sectionFilter={sectionKey} olderHref={olderHref} />
+      </div>
+      <div class="lg:sticky lg:top-24 lg:self-start">
+        <Sidebar posts={allPosts} digest={digest} compact />
+      </div>
+    </div>
+  </section>
+</BaseLayout>

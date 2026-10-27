@@ -1,6 +1,7 @@
 ---
 import type { Post } from '../lib/posts';
 import PostCard from './PostCard.astro';
+import Icon from './Icon.astro';
 
 interface Props {
   posts: Post[];
@@ -8,6 +9,8 @@ interface Props {
   sectionFilter?: string;
   emptyTitle?: string;
   emptyBody?: string;
+  /** Link to the next static archive page, shown once the rendered window is exhausted. */
+  olderHref?: string | undefined;
 }
 
 const {
@@ -16,6 +19,7 @@ const {
   sectionFilter = 'all',
   emptyTitle = 'Nothing matches those filters.',
   emptyBody = 'Try clearing one filter or browse the latest posts.',
+  olderHref,
 } = Astro.props;
 ---
 
@@ -31,9 +35,14 @@ const {
     <p class="mt-1 text-sm">{emptyBody}</p>
   </div>
 
-  <div class="mt-6 flex justify-center">
+  <div class="mt-6 flex flex-col items-center gap-3">
     <button type="button" class="btn" data-load-more hidden>
       Load older posts
     </button>
+    {olderHref && (
+      <a href={olderHref} class="btn btn-ghost">
+        Older posts <Icon name="arrowRight" size={14} />
+      </a>
+    )}
   </div>
 </div>

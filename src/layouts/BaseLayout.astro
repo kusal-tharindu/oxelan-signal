@@ -50,7 +50,7 @@ interface Props {
   tags?: string[];
   noindex?: boolean;
   /** Extra robots directive, e.g. 'follow' for tag pages that are noindexed but still crawlable. */
-  robotsExtra?: string;
+  robotsExtra?: string | undefined;
   bodyClass?: string;
   jsonLd?: Record<string, unknown>[];
 }
