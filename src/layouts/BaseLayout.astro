@@ -32,7 +32,9 @@ const csp = [
   `script-src 'self' 'sha256-${themeScriptHash}'`,
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data:",
-  "font-src 'self'",
+  // Astro inlines the small JetBrains Mono subset as a base64 data: URI, so fonts
+  // need data: — it cannot execute or exfiltrate, unlike a script source.
+  "font-src 'self' data:",
   "connect-src 'self'",
   'frame-src giscus.app',
   "object-src 'none'",

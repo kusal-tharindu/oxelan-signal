@@ -808,6 +808,7 @@
     align-items: center;
     justify-content: space-between;
     gap: 0.5rem;
+    min-height: 1.5rem;
   }
 
   .toc-mobile summary::-webkit-details-marker {
