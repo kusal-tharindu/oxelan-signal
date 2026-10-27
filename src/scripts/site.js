@@ -454,4 +454,195 @@
     );
     headings.forEach((heading) => observer.observe(heading));
   }
+
+  /* ----------------------------------------------------------- Signal field */
+  const signalField = $('[data-signal-field]');
+  if (signalField && !signalField.dataset.ready) {
+    signalField.dataset.ready = '1';
+    const canvas = $('canvas', signalField);
+    const dataEl = $('[data-signal-data]', signalField);
+    const ctx = canvas?.getContext('2d');
+    let graph = { nodes: [], edges: [] };
+    try {
+      if (dataEl?.textContent) graph = JSON.parse(dataEl.textContent);
+    } catch (_) {
+      graph = { nodes: [], edges: [] };
+    }
+
+    if (ctx && graph.nodes.length > 0) {
+      const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+      const root = document.documentElement;
+      let colors = {};
+      const readColors = () => {
+        const css = getComputedStyle(root);
+        colors = {
+          edge: css.getPropertyValue('--brand').trim() || '#e0a619',
+          critical: css.getPropertyValue('--critical').trim() || '#ff5a5a',
+          high: css.getPropertyValue('--high').trim() || '#ff9f45',
+          medium: css.getPropertyValue('--medium').trim() || '#f4cf5b',
+          low: css.getPropertyValue('--low').trim() || '#79b8ff',
+          info: css.getPropertyValue('--info').trim() || '#9aa7bd',
+          lead: css.getPropertyValue('--brand').trim() || '#e0a619',
+          node: css.getPropertyValue('--muted-strong').trim() || '#bcc6d7',
+        };
+      };
+      readColors();
+      document.addEventListener('signal:theme', readColors);
+
+      // Golden-angle sphere: even, deterministic layout for any node count.
+      const points = graph.nodes.map((node, index) => {
+        const k = index + 0.5;
+        const y = 1 - (k / graph.nodes.length) * 2;
+        const radius = Math.sqrt(Math.max(0, 1 - y * y));
+        const theta = k * Math.PI * (3 - Math.sqrt(5));
+        return { x: Math.cos(theta) * radius, y, z: Math.sin(theta) * radius, ...node };
+      });
+
+      let width = 0;
+      let height = 0;
+      let dpr = 1;
+      const resize = () => {
+        const rect = signalField.getBoundingClientRect();
+        width = Math.max(1, rect.width);
+        height = Math.max(1, rect.height);
+        dpr = Math.min(window.devicePixelRatio || 1, 2);
+        canvas.width = Math.round(width * dpr);
+        canvas.height = Math.round(height * dpr);
+      };
+      resize();
+      new ResizeObserver(resize).observe(signalField);
+
+      let onScreen = true;
+      new IntersectionObserver(
+        (entries) => {
+          onScreen = entries[0]?.isIntersecting !== false;
+        },
+        { threshold: 0 },
+      ).observe(signalField);
+
+      let rotation = 0;
+      let last = performance.now();
+      const depth = 3.4;
+
+      const colorFor = (node) => {
+        if (node.lead) return colors.lead;
+        return colors[node.impact] ?? colors.info;
+      };
+
+      const draw = (now) => {
+        if (document.hidden || (!onScreen && !reduced.matches)) {
+          last = now;
+          if (!reduced.matches) requestAnimationFrame(draw);
+          return;
+        }
+        const dt = Math.min(48, now - last);
+        last = now;
+        if (!reduced.matches) rotation += dt * 0.00022;
+
+        const cos = Math.cos(rotation);
+        const sin = Math.sin(rotation);
+        const tilt = 0.42;
+        const cosX = Math.cos(tilt);
+        const sinX = Math.sin(tilt);
+        const cx = width / 2;
+        const cy = height * 0.45;
+        const R = Math.min(width, height) * 0.46;
+
+        const project = (x, y, z) => {
+          const x1 = x * cos - z * sin;
+          const z1 = x * sin + z * cos;
+          const y1 = y * cosX - z1 * sinX;
+          const z2 = y * sinX + z1 * cosX;
+          const scale = depth / (depth - z2);
+          return { sx: cx + x1 * scale * R, sy: cy + y1 * scale * R, scale };
+        };
+
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx.clearRect(0, 0, width, height);
+
+        // Wireframe globe: latitude rings and meridians make the 3D read instantly.
+        ctx.strokeStyle = colors.edge;
+        ctx.lineWidth = 1;
+        ctx.globalAlpha = 0.09;
+        for (const latDeg of [-60, -30, 0, 30, 60]) {
+          const lat = (latDeg * Math.PI) / 180;
+          const ring = Math.cos(lat);
+          const y = Math.sin(lat);
+          ctx.beginPath();
+          for (let i = 0; i <= 60; i += 1) {
+            const t = (i / 60) * Math.PI * 2;
+            const p = project(Math.cos(t) * ring, y, Math.sin(t) * ring);
+            if (i === 0) ctx.moveTo(p.sx, p.sy);
+            else ctx.lineTo(p.sx, p.sy);
+          }
+          ctx.stroke();
+        }
+        for (let m = 0; m < 8; m += 1) {
+          const theta = (m / 8) * Math.PI * 2;
+          ctx.beginPath();
+          for (let i = 0; i <= 40; i += 1) {
+            const lat = -Math.PI / 2 + (i / 40) * Math.PI;
+            const p = project(
+              Math.cos(lat) * Math.cos(theta),
+              Math.sin(lat),
+              Math.cos(lat) * Math.sin(theta),
+            );
+            if (i === 0) ctx.moveTo(p.sx, p.sy);
+            else ctx.lineTo(p.sx, p.sy);
+          }
+          ctx.stroke();
+        }
+
+        const projected = points.map((p) => ({ ...project(p.x, p.y, p.z), node: p }));
+
+        for (const [a, b] of graph.edges) {
+          const pa = projected[a];
+          const pb = projected[b];
+          if (!pa || !pb) continue;
+          ctx.strokeStyle = colors.edge;
+          ctx.globalAlpha = 0.07 + 0.16 * ((pa.scale + pb.scale) / 2);
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(pa.sx, pa.sy);
+          ctx.lineTo(pb.sx, pb.sy);
+          ctx.stroke();
+        }
+
+        for (const [index, p] of projected.entries()) {
+          const base = p.node.lead ? 5 : p.node.advisory ? 4 : 2.5;
+          const pulse =
+            p.node.advisory && !reduced.matches
+              ? 0.5 + 0.5 * Math.sin(now * 0.004 + index * 1.7)
+              : 0;
+          const radius = (base + pulse * 1.8) * p.scale;
+          ctx.globalAlpha = 0.9;
+          if (p.node.advisory || p.node.lead) {
+            ctx.shadowColor = colorFor(p.node);
+            ctx.shadowBlur = (p.node.lead ? 18 : 12) * p.scale;
+          } else {
+            ctx.shadowBlur = 0;
+          }
+          ctx.fillStyle = colorFor(p.node);
+          ctx.beginPath();
+          ctx.arc(p.sx, p.sy, radius, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.shadowBlur = 0;
+          if (p.node.lead) {
+            ctx.globalAlpha = 0.45;
+            ctx.strokeStyle = colorFor(p.node);
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.arc(p.sx, p.sy, radius + 4 * p.scale, 0, Math.PI * 2);
+            ctx.stroke();
+          }
+        }
+        ctx.globalAlpha = 1;
+
+        if (!reduced.matches) requestAnimationFrame(draw);
+      };
+
+      if (reduced.matches) draw(performance.now());
+      else requestAnimationFrame(draw);
+    }
+  }
 })();

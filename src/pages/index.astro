@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import AlertStrip from '../components/AlertStrip.astro';
+import SignalField from '../components/SignalField.astro';
 import FilterBar from '../components/FilterBar.astro';
 import PostFeed from '../components/PostFeed.astro';
 import Sidebar from '../components/Sidebar.astro';
@@ -20,7 +21,7 @@ import {
   readingTime,
   sectionOf,
 } from '../lib/posts';
-import { latestContentDate, relativeAge } from '../lib/freshness';
+import { latestContentDate } from '../lib/freshness';
 import { FEED_PAGE_SIZE, nextArchiveHref, pageCount } from '../lib/pagination';
 import { sections, site, type SectionKey } from '../site.config';
 
@@ -47,8 +48,6 @@ const leadRows = lead?.data.briefing
       { num: '03', label: 'What to do', value: lead.data.briefing.action },
     ]
   : [];
-const logItems = (alerts.length > 0 ? alerts : posts.slice(0, 3)).slice(0, 3);
-const logLabel = alerts.length > 0 ? 'advisories' : 'latest';
 
 // The three desks. Copy is deliberately short; the section page carries the detail.
 const deskOrder: { key: SectionKey; icon: string; blurb: string }[] = [
@@ -145,35 +144,7 @@ const method = [
 
       {lead && leadSection && (
         <div class="hero-visual">
-          <div class="signal-rings" aria-hidden="true">
-            <span></span>
-            <span></span>
-            <span></span>
-          </div>
-
-          <div class="console console-back" aria-hidden="true">
-            <div class="console-bar">
-              <span class="console-lights">
-                <i></i>
-                <i></i>
-                <i></i>
-              </span>
-              <span class="console-path">~/signal/{logLabel}</span>
-              <span class="console-tag">live</span>
-            </div>
-            <ul class="console-log">
-              {logItems.map((post) => (
-                <li style={`--impact-color: var(--${post.data.impact ?? 'info'})`}>
-                  <span class="console-log-dot"></span>
-                  <span class="console-log-level">{post.data.impact ?? post.data.format}</span>
-                  <span class="console-log-title">{post.data.title}</span>
-                  <span class="console-log-age">
-                    {relativeAge(post.data.updated ?? post.data.date)}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </div>
+          <SignalField posts={posts} alerts={activeAlerts} lead={lead} />
 
           <article
             class="console console-front"
@@ -233,10 +204,6 @@ const method = [
               </span>
             </div>
           </article>
-
-          <p class="console-pill" aria-hidden="true">
-            <span class="live-dot"></span> Sourced, dated and actionable
-          </p>
         </div>
       )}
     </div>

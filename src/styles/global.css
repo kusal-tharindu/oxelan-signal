@@ -2173,6 +2173,19 @@
     border-bottom: 1px solid var(--line);
   }
 
+  /* Phones: the headline and CTAs carry the message; the long lede pushes the
+     signal sphere off the first screen, so it is hidden below sm. */
+  @media (max-width: 639px) {
+    .hero {
+      padding-top: 2.25rem;
+      padding-bottom: 2.75rem;
+    }
+
+    .hero-lede {
+      display: none;
+    }
+  }
+
   .hero-field {
     position: absolute;
     inset: 0;
@@ -2202,7 +2215,7 @@
     /* minmax(0, 1fr): long nowrap strings in the console must not widen the page. */
     grid-template-columns: minmax(0, 1fr);
     gap: clamp(3rem, 6vw, 4.5rem);
-    align-items: center;
+    align-items: start;
   }
 
   @media (min-width: 1120px) {
@@ -2315,6 +2328,55 @@
 
   .signal-rings span:nth-child(3) {
     animation-delay: 5s;
+  }
+
+  /* The 3D signal sphere above the lead card. */
+  .signal-field {
+    position: relative;
+    z-index: 0;
+    height: clamp(12rem, 24vw, 14rem);
+    margin-bottom: 1rem;
+    pointer-events: none;
+  }
+
+  .signal-field::before {
+    content: '';
+    position: absolute;
+    inset: 8% 12%;
+    background: radial-gradient(
+      circle,
+      color-mix(in srgb, var(--brand) 16%, transparent),
+      transparent 68%
+    );
+    filter: blur(18px);
+  }
+
+  .signal-field canvas {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    opacity: 0.95;
+  }
+
+  .signal-field-foot {
+    position: absolute;
+    right: 0;
+    bottom: 0.3rem;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    color: var(--muted);
+    font-family: var(--font-mono);
+    font-size: var(--text-micro);
+    letter-spacing: 0.04em;
+  }
+
+  .signal-field-live {
+    color: var(--brand);
   }
 
   .console {
@@ -2573,18 +2635,9 @@
       padding: 0 0 0.5rem;
     }
 
-    .console-back {
-      display: block;
-      position: absolute;
-      top: 0;
-      right: 0;
-      width: 82%;
-      opacity: 0.92;
-    }
-
     .console-front {
-      margin-top: 9.25rem;
-      width: 90%;
+      margin-top: 0;
+      width: 100%;
     }
 
     .console-pill {

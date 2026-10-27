@@ -1,0 +1,60 @@
+---
+import type { Post } from '../lib/posts';
+
+interface Props {
+  posts: Post[];
+  alerts: Post[];
+  lead?: Post | undefined;
+}
+
+const { posts, alerts, lead } = Astro.props;
+
+// A data-driven 3D signal sphere for the hero. Nodes are the newest posts; an edge
+// exists when two posts share a tag; advisory nodes pulse. Everything is computed at
+// build time — no API and no hand-maintained art.
+const NODE_LIMIT = 40;
+const recent = posts.slice(0, NODE_LIMIT);
+const alertIds = new Set(alerts.map((post) => post.id));
+
+const nodes = recent.map((post) => ({
+  impact: post.data.impact ?? 'info',
+  advisory: alertIds.has(post.id),
+  lead: Boolean(lead && post.id === lead.id),
+}));
+
+const edges: [number, number][] = [];
+const degree = new Array<number>(nodes.length).fill(0);
+outer: for (let i = 0; i < recent.length; i += 1) {
+  for (let j = i + 1; j < recent.length; j += 1) {
+    if (edges.length >= 90) break outer;
+    const a = recent[i]?.data.tags ?? [];
+    const b = recent[j]?.data.tags ?? [];
+    if (a.some((tag) => b.includes(tag)) && (degree[i] ?? 0) < 3 && (degree[j] ?? 0) < 3) {
+      edges.push([i, j]);
+      degree[i] = (degree[i] ?? 0) + 1;
+      degree[j] = (degree[j] ?? 0) + 1;
+    }
+  }
+}
+// If the archive is too young to have a real graph, fall back to a chain so the
+// sphere still has structure.
+if (edges.length < Math.max(4, Math.floor(nodes.length / 2))) {
+  for (let i = 0; i < nodes.length - 1; i += 1) {
+    if (!edges.some(([a, b]) => a === i && b === i + 1)) edges.push([i, i + 1]);
+  }
+}
+---
+
+<div class="signal-field" data-signal-field aria-hidden="true">
+  <canvas></canvas>
+  <script
+    type="application/json"
+    data-signal-data
+    set:html={JSON.stringify({ nodes, edges })}
+  ></script>
+  <p class="signal-field-foot">
+    <span class="live-dot"></span>
+    {nodes.length} posts in the graph
+    {alerts.length > 0 && <span class="signal-field-live">· {alerts.length} live</span>}
+  </p>
+</div>

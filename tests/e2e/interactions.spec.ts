@@ -136,6 +136,33 @@ test.describe('theme', () => {
   });
 });
 
+test.describe('home hero', () => {
+  test('renders a data-driven 3D signal sphere', async ({ page }) => {
+    await page.goto('/');
+    await expect(page.getByRole('heading', { level: 1 })).toContainText('Something changed');
+    await expect(page.getByRole('link', { name: /Read the lead story/ })).toBeVisible();
+    await expect(page.getByRole('link', { name: /See what needs patching/ })).toHaveAttribute(
+      'href',
+      '/advisories/',
+    );
+
+    const canvas = page.locator('[data-signal-field] canvas');
+    await expect(canvas).toBeVisible();
+    await expect(page.locator('.signal-field-foot')).toContainText('posts in the graph');
+
+    const painted = await canvas.evaluate((element) => {
+      const canvas = element as HTMLCanvasElement;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return 0;
+      const { data } = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      let opaque = 0;
+      for (let i = 3; i < data.length; i += 4) if ((data[i] ?? 0) > 0) opaque += 1;
+      return opaque;
+    });
+    expect(painted, 'signal canvas did not paint').toBeGreaterThan(500);
+  });
+});
+
 test.describe('article reading aids', () => {
   test('copy link gives explicit success feedback', async ({ page }) => {
     await page.goto('/security/malfex-npm-campaign/');
