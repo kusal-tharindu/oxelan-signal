@@ -35,6 +35,8 @@ const olderHref =
 <BaseLayout
   title={section.label}
   description={section.description}
+  rssPath={`/${section.key}/rss.xml`}
+  rssTitle={`${section.label} — Oxelan Signal`}
   bodyClass={`section-${section.key}`}
 >
   <header class="section-header" style={`--section-color: var(${section.cssVar})`}>

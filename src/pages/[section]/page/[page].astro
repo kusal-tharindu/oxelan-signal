@@ -55,6 +55,8 @@ const newerHref = prevArchiveHref(page, section.path);
 <BaseLayout
   title={`${section.label} — page ${page}`}
   description={`Older ${section.label} posts from Oxelan Signal, page ${page}.`}
+  rssPath={`/${section.key}/rss.xml`}
+  rssTitle={`${section.label} — Oxelan Signal`}
   bodyClass={`section-${section.key}`}
   noindex
 >

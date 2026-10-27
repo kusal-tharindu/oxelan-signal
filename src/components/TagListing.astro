@@ -4,6 +4,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import FilterBar from './FilterBar.astro';
 import PostFeed from './PostFeed.astro';
 import Sidebar from './Sidebar.astro';
+import Icon from './Icon.astro';
 
 interface Props {
   tag: string;
@@ -28,6 +29,8 @@ const { tag, posts, allPosts, digest, page, pages, total, olderHref, newerHref, 
   description={`Posts tagged ${tag} on AI, security and engineering.`}
   noindex={noindex}
   robotsExtra={noindex ? 'follow' : undefined}
+  rssPath={`/tags/${tag}/rss.xml`}
+  rssTitle={`#${tag} — Oxelan Signal`}
 >
   <header class="section-header" style="--section-color: var(--brand)">
     <div class="container-wide">
@@ -45,6 +48,14 @@ const { tag, posts, allPosts, digest, page, pages, total, olderHref, newerHref, 
         )}
         <a href="/tags/" class="text-brand hover:underline">
           All tags
+        </a>
+        <a
+          href={`/tags/${tag}/rss.xml`}
+          class="inline-flex items-center gap-1 hover:text-brand"
+          rel="alternate"
+          type="application/rss+xml"
+        >
+          <Icon name="rss" size={12} /> Topic RSS
         </a>
         {thin && <span class="text-[0.75rem]">Not indexed</span>}
       </p>

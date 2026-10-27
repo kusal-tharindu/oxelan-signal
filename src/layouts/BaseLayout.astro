@@ -65,6 +65,9 @@ interface Props {
   noindex?: boolean;
   /** Extra robots directive, e.g. 'follow' for tag pages that are noindexed but still crawlable. */
   robotsExtra?: string | undefined;
+  /** Feed for this page's listing, used for reader autodiscovery. */
+  rssPath?: string;
+  rssTitle?: string;
   bodyClass?: string;
   jsonLd?: Record<string, unknown>[];
 }
@@ -79,6 +82,8 @@ const {
   tags = [],
   noindex = false,
   robotsExtra,
+  rssPath = '/rss.xml',
+  rssTitle = `${site.name} — all posts`,
   bodyClass = '',
   jsonLd = [],
 } = Astro.props;
@@ -150,12 +155,7 @@ const structuredData = {
     <meta name="twitter:image" content={absoluteImageUrl} />
     <meta name="twitter:image:alt" content={title ? `${title} — ${site.name}` : site.tagline} />
 
-    <link
-      rel="alternate"
-      type="application/rss+xml"
-      title={`${site.name} — all posts`}
-      href="/rss.xml"
-    />
+    <link rel="alternate" type="application/rss+xml" title={rssTitle} href={rssPath} />
     <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />

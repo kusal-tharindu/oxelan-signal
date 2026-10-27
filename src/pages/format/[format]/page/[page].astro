@@ -45,6 +45,8 @@ const newerHref = prevArchiveHref(page, format.path);
   title={`${format.label} — page ${page}`}
   description={`Older ${format.label} posts on Oxelan Signal, page ${page}.`}
   noindex
+  rssPath={`${format.path}rss.xml`}
+  rssTitle={`${format.label} — Oxelan Signal`}
   bodyClass={`format-${format.key}`}
 >
   <header class="section-header" style={`--section-color: var(${format.cssVar})`}>

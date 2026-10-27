@@ -48,8 +48,13 @@ const olderHref = nextArchiveHref(1, matching.length, format.path);
           <span>
             {matching.length} {matching.length === 1 ? 'post' : 'posts'}
           </span>
-          <a href="/rss.xml" class="inline-flex items-center gap-1.5 hover:text-brand">
-            <Icon name="rss" size={12} /> All posts RSS
+          <a
+            href={`${format.path}rss.xml`}
+            class="inline-flex items-center gap-1.5 hover:text-brand"
+            rel="alternate"
+            type="application/rss+xml"
+          >
+            <Icon name="rss" size={12} /> {format.label} RSS
           </a>
         </div>
       </div>
