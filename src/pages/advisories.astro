@@ -1,0 +1,141 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PostCard from '../components/PostCard.astro';
+import Icon from '../components/Icon.astro';
+import { formatDate, getAllPosts, getAlerts, getPatchNow } from '../lib/posts';
+import { latestContentDate } from '../lib/freshness';
+
+const posts = await getAllPosts();
+const alerts = getAlerts(posts, Number.MAX_SAFE_INTEGER);
+const patches = getPatchNow(posts, Number.MAX_SAFE_INTEGER);
+const latest = latestContentDate(posts);
+---
+
+<BaseLayout
+  title="Advisories"
+  description="Active security advisories and patch-now items from Oxelan Signal, derived automatically from published posts."
+>
+  <header class="section-header" style="--section-color: var(--critical)">
+    <div class="container-wide">
+      <p class="section-label">Live</p>
+      <h1 class="section-title mt-2">Advisories</h1>
+      <p class="measure mt-4 text-sm leading-relaxed text-muted-strong md:text-base">
+        Everything we would want a production team to see this month. This page is generated from
+        post metadata at build time: no dashboard, no manual list.
+      </p>
+      <p class="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-[0.8125rem] text-muted">
+        <span class="inline-flex items-center gap-1.5">
+          <Icon name="alert" size={13} class="text-critical" />
+          {alerts.length} active {alerts.length === 1 ? 'advisory' : 'advisories'}
+        </span>
+        <span class="inline-flex items-center gap-1.5">
+          <Icon name="wrench" size={13} class="text-high" />
+          {patches.length} patch-now {patches.length === 1 ? 'item' : 'items'}
+        </span>
+        {latest && <span>Last updated {formatDate(latest)}</span>}
+      </p>
+    </div>
+  </header>
+
+  <section class="container-wide pt-8">
+    <div class="grid gap-10 lg:grid-cols-[minmax(0,1fr)_19rem]">
+      <div class="min-w-0 space-y-12">
+        <section aria-labelledby="active-title">
+          <div class="flex items-end justify-between gap-4 border-b border-line pb-3">
+            <h2 id="active-title" class="font-display text-2xl text-fg">
+              Needs attention
+            </h2>
+            <span class="text-[0.75rem] text-muted">Critical and high · last 30 days</span>
+          </div>
+          {alerts.length > 0 ? (
+            <div class="divide-y divide-line">
+              {alerts.map((post) => (
+                <PostCard post={post} showTags />
+              ))}
+            </div>
+          ) : (
+            <div class="empty-state">
+              <p class="font-display text-2xl text-fg">No active advisories.</p>
+              <p class="mt-1 text-sm">That is a good week. Older items stay in their sections.</p>
+            </div>
+          )}
+        </section>
+
+        <section aria-labelledby="patch-title">
+          <div class="flex items-end justify-between gap-4 border-b border-line pb-3">
+            <h2 id="patch-title" class="font-display text-2xl text-fg">
+              Patch now
+            </h2>
+            <span class="text-[0.75rem] text-muted">Action required · last 90 days</span>
+          </div>
+          {patches.length > 0 ? (
+            <div class="divide-y divide-line">
+              {patches.map((post) => (
+                <PostCard post={post} showTags />
+              ))}
+            </div>
+          ) : (
+            <div class="empty-state">
+              <p class="font-display text-2xl text-fg">Nothing needs an emergency patch.</p>
+              <p class="mt-1 text-sm">
+                Advisories move here when a post sets{' '}
+                <code class="rounded border border-line bg-surface-2 px-1 py-0.5 font-mono text-[0.75rem]">
+                  action: patch-now
+                </code>
+                .
+              </p>
+            </div>
+          )}
+        </section>
+      </div>
+
+      <aside class="space-y-4 lg:sticky lg:top-24 lg:self-start" aria-label="How advisories work">
+        <section class="sidebar-panel">
+          <h2 class="panel-title">How this works</h2>
+          <div class="mt-3 space-y-3 text-[0.8125rem] leading-relaxed text-muted">
+            <p>
+              A post appears under <strong class="text-muted-strong">Needs attention</strong> when
+              it has{' '}
+              <code class="rounded border border-line bg-surface-2 px-1 py-0.5 font-mono text-[0.75rem]">
+                impact: critical
+              </code>{' '}
+              or{' '}
+              <code class="rounded border border-line bg-surface-2 px-1 py-0.5 font-mono text-[0.75rem]">
+                high
+              </code>
+              , is not superseded, and its latest date is within 30 days.
+            </p>
+            <p>
+              <strong class="text-muted-strong">Patch now</strong> uses
+              <code class="rounded border border-line bg-surface-2 px-1 py-0.5 font-mono text-[0.75rem]">
+                action: patch-now
+              </code>{' '}
+              within 90 days. Updating a post resets its window.
+            </p>
+            <p>The daily rebuild ages items out automatically. Nothing here needs a manual edit.</p>
+          </div>
+        </section>
+        <section class="sidebar-panel">
+          <h2 class="panel-title">Stay current</h2>
+          <ul class="mt-3 space-y-2 text-[0.8125rem] text-muted-strong">
+            <li>
+              <a href="/rss.xml" class="inline-flex items-center gap-1.5 hover:text-brand">
+                <Icon name="rss" size={12} /> All posts
+              </a>
+            </li>
+            <li>
+              <a href="/security/rss.xml" class="inline-flex items-center gap-1.5 hover:text-brand">
+                <Icon name="rss" size={12} /> Security only
+              </a>
+            </li>
+            <li>
+              <a href="/tags/cve/" class="inline-flex items-center gap-1.5 hover:text-brand">
+                <Icon name="tag" size={12} /> CVE coverage
+              </a>
+            </li>
+          </ul>
+        </section>
+      </aside>
+    </div>
+  </section>
+</BaseLayout>

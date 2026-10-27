@@ -30,9 +30,11 @@ const tags = trendingTags(posts, compact ? 5 : 8);
       <span class="inline-flex items-center gap-1.5 text-high">
         <Icon name="wrench" size={13} /> Patch now
       </span>
-      <span class="text-[0.75rem] font-normal tracking-normal normal-case text-muted">
-        {patchNow.length}
-      </span>
+      {patchNow.length > 0 && (
+        <span class="text-[0.75rem] font-normal tracking-normal normal-case text-muted">
+          {patchNow.length}
+        </span>
+      )}
     </h2>
     {patchNow.length > 0 ? (
       <ul class="space-y-2.5">

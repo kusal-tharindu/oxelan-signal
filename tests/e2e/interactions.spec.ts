@@ -175,6 +175,32 @@ test.describe('article reading aids', () => {
   });
 });
 
+test.describe('advisories', () => {
+  test('the home rail links to the generated advisories page', async ({ page }) => {
+    await page.goto('/');
+    const strip = page.locator('.alert-strip');
+    await expect(strip).toBeVisible();
+    await expect(strip).toContainText('Advisories');
+    await expect(strip).toContainText('2');
+
+    await strip.locator('a[href="/advisories/"]').first().click();
+    await expect(page).toHaveURL(/\/advisories\/$/);
+    await expect(page.getByRole('heading', { level: 1, name: 'Advisories' })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 2, name: 'Needs attention' })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 2, name: 'Patch now' })).toBeVisible();
+    await expect(page.locator('body')).toContainText('Critical and high');
+    await expect(page.locator('body')).toContainText('Nothing needs an emergency patch');
+  });
+
+  test('the home page shows a freshness summary', async ({ page }) => {
+    await page.goto('/');
+    const summary = page.locator('body');
+    await expect(summary).toContainText('Updated');
+    await expect(summary).toContainText('13 posts');
+    await expect(summary).toContainText('2 advisories');
+  });
+});
+
 test.describe('mobile menu', () => {
   test('moves focus on open and returns it on Escape (L6)', async ({ page }) => {
     await page.goto('/');

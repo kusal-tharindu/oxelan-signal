@@ -30,6 +30,7 @@ export const GET: APIRoute = async () => {
     })),
     { loc: '/about/', lastmod, priority: '0.4' },
     { loc: '/radar/', lastmod, priority: '0.5' },
+    { loc: '/advisories/', lastmod, priority: '0.6' },
     { loc: '/tags/', lastmod, priority: '0.5' },
     ...tags.map((tag) => ({ loc: `/tags/${tag}/`, lastmod, priority: '0.3' })),
     ...posts.map((post) => ({

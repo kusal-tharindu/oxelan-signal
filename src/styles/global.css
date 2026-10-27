@@ -608,6 +608,23 @@
     background: color-mix(in srgb, var(--critical) 7%, transparent);
   }
 
+  /* On narrow screens the rail scrolls; fade the edge so the cut-off is visible. */
+  @media (max-width: 900px) {
+    .alert-strip-fade::after {
+      content: '';
+      position: absolute;
+      inset-block: 0;
+      right: 0;
+      width: 2.5rem;
+      background: linear-gradient(
+        to right,
+        transparent,
+        color-mix(in srgb, var(--critical) 7%, var(--bg))
+      );
+      pointer-events: none;
+    }
+  }
+
   .alert-strip-item {
     display: inline-flex;
     align-items: center;

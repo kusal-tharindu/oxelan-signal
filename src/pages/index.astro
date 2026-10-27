@@ -20,11 +20,14 @@ import {
   readingTime,
   sectionOf,
 } from '../lib/posts';
+import { latestContentDate } from '../lib/freshness';
 import { FEED_PAGE_SIZE, nextArchiveHref } from '../lib/pagination';
 import { sections, site } from '../site.config';
 
 const posts = await getAllPosts();
 const alerts = getAlerts(posts, 3);
+const activeAlerts = getAlerts(posts, Number.MAX_SAFE_INTEGER);
+const latest = latestContentDate(posts);
 const lead = getLeadPost(posts);
 const digest = getLatestDigest(posts);
 const guides = getGuides(posts, 3);
@@ -39,19 +42,40 @@ const guidesHeading = 'Guides that stay current';
 ---
 
 <BaseLayout description={site.description}>
-  <AlertStrip alerts={alerts} />
+  <AlertStrip alerts={alerts} total={activeAlerts.length} />
 
-  <section class="container-wide pt-8 md:pt-10">
-    <div class="mb-6 flex flex-wrap items-end justify-between gap-4 border-b border-line pb-4">
+  <section class="container-wide pt-6 md:pt-9">
+    <div class="mb-5 flex flex-wrap items-end justify-between gap-3 border-b border-line pb-4">
       <div>
         <p class="eyebrow">The briefing</p>
-        <h1 class="mt-1 font-display text-3xl leading-none text-fg md:text-4xl">
+        <h1 class="mt-1 font-display text-[1.9rem] leading-[1.05] text-fg sm:text-3xl md:text-4xl">
           Signal over noise.
         </h1>
       </div>
-      <p class="max-w-md text-sm leading-relaxed text-muted">
-        What changed in AI, security and engineering. Why it matters in production. What to do next.
-      </p>
+      <div class="max-w-md md:text-right">
+        <p class="text-[0.8125rem] leading-relaxed text-muted sm:text-sm">
+          What changed in AI, security and engineering. Why it matters in production. What to do
+          next.
+        </p>
+        <p class="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-[0.75rem] text-muted md:justify-end">
+          {latest && <span>Updated {formatDate(latest)}</span>}
+          <span aria-hidden="true">·</span>
+          <span>{posts.length} posts</span>
+          <span aria-hidden="true">·</span>
+          <span>
+            {activeAlerts.length}
+            {activeAlerts.length === 1 ? ' advisory' : ' advisories'}
+          </span>
+          {digest && (
+            <>
+              <span aria-hidden="true">·</span>
+              <a href={hrefOf(digest)} class="inline-flex items-center gap-1 hover:text-brand">
+                Latest digest <Icon name="arrowRight" size={11} />
+              </a>
+            </>
+          )}
+        </p>
+      </div>
     </div>
 
     <div class="grid gap-10 lg:grid-cols-[minmax(0,1fr)_20rem]">

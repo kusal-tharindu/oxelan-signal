@@ -1,35 +1,57 @@
 ---
 import type { Post } from '../lib/posts';
 import { hrefOf } from '../lib/posts';
+import { relativeAge } from '../lib/freshness';
 import ImpactBadge from './ImpactBadge.astro';
 import Icon from './Icon.astro';
 
 interface Props {
   alerts: Post[];
+  /** Total active advisories, which can exceed the number shown in the strip. */
+  total?: number;
 }
 
-const { alerts } = Astro.props;
+const { alerts, total = alerts.length } = Astro.props;
 ---
 
 {alerts.length > 0 && (
   <div class="alert-strip" role="region" aria-label="Active advisories">
-    <div class="container-wide flex items-center gap-3 overflow-x-auto py-1 no-scrollbar">
-      <span class="label flex shrink-0 items-center gap-1.5 text-critical">
+    <div class="container-wide flex items-center gap-3 py-1">
+      <a
+        href="/advisories/"
+        class="label flex shrink-0 items-center gap-1.5 text-critical hover:text-critical/80"
+      >
         <Icon name="alert" size={13} /> Advisories
-      </span>
+        <span class="rounded bg-critical/15 px-1.5 py-0.5 text-[0.75rem] text-critical">
+          {total}
+        </span>
+      </a>
       <span class="h-4 w-px shrink-0 bg-line" aria-hidden="true"></span>
-      <div class="flex items-center gap-4">
-        {alerts.map((post, index) => (
-          <>
-            {index > 0 && <span class="h-3 w-px shrink-0 bg-line" aria-hidden="true"></span>}
-            <a href={hrefOf(post)} class="alert-strip-item group">
-              <ImpactBadge impact={post.data.impact!} />
-              <span class="group-hover:text-fg-strong">{post.data.title}</span>
-              <Icon name="arrowRight" size={12} class="text-muted" />
-            </a>
-          </>
-        ))}
+
+      <div class="alert-strip-fade relative min-w-0 flex-1">
+        <div class="flex items-center gap-4 overflow-x-auto py-1 pr-6 no-scrollbar">
+          {alerts.map((post, index) => (
+            <>
+              {index > 0 && <span class="h-3 w-px shrink-0 bg-line" aria-hidden="true"></span>}
+              <a href={hrefOf(post)} class="alert-strip-item group">
+                <ImpactBadge impact={post.data.impact!} />
+                <span class="group-hover:text-fg-strong">{post.data.title}</span>
+                <span class="shrink-0 text-[0.75rem] font-normal text-muted">
+                  {relativeAge(post.data.updated ?? post.data.date)}
+                </span>
+                <Icon name="arrowRight" size={12} class="text-muted" />
+              </a>
+            </>
+          ))}
+        </div>
       </div>
+
+      <a
+        href="/advisories/"
+        class="ml-auto hidden shrink-0 items-center gap-1 text-[0.8125rem] text-muted hover:text-brand md:inline-flex"
+      >
+        All advisories <Icon name="arrowRight" size={12} />
+      </a>
     </div>
   </div>
 )}
