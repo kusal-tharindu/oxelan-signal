@@ -4,6 +4,7 @@ import satori from 'satori';
 import { Resvg } from '@resvg/resvg-js';
 
 import { formatDate, type Post } from './posts';
+import type { OgCacheInput } from './og-key';
 import { sections } from '../site.config';
 
 const FONT_DIR = path.join(process.cwd(), 'node_modules');
@@ -34,14 +35,7 @@ const SECTION_COLORS = {
   digest: '#E0A619',
 } as const;
 
-interface OgInput {
-  title: string;
-  sectionLabel: string;
-  sectionColor: string;
-  format: string;
-  date: Date;
-  domain: string;
-}
+type OgInput = OgCacheInput;
 
 function textStyle(extra: Record<string, string | number>) {
   return { display: 'flex', ...extra };

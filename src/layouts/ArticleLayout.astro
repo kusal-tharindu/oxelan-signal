@@ -112,6 +112,18 @@ const articleSchema = {
   >
     <span data-pagefind-meta={`section:${section.label}`} aria-hidden="true"></span>
     <span data-pagefind-meta={`sectionKey:${section.key}`} aria-hidden="true"></span>
+    {/* Facets for the search UI: the index is built from content, not a manual list. */}
+    <span class="sr-only" data-pagefind-filter="section">
+      {section.label}
+    </span>
+    <span class="sr-only" data-pagefind-filter="format">
+      {displayFormat(post.data.format)}
+    </span>
+    {post.data.tags.map((tag) => (
+      <span class="sr-only" data-pagefind-filter="tag">
+        {tag}
+      </span>
+    ))}
     <div
       class="mb-5 flex flex-wrap items-center gap-2"
       style={`--section-color: var(${section.cssVar})`}

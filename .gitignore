@@ -34,3 +34,6 @@ Thumbs.db
 test-results/
 playwright-report/
 blob-report/
+
+# Build caches
+.cache/
