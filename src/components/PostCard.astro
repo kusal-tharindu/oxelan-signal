@@ -44,6 +44,7 @@ const year = post.data.date.getUTCFullYear();
   data-impact={post.data.impact ?? 'none'}
   data-tags={post.data.tags.join(' ')}
   data-date={isoDate(post.data.date)}
+  data-timestamp={post.data.date.toISOString()}
   style={`--section-color: var(${section.cssVar})`}
 >
   <div class="post-card-grid">
