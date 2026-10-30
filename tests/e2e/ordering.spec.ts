@@ -3,6 +3,7 @@ import { expect, test, type Page } from '@playwright/test';
 interface Card {
   title: string;
   date: string;
+  timestamp: string;
   impact: string;
 }
 
@@ -22,6 +23,7 @@ async function cards(page: Page): Promise<Card[]> {
       return {
         title: card.querySelector('.post-card-title')?.textContent?.trim() ?? '',
         date: card.dataset.date ?? '',
+        timestamp: card.dataset.timestamp ?? '',
         impact: card.dataset.impact ?? 'none',
       };
     }),
@@ -32,13 +34,14 @@ async function expectLatestDayOrdered(page: Page) {
   const rows = await cards(page);
   expect(rows.length).toBeGreaterThan(0);
 
-  const dates = rows.map((row) => row.date);
-  expect([...dates].sort().reverse(), 'listing is not newest-first').toEqual(dates);
+  // Listings sort by the full timestamp; impact only breaks exact-time ties (src/lib/sort.ts).
+  const stamps = rows.map((row) => row.timestamp);
+  expect([...stamps].sort().reverse(), 'listing is not newest-first').toEqual(stamps);
 
-  const latestDate = rows[0]!.date;
-  const sameDay = rows.filter((row) => row.date === latestDate);
-  const ranks = sameDay.map((row) => IMPACT_RANK[row.impact] ?? 5);
-  expect(ranks, `same-day order is not impact-first: ${JSON.stringify(sameDay)}`).toEqual(
+  const latest = rows[0]!.timestamp;
+  const sameTime = rows.filter((row) => row.timestamp === latest);
+  const ranks = sameTime.map((row) => IMPACT_RANK[row.impact] ?? 5);
+  expect(ranks, `same-time order is not impact-first: ${JSON.stringify(sameTime)}`).toEqual(
     [...ranks].sort((a, b) => a - b),
   );
 }
