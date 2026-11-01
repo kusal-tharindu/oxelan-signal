@@ -41,7 +41,7 @@ jobs:
 
       - name: Run lychee
         id: lychee
-        uses: lycheeverse/lychee-action@v2.0.2
+        uses: lycheeverse/lychee-action@v2.9.0
         with:
           args: --no-progress --max-concurrency 8 --timeout 30 --accept 200,206,429,403 --exclude-mail external-urls.txt
           fail: false
