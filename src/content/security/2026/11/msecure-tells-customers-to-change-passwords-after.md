@@ -10,7 +10,7 @@ description: mSeven Software told mSecure users on November 3 to change
 tags:
   - authentication
 impact: high
-action: patch-now
+action: review
 status: current
 affects:
   - mSecure Cloud sync users
