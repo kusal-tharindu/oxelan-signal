@@ -23,10 +23,12 @@ jobs:
       week: ${{ steps.draft.outputs.week }}
       created: ${{ steps.draft.outputs.created }}
     steps:
-      - name: Checkout stg
+      # The digest covers published posts, so it is built from main and its PR targets
+      # main (stg belongs to the content engine).
+      - name: Checkout main
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: stg
+          ref: main
           persist-credentials: false
 
       - name: Set up Node
@@ -82,10 +84,10 @@ jobs:
       contents: write
       pull-requests: write
     steps:
-      - name: Checkout stg
+      - name: Checkout main
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: stg
+          ref: main
 
       - name: Download the draft artifact
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
@@ -100,18 +102,22 @@ jobs:
         run: |
           set -euo pipefail
           BRANCH="digest/${WEEK}"
+          TITLE="content: ${WEEK} digest"
+          BODY="Automated draft for the week of ${WEEK}. Review the links, add anything worth watching, and remove \`draft: true\` before merging. The build job already ran the full \`npm run ci\` on this draft (pull requests opened by GitHub Actions do not start the PR check workflow). Merging into \`main\` deploys the site."
           if git ls-remote --exit-code --heads origin "$BRANCH" >/dev/null 2>&1; then
-            echo "Branch ${BRANCH} already exists; nothing to do."
-            exit 0
+            # A branch without a PR is left by an earlier run whose PR step failed:
+            # open the PR instead of stopping silently.
+            if [ -n "$(gh pr list --head "$BRANCH" --state open --json number --jq '.[].number')" ]; then
+              echo "Branch ${BRANCH} already has an open pull request; nothing to do."
+              exit 0
+            fi
+            echo "Branch ${BRANCH} exists without an open pull request; opening it."
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git checkout -b "$BRANCH"
+            git add "src/content/digest/${WEEK}.md"
+            git commit -m "content: add ${WEEK} digest draft"
+            git push -u origin "$BRANCH"
           fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git checkout -b "$BRANCH"
-          git add "src/content/digest/${WEEK}.md"
-          git commit -m "content: add ${WEEK} digest draft"
-          git push -u origin "$BRANCH"
-          gh pr create \
-            --base stg \
-            --head "$BRANCH" \
-            --title "content: ${WEEK} digest" \
-            --body "Automated draft for the week of ${WEEK}. Review the links, add anything worth watching, and remove \`draft: true\` before merging. The digest was validated by the build job. Merges land on \`stg\`; production deploys from \`main\`."
+          gh pr create --base main --head "$BRANCH" --title "$TITLE" --body "$BODY"
