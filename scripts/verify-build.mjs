@@ -7,6 +7,7 @@ import path from 'node:path';
 import { readFile, stat } from 'node:fs/promises';
 
 import { DIST_DIR, formatIso, readPosts, walk } from './lib/content.mjs';
+import { rssItemLimit } from '../src/site.config.ts';
 
 const errors = [];
 const notes = [];
@@ -71,12 +72,26 @@ for (const file of htmlFiles) {
 const sitemap = await read('sitemap.xml');
 const rss = await read('rss.xml');
 
+// The main feed is a window of the newest `rssItemLimit` posts, not an archive. A post
+// must be in it only when it is strictly newer than the oldest post inside the window;
+// posts with the cutoff timestamp may fall either side of it (the feed's tie-break
+// decides), so the check never depends on sort details.
+const newestFirst = [...published].sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+const rssCutoff = newestFirst[rssItemLimit - 1]?.data.date.getTime();
+const rssItems = (rss.match(/<item>/g) ?? []).length;
+if (rssItems !== Math.min(published.length, rssItemLimit)) {
+  errors.push(
+    `RSS has ${rssItems} items; expected ${Math.min(published.length, rssItemLimit)} (limit ${rssItemLimit})`,
+  );
+}
+
 for (const post of published) {
   const url = `/${post.id}/`;
   const page = path.join(DIST_DIR, post.id, 'index.html');
   if (!(await fileExists(page))) errors.push(`published post missing from output: ${url}`);
   if (!sitemap.includes(url)) errors.push(`sitemap missing ${url}`);
-  if (!rss.includes(url)) errors.push(`RSS missing ${url}`);
+  const inFeedWindow = rssCutoff === undefined || post.data.date.getTime() > rssCutoff;
+  if (inFeedWindow && !rss.includes(url)) errors.push(`RSS missing ${url}`);
   // Production search is Pagefind; the post must carry the body marker Pagefind indexes.
   // (/search-index.json is a dev-only fallback and is empty in production — BLOG-L10.)
   const pageHtml = await readFile(page, 'utf8');

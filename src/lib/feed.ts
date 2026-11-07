@@ -1,4 +1,4 @@
-import { site } from '../site.config';
+import { rssItemLimit, site } from '../site.config';
 import { formatDate, hrefOf, isoDate, type Post } from './posts';
 
 function escapeXml(value: string): string {
@@ -27,7 +27,7 @@ export function rssResponse(
   const lastBuild = posts[0]?.data.updated ?? posts[0]?.data.date ?? new Date();
 
   const items = posts
-    .slice(0, 30)
+    .slice(0, rssItemLimit)
     .map((post) => {
       const url = new URL(hrefOf(post), site.url).toString();
       const categories = post.data.tags
