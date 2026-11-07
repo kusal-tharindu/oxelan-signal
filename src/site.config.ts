@@ -144,6 +144,12 @@ export const impacts: Record<ImpactKey, { label: string; description: string }> 
 
 export const impactOrder: ImpactKey[] = ['critical', 'high', 'medium', 'low', 'info'];
 
+/**
+ * Items in each RSS feed (newest first). A feed is a window, not an archive, so
+ * `scripts/verify-build.mjs` checks only the posts that belong inside this window.
+ */
+export const rssItemLimit = 30;
+
 export const actions = {
   'patch-now': 'Patch now',
   review: 'Review',
