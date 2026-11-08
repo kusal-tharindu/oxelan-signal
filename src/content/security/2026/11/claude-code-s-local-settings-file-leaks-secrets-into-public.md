@@ -32,7 +32,7 @@ sources:
     url: https://thehackernews.com/2026/11/claude-codes-dont-ask-again-file.html
 ---
 
-According to The Hacker News, 1,122 public copies of the file`.claude/settings.local.json` hold at least one secret, out of 104,185 copies that Apiiro found in 103,617 public GitHub repositories. The 1,122 files together hold 1,379 different secrets. More than a third of those secrets open a database directly, including 379 database passwords, the report says.
+According to The Hacker News, 1,122 public copies of the file `.claude/settings.local.json` hold at least one secret, out of 104,185 copies that Apiiro found in 103,617 public GitHub repositories. The 1,122 files together hold 1,379 different secrets. More than a third of those secrets open a database directly, including 379 database passwords, the report says.
 
 The file is Claude Code's project-local settings file. Of 16 coding agents whose documentation the researchers compared, Claude Code is the only one confirmed to save the full approved command in a project file by default, the report says. The exposed material includes 43 SSH logins for public servers, 42 tokens for GitHub, GitLab and npm, and 23 AWS keys. Among the owners of the files are 63 organizations, mostly software companies.
 
@@ -48,6 +48,6 @@ Detection is partial: of the 1,122 files with a secret, gitleaks flagged 564 and
 
 ## What to do
 
-The report's advice is to rotate every password, token and key the files have ever held, before cleaning up. Stop tracking the local file with`git rm --cached .claude/settings.local.json` and add it to the repository's own`.gitignore`. Security teams should treat agent folders such as`.claude/`,`.cursor/`,`.gemini/` and`.specstory/`, and agent memory files, as holding secrets, like`.env` files, on laptops as well as in repositories.
+The report's advice is to rotate every password, token and key the files have ever held, before cleaning up. Stop tracking the local file with `git rm --cached .claude/settings.local.json` and add it to the repository's own `.gitignore`. Security teams should treat agent folders such as `.claude/`, `.cursor/`, `.gemini/` and `.specstory/`, and agent memory files, as holding secrets, like `.env` files, on laptops as well as in repositories.
 
 <!-- cspell:words Apiiro -->
