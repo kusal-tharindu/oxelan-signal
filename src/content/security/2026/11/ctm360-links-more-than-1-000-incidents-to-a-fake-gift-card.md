@@ -12,9 +12,6 @@ tags:
 impact: medium
 action: review
 status: current
-affects:
-  - Gift-card scam portals impersonating PlayStation, Sephora, SHEIN, Walmart
-    and Amazon
 briefing:
   changed: According to BleepingComputer, CTM360 identified more than 1,000
     incidents linked to a recurring gift-card scam campaign that impersonates
