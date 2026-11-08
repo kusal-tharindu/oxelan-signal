@@ -19,15 +19,14 @@ affects:
   - ARTEX panels and exposed instances
 briefing:
   changed: Check Point Research identified 2,557 systems that hosted ARTEX panels,
-    including 1,608 live and publicly accessible instances [c1]. According to
+    including 1,608 live and publicly accessible instances. According to
     Cyber Security News, agents recovered more than 190,000 gaming credential
-    sets [c25].
+    sets.
   why: ARTEX is an open-source, AI-powered penetration testing platform, and the
-    research shows agents producing findings at volume with low model costs
-    [c3,c6,c14].
+    research shows agents producing findings at volume with low model costs.
   action: The cited sources do not publish fixed ARTEX versions; follow the
     developer's advisory and note the original project was made closed-source
-    after attacks against South Korean banks [c3,c4].
+    after attacks against South Korean banks.
 sources:
   - title: "Inside ARTEX: How Autonomous AI Agents Are Being Used in Real-World
       Cyberattacks - Check Point Blog"
