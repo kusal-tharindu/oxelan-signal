@@ -10,6 +10,7 @@ description: "Report: attacker reached Arkéa's network through a service
   provider's platform, with up to $133 million in fraudulent transactions."
 tags:
   - supply-chain
+  - incident-response
 impact: high
 action: review
 status: current
