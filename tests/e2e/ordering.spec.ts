@@ -30,6 +30,20 @@ async function cards(page: Page): Promise<Card[]> {
   );
 }
 
+/** RSS is XML: decode the entity-escaped title before comparing it with the DOM. */
+function decodeXml(value: string): string {
+  return value
+    .replace(/&#x([0-9a-f]+);/gi, (_, hex: string) =>
+      String.fromCodePoint(Number.parseInt(hex, 16)),
+    )
+    .replace(/&#(\d+);/g, (_, dec: string) => String.fromCodePoint(Number.parseInt(dec, 10)))
+    .replace(/&quot;/g, '"')
+    .replace(/&apos;/g, "'")
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&amp;/g, '&');
+}
+
 async function expectLatestDayOrdered(page: Page) {
   const rows = await cards(page);
   expect(rows.length).toBeGreaterThan(0);
@@ -60,7 +74,7 @@ test.describe('deterministic ordering', () => {
     const response = await request.get('/rss.xml');
     expect(response.status()).toBe(200);
     const xml = await response.text();
-    const rssFirst = xml.match(/<item>[\s\S]*?<title>([^<]+)<\/title>/)?.[1] ?? '';
+    const rssFirst = decodeXml(xml.match(/<item>[\s\S]*?<title>([^<]+)<\/title>/)?.[1] ?? '');
     expect(rssFirst.trim()).toBe(first.title);
   });
 
