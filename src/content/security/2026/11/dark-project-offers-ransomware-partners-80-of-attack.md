@@ -9,6 +9,7 @@ description: Dark Project offers affiliates 80% of attack proceeds, and its
   published victim records span manufacturing, healthcare, and construction.
 tags:
   - malware
+  - incident-response
 impact: high
 action: review
 status: current
