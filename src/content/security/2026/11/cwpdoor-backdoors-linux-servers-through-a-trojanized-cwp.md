@@ -8,6 +8,7 @@ description: CWPdoor replaces cwpsrv 1.15.10 and 1.24.0 and waits for signed,
   encrypted commands sent in an HTTP header.
 tags:
   - malware
+  - supply-chain
 impact: high
 action: review
 status: current
