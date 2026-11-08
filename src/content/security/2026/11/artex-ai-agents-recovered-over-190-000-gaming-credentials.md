@@ -16,7 +16,7 @@ impact: high
 action: review
 status: current
 affects:
-  - ARTEX panels and exposed instances
+  - Servers running exposed ARTEX panels
 briefing:
   changed: Check Point Research identified 2,557 systems that hosted ARTEX panels,
     including 1,608 live and publicly accessible instances. According to
