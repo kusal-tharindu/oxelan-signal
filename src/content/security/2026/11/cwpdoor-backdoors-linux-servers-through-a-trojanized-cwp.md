@@ -34,7 +34,7 @@ sources:
     url: https://www.bleepingcomputer.com/news/security/hackers-backdoor-linux-servers-using-trojanized-cwp-web-server/
 ---
 
-According to BleepingComputer, a Linux malware family called CWPdoor is distributed through a trojanized version of cwpsrv, the web server behind the Control Web Panel (CWP) management interface. XLab captured a script named`cwpsrv_update.sh` on June 29, 2026; it downloads cwpsrv from 136.0.141.71 and must run with root privileges.
+According to BleepingComputer, a Linux malware family called CWPdoor is distributed through a trojanized version of cwpsrv, the web server behind the Control Web Panel (CWP) management interface. XLab captured a script named `cwpsrv_update.sh` on June 29, 2026; it downloads cwpsrv from 136.0.141.71 and must run with root privileges.
 
 ## What is affected
 
@@ -48,6 +48,6 @@ BleepingComputer also notes that a malicious cwpsrv file (cwpsrv.suspeito) uploa
 
 ## What to do
 
-Administrators should check for the ngx_http_integrity_helper Unix socket, suspicious cwpsrv helper processes, and X-Ngx-Integrity strings in the server binary. XLab lists the downloader URL as`http://136.0.141[.]71/static/cwpsrv_update.sh` and the infection script's MD5 as`e505d4ffa21cf494a5dc2d7c8f4f1236`. If compromise is confirmed, replace the backdoored binary with a legitimate copy, upgrade to the latest version, rotate all control panel credentials, and investigate the host for additional malware.
+Administrators should check for the ngx_http_integrity_helper Unix socket, suspicious cwpsrv helper processes, and X-Ngx-Integrity strings in the server binary. XLab lists the downloader URL as `http://136.0.141[.]71/static/cwpsrv_update.sh` and the infection script's MD5 as `e505d4ffa21cf494a5dc2d7c8f4f1236`. If compromise is confirmed, replace the backdoored binary with a legitimate copy, upgrade to the latest version, rotate all control panel credentials, and investigate the host for additional malware.
 
 <!-- cspell:words Pdoor trojanized cwpsrv suspeito Ebury backdoored -->
