@@ -9,15 +9,12 @@ description: Microsoft described trojanized installers that push proxy,
   distributed-computing and adware payloads onto Windows PCs.
 tags:
   - malware
+  - supply-chain
 impact: medium
 action: review
 status: current
 affects:
   - Windows PCs where users run installers downloaded from untrusted sources
-  - WorldProxyPool scheduled tasks WorldProxyPoolAgent, WorldProxyPoolWatchdog,
-    WorldProxyPoolUpdater
-  - CharityEngine/BOINC components under C:\Program Files\BOINC\ and
-    C:\ProgramData\BOINC\
 briefing:
   changed: Microsoft Threat Intelligence identified a fake-download campaign that
     ships trojanized Inno Setup-style installers for cracked software, free

@@ -9,11 +9,12 @@ description: Mirax uses the aquafina build tag, and Group-IB recommends banks
   correlate Accessibility abuse with transaction attempts.
 tags:
   - malware
+  - authentication
 impact: high
 action: review
 status: current
 affects:
-  - Mirax campaign builds tagged aquafina and aquafina_all
+  - Android devices with the targeted banking apps
 briefing:
   changed: According to Cyber Security News, the Mirax campaign uses the build tag
     aquafina, with variant aquafina_all.
