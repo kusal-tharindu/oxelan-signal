@@ -10,6 +10,7 @@ description: MetaMask said an infrastructure attack diverted some
   Phrases or private keys.
 tags:
   - authentication
+  - incident-response
 impact: high
 action: review
 status: current

@@ -9,6 +9,7 @@ description: mSeven Software told mSecure users on November 3 to change
   passwords, reset two-factor authentication, or remove passkeys.
 tags:
   - authentication
+  - incident-response
 impact: high
 action: review
 status: current

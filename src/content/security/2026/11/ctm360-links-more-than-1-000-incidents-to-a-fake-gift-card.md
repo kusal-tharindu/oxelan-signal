@@ -9,6 +9,7 @@ description: CTM360 linked more than 1,000 incidents to gift-card scams
   impersonating major brands; no reward was delivered in the flows it tested.
 tags:
   - malware
+  - incident-response
 impact: medium
 action: review
 status: current
