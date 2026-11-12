@@ -15,12 +15,17 @@ test.describe('policies', () => {
   });
 
   test('retired tags are no longer generated or listed', async ({ request }) => {
-    const retired = await request.get('/tags/build/');
-    expect(retired.status()).toBe(404);
-    const index = await request.get('/tags/');
-    const body = await index.text();
-    expect(body).not.toContain('#build');
-    expect(body).not.toContain('#security');
-    expect(body).toContain('#supply-chain');
+    // Compare whole tag names: a substring check such as '#security' also
+    // matched the approved tag `security-updates` and failed the content PR.
+    const retiredTags = ['build', 'security'];
+    for (const tag of retiredTags) {
+      expect((await request.get(`/tags/${tag}/`)).status()).toBe(404);
+    }
+    const body = await (await request.get('/tags/')).text();
+    const listed = new Set(
+      [...body.matchAll(/href="\/tags\/([a-z0-9-]+)\/"/g)].map((match) => match[1]),
+    );
+    for (const tag of retiredTags) expect(listed.has(tag)).toBe(false);
+    expect(listed.has('supply-chain')).toBe(true);
   });
 });
