@@ -22,7 +22,9 @@ test.describe('policies', () => {
       expect((await request.get(`/tags/${tag}/`)).status()).toBe(404);
     }
     const body = await (await request.get('/tags/')).text();
-    const listed = new Set([...body.matchAll(/href="\/tags\/([a-z0-9-]+)\/"/g)].map((match) => match[1]));
+    const listed = new Set(
+      [...body.matchAll(/href="\/tags\/([a-z0-9-]+)\/"/g)].map((match) => match[1]),
+    );
     for (const tag of retiredTags) expect(listed.has(tag)).toBe(false);
     expect(listed.has('supply-chain')).toBe(true);
   });
