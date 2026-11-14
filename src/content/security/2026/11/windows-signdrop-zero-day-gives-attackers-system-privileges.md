@@ -24,13 +24,16 @@ briefing:
     a Microsoft patch.
   action: Check Windows hosts against the CLFS Authentication Mode registry value,
     and wait for a Microsoft patch rather than disabling the CLFS mitigation.
+updated: 2026-11-14
+updates:
+  - { date: 2026-11-14, note: "Corrected the guidance: besides waiting for a patch, the report gives two ways to check exposure (the proof-of-concept or the CLFS registry value). Removed an unsupported description of the SYSTEM account." }
 sources:
   - title: "BleepingComputer: New Windows SignDrop zero-day gives hackers SYSTEM
       privileges"
     url: https://www.bleepingcomputer.com/news/security/new-windows-signdrop-zero-day-gives-hackers-system-privileges/
 ---
 
-According to BleepingComputer, security researcher Abdelhamid Naceri, also known as Nightmare Eclipse, has released a new Windows zero-day exploit called SignDrop that can let attackers gain SYSTEM privileges, the highest-privilege local account on Windows. A zero-day in this sense means no vendor fix is available, and the report says there is currently no solution except waiting for a patch from Microsoft.
+According to BleepingComputer, security researcher Abdelhamid Naceri, also known as Nightmare Eclipse, has released a new Windows zero-day exploit called SignDrop that can let attackers gain SYSTEM privileges. A zero-day in this sense means no vendor fix is available, and the report says there is currently no solution except waiting for a patch from Microsoft.
 
 According to the report, SignDrop exploits mitigations Microsoft introduced in October 2025 to defend against authentication attacks targeting vulnerabilities in the Common Log File System (CLFS) driver. Naceri says the flaw is in how CLFS handles creating the authentication file (".cnpf") when it creates a new log file.
 
@@ -44,6 +47,6 @@ There is no configuration change that closes the flaw: the report says that disa
 
 ## What to do
 
-Until Microsoft ships a patch, the report's only guidance is to wait for it. To find hosts in scope, check the CLFS Authentication Mode registry value at `HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\CLFS\Authentication\Mode` on Windows endpoints; a value of 0 or 1 means the device is vulnerable.
+The report says there is no fix until Microsoft ships a patch. To find vulnerable devices, Naceri recommends running the proof-of-concept exploit, which spawns a SYSTEM shell on a vulnerable machine, or checking the CLFS Authentication Mode registry value at `HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\CLFS\Authentication\Mode`; a value of 0 or 1 means the device is vulnerable.
 
 <!-- cspell:words CLFS Abdelhamid Naceri cnpf -->
