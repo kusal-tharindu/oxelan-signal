@@ -24,6 +24,9 @@ briefing:
   action: "Block digitalelvis/neuronai-studio v3.14.3 and pin v3.14.2 or earlier,
     and review repositories for pull requests titled 'docs: dependency audit
     notes' from branch wfx-docs."
+updated: 2026-11-14
+updates:
+  - { date: 2026-11-14, note: "Added the attribution caveat: Aikido does not attribute the November attack to the GhostAction actor behind the October wave, although the hijacked accounts overlap." }
 sources:
   - title: "GhostAction Returns: Fake 'Security Audit' Workflows Steal CI Secrets"
     url: https://safeguard.sh/resources/blog/ghostaction-returns-security-audit-workflow-github
@@ -45,6 +48,8 @@ The stealer collects GitHub Actions secrets and variables, the workflow's GITHUB
 Version 3.14.3 of the Packagist package digitalelvis/neuronai-studio is malicious.
 
 On October 8, 2026, two hijacked GitHub maintainer accounts pushed a workflow called a "security audit" to more than 340 repositories in a single day. GitGuardian links the campaign to GhostAction, first documented in September 2025. The likely entry point is a leaked token from infostealer logs. GitHub began preventing the malicious workflow from running on October 9.
+
+According to The Hacker News, Aikido found that the accounts used in November overlap with those hit in the October wave, but said "we don't attribute November to the same actor at this stage," because the infrastructure, tools, and methods differ and stolen credentials often end up with several attackers.
 
 ## What to do
 
